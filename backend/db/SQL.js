@@ -1,0 +1,26 @@
+/* eslint-disable no-console */
+const Sequelize = require('sequelize/types');
+
+const db = new Sequelize('splitwisedb', 'admin', 'adminadmin', {
+	host: 'splitwisedb.cyazxyujehyt.us-west-2.rds.amazonaws.com',
+	dialect: 'mysql',
+	pool: {
+		max: 5,
+		min: 0,
+		acquire: 30000,
+		idle: 10000,
+	},
+});
+
+db
+	.authenticate()
+	.then(() => {
+		console.log('Connection has been established successfully.');
+	})
+	.catch((err) => {
+		console.error('Unable to connect to the database:', err);
+	});
+
+db.sync({ force: true });
+
+module.exports = db;
