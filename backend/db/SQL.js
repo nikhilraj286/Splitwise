@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
-const Sequelize = require('sequelize/types');
+const Sequelize = require('sequelize');
+
 
 const db = new Sequelize('splitwisedb', 'admin', 'adminadmin', {
 	host: 'splitwisedb.cyazxyujehyt.us-west-2.rds.amazonaws.com',
@@ -21,6 +22,6 @@ db
 		console.error('Unable to connect to the database:', err);
 	});
 
-db.sync({ force: true });
+// db.sync({ force: true });
 
 module.exports = db;

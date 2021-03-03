@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize/types');
+const Sequelize = require('sequelize');
 const sequelize = require('../db/SQL');
 
 const Expense = sequelize.define('expense', {
