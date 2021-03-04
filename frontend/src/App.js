@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
-import {BrowserRouter} from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import Main from './components/Main'
+import Store from './store/store'
 import './App.css';
+
 
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          <Main/>
-        </div>
-      </BrowserRouter>
+      <Provider store={Store}>
+        <BrowserRouter>
+          <div>
+            <Main />
+          </div>
+        </BrowserRouter>
+      </Provider>
     );
   }
 }
