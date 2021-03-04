@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import '../style.css';
-import axios from 'axios';
-import cookie from 'react-cookies';
+// import axios from 'axios';
+// import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import { connect } from 'react-redux';
+import { signup } from '../../store/actions/signupActions/signupActions';
 
-class Signup extends Component{
+class SignUp extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -16,7 +18,7 @@ class Signup extends Component{
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
         this.fullNameChangeHandler = this.fullNameChangeHandler.bind(this);
-        this.submitLogin = this.submitLogin.bind(this);
+        this.submitSignUp = this.submitSignUp.bind(this);
     }
     componentWillMount(){
         this.setState({
@@ -38,7 +40,8 @@ class Signup extends Component{
             fullName : e.target.value
         })
     }
-    submitLogin = (e) => {
+        
+    submitSignUp = async e => {
         // var headers = new Headers();
         e.preventDefault();
         const data = {
@@ -46,39 +49,28 @@ class Signup extends Component{
             password : this.state.password,
             fullName: this.state.fullName
         }
-        axios.defaults.withCredentials = true;
-        axios.post('http://localhost:3001/signup',data)
-            .then(response => {
-                console.log("Status Code : ",response.status);
-                if(response.status === 200){
-                    this.setState({
-                        authFlag : true
-                    })
-                }else{
-                    this.setState({
-                        authFlag : false
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-                this.setState({
-                    errMessage : true
-                })
-            });
+        await this.props.signup(data);
+
+        if (this.props.signupDetails.status === 200) {
+            this.setState({
+                authFlag: true,
+                Redirect: <Redirect to="/home"/>
+            })
+        } else {
+            this.setState({
+                authFlag: false,
+                Redirect: <Redirect to="/signup"/>
+            })
+        }
     }
     render(){
-        let redirectVar = null;
         // let details = null;
-        
-        if(cookie.load('cookie')){
-            redirectVar = <Redirect to= "/home"/>
-        }
         // if(this.state.errMessage){
         //     details = <p class="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
         return(
             <div>
-                {redirectVar}
+                {this.state.Redirect}
                 <div className="container-fluid">
                     <div className="container login-main" style={{padding: '100px 0'}}>
                         <div className="row">
@@ -98,7 +90,7 @@ class Signup extends Component{
                                     <div className="mb-3">
                                         <input type="password" onChange = {this.passwordChangeHandler} className="form-control" id="password" placeholder="Password"/>
                                     </div>
-                                    <button onClick = {this.submitLogin} className="btn btn-primary">Sign me up!</button>
+                                    <button onClick = {this.submitSignUp} className="btn btn-primary">Sign me up!</button>
                                 </div>
                             </div>
                             <div className="col-4"></div>
@@ -110,4 +102,8 @@ class Signup extends Component{
     }
 }
 
-export default Signup;
+const mapStateToProps = (state) => {
+    return { signupDetails: state.signupDetails }
+}
+
+export default connect(mapStateToProps, {signup})(SignUp);

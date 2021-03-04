@@ -54,34 +54,8 @@ class Login extends Component {
                 Redirect: <Redirect to="/signup"/>
             })
         }
-
-        // axios.defaults.withCredentials = true;
-        // axios.post('http://localhost:3001/login',data)
-        //     .then(response => {
-        //         console.log("Status Code : ",response.status);
-        //         if(response.status === 200){
-        //             this.setState({
-        //                 authFlag : true
-        //             })
-        //         }else{
-        //             this.setState({
-        //                 authFlag : false
-        //             })
-        //         }
-        //     }).catch((err) => {
-        //         console.log(err)
-        //         this.setState({
-        //             errMessage : true
-        //         })
-        //     });
     }
     render() {
-        // let redirectVar = null;
-        // let details = null;
-
-        // if (cookie.load('cookie')) {
-        //     redirectVar = <Redirect to="/home" />
-        // }
         // if(this.state.errMessage){
         //     details = <p class="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
