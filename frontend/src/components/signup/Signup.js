@@ -5,6 +5,7 @@ import '../style.css';
 import {Redirect} from 'react-router';
 import { connect } from 'react-redux';
 import { signup } from '../../store/actions/signupActions/signupActions';
+import '../../css/buttons.css'
 
 class SignUp extends Component{
     constructor(props){
@@ -54,7 +55,7 @@ class SignUp extends Component{
         if (this.props.signupDetails.status === 200) {
             this.setState({
                 authFlag: true,
-                Redirect: <Redirect to="/home"/>
+                Redirect: <Redirect to="/dashboard"/>
             })
         } else {
             this.setState({
@@ -72,7 +73,7 @@ class SignUp extends Component{
             <div>
                 {this.state.Redirect}
                 <div className="container-fluid">
-                    <div className="container login-main" style={{padding: '100px 0'}}>
+                    <div className="container login-main" style={{padding: '150px 0'}}>
                         <div className="row">
                             <div className="col-3"></div>
                             <div className="col-2" style={{textAlign: 'center'}}>
@@ -85,12 +86,12 @@ class SignUp extends Component{
                                         <input type="text" onChange = {this.fullNameChangeHandler} className="form-control" id="fullname" placeholder="Your full name" />
                                     </div>
                                     <div className="mb-3">
-                                        <input type="email" onChange = {this.emailChangeHandler} className="form-control" id="email" placeholder="Emaill Id" />
+                                        <input type="email" onChange = {this.emailChangeHandler} className="form-control" id="email" placeholder="Email Id" />
                                     </div>
                                     <div className="mb-3">
                                         <input type="password" onChange = {this.passwordChangeHandler} className="form-control" id="password" placeholder="Password"/>
                                     </div>
-                                    <button onClick = {this.submitSignUp} className="btn btn-primary">Sign me up!</button>
+                                    <button onClick = {this.submitSignUp} className="btn btn-primary btn-orange" style={{fontWeight:'bold'}}>Sign me up!</button>
                                 </div>
                             </div>
                             <div className="col-4"></div>

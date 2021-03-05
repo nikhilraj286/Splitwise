@@ -1,0 +1,44 @@
+.centerBar {
+    box-shadow: 3px 0 3px -4px rgba(31, 73, 125, 0.8), -3px 0 3px -4px rgba(31, 73, 125, 0.8);
+    height: 100vh;
+}
+
+.leftBar .inner{
+    padding-top: 20px;
+}
+
+.leftBar{
+    padding-left: 0;
+}
+
+.centerBar .inner{
+    margin: 0 20px;
+    padding-top: 20px;
+}
+
+#right_sidebar_content {
+    padding-top: 20px;
+    margin-left: 20px;
+}
+
+.leftbarItem{
+    padding: 5px 10px;
+
+}
+
+.leftbarHeading{
+    padding: 5px 0px;
+    
+}
+
+.leftbarHeading p{
+    margin-bottom: 0;
+    padding: 5px 10px;
+    background-color: #efefef;
+}
+
+.left-inner {
+
+    padding: 5px 10px;
+
+}

@@ -13,7 +13,7 @@ export const signup = (data) => async dispatch => {
         if(res.status === 200) {
             console.log(res);
             dispatch({
-                type: 'LOGIN',
+                type: 'SIGNUP',
                 payload: res.data
             })
         } else {
@@ -23,7 +23,7 @@ export const signup = (data) => async dispatch => {
     .catch(err => {
         console.log(err);
         dispatch({
-            type: 'LOGIN',
+            type: 'SIGNUP',
             payload: 404
         })
     })

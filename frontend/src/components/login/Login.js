@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 // import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../store/actions/loginActions/loginActions';
+import '../../css/buttons.css'
 
 class Login extends Component {
     constructor(props) {
@@ -46,7 +47,7 @@ class Login extends Component {
         if (this.props.loginDetails.status === 200) {
             this.setState({
                 authFlag: true,
-                Redirect: <Redirect to="/home"/>
+                Redirect: <Redirect to="/dashboard"/>
             })
         } else {
             this.setState({
@@ -63,7 +64,7 @@ class Login extends Component {
             <div>
                 {this.state.Redirect}
                 <div className="container-fluid">
-                    <div className="container login-main" style={{ padding: '100px 0' }}>
+                    <div className="container login-main" style={{ padding: '150px 0' }}>
                         <div className="row">
                             <div className="col-3"></div>
                             <div className="col-2" style={{ textAlign: 'center' }}>
@@ -73,12 +74,12 @@ class Login extends Component {
                                 <div className="login-form form" style={{ paddingTop: '20px' }}>
                                     <h4>WELCOME TO SPLITWISE</h4>
                                     <div className="mb-3">
-                                        <input type="emaill" onChange={this.emailChangeHandler} className="form-control" id="exampleInputemaill1" placeholder="emaill Id" />
+                                        <input type="emaill" onChange={this.emailChangeHandler} className="form-control" id="exampleInputemaill1" placeholder="Email Id" />
                                     </div>
                                     <div className="mb-3">
                                         <input type="password" onChange={this.passwordChangeHandler} className="form-control" id="exampleInputPassword1" placeholder="Password" />
                                     </div>
-                                    <button onClick={this.submitLogin} className="btn btn-primary">Log in</button>
+                                    <button onClick={this.submitLogin} className="btn btn-primary btn-orange"  style={{fontWeight:'bold'}}>Log in</button>
                                 </div>
                             </div>
                             <div className="col-4"></div>
