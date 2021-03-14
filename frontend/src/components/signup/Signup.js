@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import '../style.css';
-// import axios from 'axios';
-// import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import { connect } from 'react-redux';
 import { signup } from '../../store/actions/signupActions/signupActions';
+import PropTypes from 'prop-types'
 import '../../css/buttons.css'
 
 class SignUp extends Component{
@@ -13,7 +12,7 @@ class SignUp extends Component{
         this.state = {
             email : "",
             password : "",
-            fullName : "",
+            full_name : "",
             authFlag : false
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
@@ -38,7 +37,7 @@ class SignUp extends Component{
     }
     fullNameChangeHandler = (e) => {
         this.setState({
-            fullName : e.target.value
+            full_name : e.target.value
         })
     }
         
@@ -48,30 +47,38 @@ class SignUp extends Component{
         const data = {
             email : this.state.email,
             password : this.state.password,
-            fullName: this.state.fullName
+            full_name: this.state.full_name
         }
         await this.props.signup(data);
-
-        if (this.props.signupDetails.status === 200) {
-            this.setState({
-                authFlag: true,
-                Redirect: <Redirect to="/dashboard"/>
-            })
-        } else {
-            this.setState({
-                authFlag: false,
-                Redirect: <Redirect to="/signup"/>
-            })
-        }
+        // console.log(this.props.signupDetails)      
     }
     render(){
         // let details = null;
         // if(this.state.errMessage){
-        //     details = <p class="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
+        //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
+        // }
+        let redirctVar = ""
+        console.log("SIGN UP ************");
+        console.log(this.props);
+        console.log(this.state);
+        if (localStorage.getItem('userProfile')) {
+            // localStorage.setItem('userProfile', JSON.stringify(this.props.signupDetails.user))
+            redirctVar = <Redirect to="/home"/>
+        }
+        // if(localStorage.getItem('userProfile')){
+        //     this.setState({
+        //         authFlag: true,
+        //         Redirect: <Redirect to="/home"/>
+        //     })
+        // } else {
+        //     this.setState({
+        //         authFlag: false,
+        //         Redirect: <Redirect to="/signup"/>
+        //     })
         // }
         return(
             <div>
-                {this.state.Redirect}
+                {redirctVar}
                 <div className="container-fluid">
                     <div className="container login-main" style={{padding: '150px 0'}}>
                         <div className="row">
@@ -101,6 +108,11 @@ class SignUp extends Component{
             </div>
         );
     }
+}
+
+SignUp.propTypes = {
+    signup: PropTypes.func.isRequired,
+    // user: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => {

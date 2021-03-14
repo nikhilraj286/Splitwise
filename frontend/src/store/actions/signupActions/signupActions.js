@@ -9,9 +9,10 @@ export const signup = (data) => async dispatch => {
         }
     })
     .then(async res => {
-        console.log(res);
+        // console.log(res);
         if(res.status === 200) {
-            console.log(res);
+            // console.log(res);
+            localStorage.setItem('userProfile', JSON.stringify(res.data))
             dispatch({
                 type: 'SIGNUP',
                 payload: res.data

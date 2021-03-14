@@ -1,7 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
 app.set('view engine', 'ejs');
@@ -18,7 +17,7 @@ app.use(session({
     activeDuration      :  5 * 60 * 1000
 }));
 app.use(express.json({ extended: false }));
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 app.use(function(req, res, next){
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');

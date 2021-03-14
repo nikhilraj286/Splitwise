@@ -1,6 +1,6 @@
 const express = require('express');
 const sequelize = require('../../db/SQL');
-const User = require('../../mysqlModels/User');
+const db = require('../../models');
 const app = require('../../app');
 
 const router = express.Router();
@@ -10,13 +10,17 @@ app.post('/signup', async (req, res) => {
 	console.log("Req Body : ", req.body);
 	const transaction = await sequelize.transaction();
 	try {
-		const user = await User.create({
+		const user = await db.User.create({
 			email: req.body.email,
 			password: req.body.password,
-			fullName: req.body.fullName
+			full_name: req.body.full_name,
+			phone: "",
+			currency: "USD",
+			time_zone: "",
+			language: "English",
+			profile_picture: ""
 		}, { transaction: transaction })
 		transaction.commit();
-		res.cookie('cookie', "admin", { maxAge: 900000, httpOnly: false, path: '/' });
 		req.session.user = user;
 		return res.status(200).send(user)
 	} catch (error) {

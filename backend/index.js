@@ -1,6 +1,8 @@
 
 // const PORT = process.env.PORT || 3001; 
 const app = require('./app');
+// const db = require('./db/SQL');
+const db = require('./models');
 const router = require('./routers/router');
 
 app.get('/', (req, res) => {
@@ -9,5 +11,7 @@ app.get('/', (req, res) => {
 
 app.use('/router', router);
 
-
-app.listen(3001, console.log('server started on port 3001'));
+db.sequelize.sync().then(() => {
+    app.listen(3001, console.log('server started on port 3001'));
+})
+// app.listen(3001, console.log('server started on port 3001'));

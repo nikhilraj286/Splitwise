@@ -1,7 +1,12 @@
-export const LogoutReducer = (state = [], action)=> {
+const initialState = {
+    user : []
+}
+
+
+export const LogoutReducer = (state = initialState, action)=> {
       switch(action.type){
         case 'LOGOUT':
-            return {}
+            return []
           
         default:
             return state

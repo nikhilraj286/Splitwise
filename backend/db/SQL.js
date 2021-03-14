@@ -13,8 +13,7 @@ const db = new Sequelize('splitwisedb', 'admin', 'adminadmin', {
 	},
 });
 
-db
-	.authenticate()
+db.authenticate()
 	.then(() => {
 		console.log('Connection has been established successfully.');
 	})

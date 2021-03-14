@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import '../style.css';
-// import axios from 'axios';
-// import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 // import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../store/actions/loginActions/loginActions';
+import PropTypes from 'prop-types'
 import '../../css/buttons.css'
 
 class Login extends Component {
@@ -36,33 +35,24 @@ class Login extends Component {
         })
     }
     submitLogin = async e => {
-        // var headers = new Headers();
         e.preventDefault();
         const data = {
             email: this.state.email,
             password: this.state.password
         }
         await this.props.login(data);
-
-        if (this.props.loginDetails.status === 200) {
-            this.setState({
-                authFlag: true,
-                Redirect: <Redirect to="/dashboard"/>
-            })
-        } else {
-            this.setState({
-                authFlag: false,
-                Redirect: <Redirect to="/signup"/>
-            })
-        }
     }
     render() {
         // if(this.state.errMessage){
-        //     details = <p class="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
+        //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
+        let redirctVar = ""
+        if (localStorage.getItem('userProfile')) {
+            redirctVar = <Redirect to="/home"/>
+        }
         return (
             <div>
-                {this.state.Redirect}
+                {redirctVar}
                 <div className="container-fluid">
                     <div className="container login-main" style={{ padding: '150px 0' }}>
                         <div className="row">
@@ -93,8 +83,12 @@ class Login extends Component {
 
 // export default Login;
 
+Login.propTypes = {
+    login: PropTypes.func.isRequired,
+}
+
 const mapStateToProps = (state) => {
-    return { loginDetails: state.loginDetails }
+    return { loginDetails : state.loginDetails }
 }
 
 export default connect(mapStateToProps, {login})(Login);
