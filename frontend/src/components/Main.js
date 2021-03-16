@@ -5,6 +5,7 @@ import signup from './signup/Signup';
 import Home from './home/home'
 import Navbar from './navbar/navbar'
 import landing from './landing/landing'
+import AddGroup from './group/addGroup';
 // import dashboard from './home/centerBar/dashboard'
 
 
@@ -14,7 +15,7 @@ class Main extends Component {
         // if(localStorage.getItem('userprofile')){
         //     navbar_display = navbar
         // }
-        console.log(localStorage)
+        // console.log(localStorage)
         return(
             <div>
                 <Route exact path='/' component={landing}/>
@@ -22,6 +23,7 @@ class Main extends Component {
                 <Route path='/login' component={login}/>
                 <Route path='/signup' component={signup}/>
                 <Route path="/home" component={Home}/>
+                <Route path="/group/new" component={AddGroup}/>
                 {/* <Route path="/home/dashboard" component={dashboard}/> */}
             </div>
         );

@@ -11,7 +11,7 @@ export default class Center extends React.Component{
     }
     
     componentDidMount=()=>{
-        if(this.props.selected===3){
+        if(this.props.selected===4){
             // let groupId=this.props.groupSelected;
             //axios get with group Id
 

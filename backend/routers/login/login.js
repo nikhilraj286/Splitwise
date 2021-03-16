@@ -30,4 +30,23 @@ app.post('/login',async (req,res) => {
     return res.status(500).send("Internal Server Error!");
 });
 
+app.post('/getUsers', async (req,res) => {
+    console.log("Inside get users Post Request");
+    try {
+        const result = await db.User.findAll({});
+        console.log(result.dataValues);
+        if (result === null) {
+            return res.status(404).send("Groups not found!");
+        }
+        else if (result !== null){
+            return res.status(200).send(result)
+        }
+        return res.status(401).send("UnAuthorized!");
+    }
+    catch (err) {
+        console.log(err);
+    }
+    return res.status(500).send("Internal Server Error!");
+});
+
 module.exports = router;

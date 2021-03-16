@@ -42,3 +42,15 @@
     padding: 5px 10px;
 
 }
+
+.secondary_fields{
+    overflow: hidden;
+    color: #000;   
+    transition: all 10s ease-in-out;
+    height: 0;
+}
+
+.secondary_fields-scroll {
+    overflow: visible;
+    height: auto;
+}

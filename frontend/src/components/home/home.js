@@ -38,12 +38,14 @@ class Home extends Component {
     }
 
     changeTab = (id) => {
+        console.log("inside change tab - ",id)
         this.setState({
             tabSelected: id
         })
     }
 
-    selectgroup = (tabSelected, groupSelected) => {
+    changeGroup = (tabSelected, groupSelected) => {
+        console.log("inside change group - ",tabSelected,groupSelected)
         this.setState({
             tabSelected: tabSelected,
             groupSelected: groupSelected
@@ -64,12 +66,12 @@ class Home extends Component {
             }
         })
             .then(async (res) => {
-                console.log("Status Code : ", res.status);
+                // console.log("Status Code : ", res.status);
                 if (res.status === 200) {
                     // this.setState({
                     //     groups.
                     // })
-                    console.log(res.data)
+                    // console.log(res.data)
                     this.setState({
                         groups: res.data
                     })
@@ -91,7 +93,7 @@ class Home extends Component {
                     <div className="row">
                         <div className="col-2 leftBar">
                             <div className="inner">
-                                <LeftBar tabs={this.state.tabs} groups={this.state.groups} tabSelected={this.state.tabSelected} groupSelected={this.state.groupSelected} changeTab={this.changeTab} changeGroup={this.selectgroup}/>
+                                <LeftBar tabs={this.state.tabs} groups={this.state.groups} tabSelected={this.state.tabSelected} groupSelected={this.state.groupSelected} changeTab={this.changeTab} changeGroup={this.changeGroup}/>
                             </div>
                         </div>
                         <div className="col-7 centerBar">
