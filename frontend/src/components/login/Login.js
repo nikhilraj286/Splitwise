@@ -6,13 +6,14 @@ import { connect } from 'react-redux';
 import { login } from '../../store/actions/loginActions/loginActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: "",
-            password: "",
+            email: null,
+            password: null,
             authFlag: false
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
@@ -35,12 +36,14 @@ class Login extends Component {
         })
     }
     submitLogin = async e => {
-        e.preventDefault();
-        const data = {
-            email: this.state.email,
-            password: this.state.password
+        if(this.state.email && this.state.password){
+            e.preventDefault();
+            const data = {
+                email: this.state.email,
+                password: this.state.password
+            }
+            await this.props.login(data);
         }
-        await this.props.login(data);
     }
     render() {
         // if(this.state.errMessage){
@@ -69,7 +72,7 @@ class Login extends Component {
                                     <div className="mb-3">
                                         <input type="password" onChange={this.passwordChangeHandler} className="form-control" id="exampleInputPassword1" placeholder="Password" />
                                     </div>
-                                    <button onClick={this.submitLogin} className="btn btn-primary btn-orange"  style={{fontWeight:'bold'}}>Log in</button>
+                                    <Link onClick={this.submitLogin} className="btn link-orange"  style={{fontWeight:'bold', color:'#fff'}}>Log in</Link>
                                 </div>
                             </div>
                             <div className="col-4"></div>

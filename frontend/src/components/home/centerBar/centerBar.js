@@ -60,10 +60,10 @@ export default class Center extends React.Component{
            <div className="col-4"><h3>{datatobeDisplayed}</h3></div>
            <div className="col-8">
            <ul className="nav navbar-nav navbar-right"  style={{flexDirection:'row', float:'right'}}>
-                {/* <button className="btn btn-primary btn-green" style={{paddingTop:'0px', paddingBottom:'0px', marginRight:'10px', maxHeight:'35px'}}><Link to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold'}}>Add Group</Link></button> */}
-                <Link className="btn btn-green" to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'15px'}}>Add Group</Link>
-                {/* <button onClick = {this.handleLogout} className="btn btn-primary btn-orange" style={{paddingTop:'0px', paddingBottom:'0px', height:'35px'}}><Link to="/" style={{color:'#fff', textDecoration:'none', fontWeight:'bold'}}>Settle Up</Link></button> */}
-                <Link className="btn btn-orange" to="/" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'15px'}}>Settle Up</Link>
+                {/* <button className="btn btn-primary link-green" style={{paddingTop:'0px', paddingBottom:'0px', marginRight:'10px', maxHeight:'35px'}}><Link to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold'}}>Add Group</Link></button> */}
+                <Link className="btn link-green" to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'15px'}}>Add Group</Link>
+                {/* <button onClick = {this.handleLogout} className="btn btn-primary link-orange" style={{paddingTop:'0px', paddingBottom:'0px', height:'35px'}}><Link to="/" style={{color:'#fff', textDecoration:'none', fontWeight:'bold'}}>Settle Up</Link></button> */}
+                <Link className="btn link-orange" to="/" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'15px'}}>Settle Up</Link>
             </ul>
            </div>
            {/* {texts} */}

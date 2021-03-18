@@ -5,14 +5,15 @@ import { connect } from 'react-redux';
 import { signup } from '../../store/actions/signupActions/signupActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
+import { Link } from 'react-router-dom';
 
 class SignUp extends Component{
     constructor(props){
         super(props);
         this.state = {
-            email : "",
-            password : "",
-            full_name : "",
+            email : null,
+            password : null,
+            full_name : null,
             authFlag : false
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
@@ -43,13 +44,15 @@ class SignUp extends Component{
         
     submitSignUp = async e => {
         // var headers = new Headers();
-        e.preventDefault();
-        const data = {
-            email : this.state.email,
-            password : this.state.password,
-            full_name: this.state.full_name
+        if(this.state.email && this.state.password && this.state.full_name){
+            e.preventDefault();
+            const data = {
+                email : this.state.email,
+                password : this.state.password,
+                full_name: this.state.full_name
+            }
+            await this.props.signup(data);
         }
-        await this.props.signup(data);
         // console.log(this.props.signupDetails)      
     }
     render(){
@@ -98,7 +101,7 @@ class SignUp extends Component{
                                     <div className="mb-3">
                                         <input type="password" onChange = {this.passwordChangeHandler} className="form-control" id="password" placeholder="Password"/>
                                     </div>
-                                    <button onClick = {this.submitSignUp} className="btn btn-primary btn-orange" style={{fontWeight:'bold'}}>Sign me up!</button>
+                                    <Link onClick = {this.submitSignUp} className="btn link-orange" style={{fontWeight:'bold', color:'#fff'}}>Sign me up!</Link>
                                 </div>
                             </div>
                             <div className="col-4"></div>

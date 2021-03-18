@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 import '../style.css'
 
 export default class AddGroup extends Component {
@@ -11,8 +12,36 @@ export default class AddGroup extends Component {
             usersToAdd: {},
             selected: false,
             selectedPerson: 0,
-            groupName: ''
+            groupName: '',
+            groupCreated:false
         }
+        this.createGroup = this.createGroup.bind(this)
+    }
+
+    createGroup = async () => {
+        let data = {
+            user_list:{...this.state.usersToAdd},
+            group_name:this.state.groupName,
+            no_of_users:Object.keys(this.state.usersToAdd).length
+        }
+        console.log(data)
+        axios.defaults.withCredentials = true;
+        await axios.post('http://localhost:3001/createGroup', data, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(async (res) => {
+            console.log("group creation Status Code : ", res.status);
+            console.log('group created - ', res)
+            this.setState({
+                groupCreated:true
+            })
+            
+        }).catch((err) => {
+            console.log('group creation error -',err)
+        });
     }
 
 
@@ -74,30 +103,33 @@ export default class AddGroup extends Component {
 
     render = () => {
         // console.log('current state', this.state)
+        let redirect = ""
+        if(this.state.groupCreated){
+            redirect = <Redirect to="/home"/>
+        }
         if (this.state.scroll) {
             document.getElementById('dropdown').classList.add("secondary_fields-scroll")
         }
+
+        var current_user = JSON.parse(localStorage.getItem('userProfile'))
+        // console.log(current_user)
 
         var personList = []
         var keys1 = Object.keys(this.state.usersToAdd)
         if (this.state.usersToAdd && keys1.length > 0) {
             keys1.forEach(item => {
+                // {(item === current_user.user_id}
                 var data = this.state.usersToAdd[item]
-                personList.push(<div className="row personList" style={{ marginBottom: '15px' }}>
-                    <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-50px.png" alt="" />
-                    </div>
-                    <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <p style={{ margin: '0 0 0 10px' }} id={data.user_id}>{data.full_name} ({data.email})</p>
-                    </div>
-                    {(data.canBeDeleted === 0) &&
-                        <div className="col-1" style={{ padding: '0' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" class="bi bi-record-fill" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
-                            </svg>
+                if ((item !== current_user.user_id) && (data.canBeDeleted === 1)) {
+                    personList.push(<div className="row personList" style={{ margin: '0 0 15px 0' }}>
+                        <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-50px.png" alt="" />
                         </div>
-                    }
-                    {(data.canBeDeleted === 1) &&
+                        <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <p style={{ margin: '0 0 0 10px' }} id={data.user_id}>{data.full_name} ({data.email})</p>
+                        </div>
+
+
                         <div className="col-1" style={{ padding: '0' }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#ff652f" class="bi bi-trash-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} onClick={(e) => {
                                 let data = { ...this.state.usersToAdd }
@@ -114,9 +146,11 @@ export default class AddGroup extends Component {
                                 <path id={data.user_id} d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                             </svg>
                         </div>
-                    }
 
-                </div>)
+
+                    </div>)
+                }
+
             })
         }
 
@@ -137,6 +171,7 @@ export default class AddGroup extends Component {
 
 
         return (<div>
+            {redirect}
             <div className="container">
                 <div className="row" style={{ width: '50%', margin: 'auto', height: '100vh', padding: '100px 0px', textAlign: 'center' }}>
                     <div className="col-5" style={{ padding: 0 }}>
@@ -148,6 +183,7 @@ export default class AddGroup extends Component {
                         <form>
                             <label htmlFor="groupName">My group shall be called..</label><br></br>
                             <input type="text" id="groupName" placeholder="Funkytown" style={{ width: '100%', height: '38px', paddingLeft: '10px', marginTop: '10px' }} onChange={(e) => {
+                                // console.log(e.target.value)
                                 this.setState({
                                     scroll: true,
                                     groupName: e.target.value
@@ -157,7 +193,7 @@ export default class AddGroup extends Component {
                                 <hr />
                                 <p style={{ fontSize: '18px' }}>GROUP MEMEBERS</p>
                                 <p style={{ fontSize: '12px' }}>Tip: Lots of people to add? Send you friends an <span style={{ color: '#0088cc' }}>invite link</span></p>
-                                {personList}
+
 
                                 {/* <div className="row personList" style={{ marginBottom: '15px' }}>
                                 <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -173,13 +209,27 @@ export default class AddGroup extends Component {
                                 </div>
                             </div> */}
 
-
-                                <div className="addPersonButton" style={{ marginBottom: '15px' }}>
-                                    <div style={{ color: '#0088cc', cursor: 'pointer', fontSize: '13px' }} onClick='this.newRow'>+ Add a person</div>
+                                <div className="row personList" style={{ margin: '0 0 15px 0' }}>
+                                    <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-50px.png" alt="" />
+                                    </div>
+                                    <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <p style={{ margin: '0 0 0 10px' }} id={current_user.user_id}>{current_user.full_name} ({current_user.email})</p>
+                                    </div>
+                                    <div className="col-1" style={{ padding: '0' }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" class="bi bi-record-fill" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                        </svg>
+                                    </div>
                                 </div>
 
+                                {personList}
 
-                                <div className="row addPerson">
+
+                                
+
+
+                                <div className="row addPerson" style={{ margin: '0 0 15px 0' }} id="addPerson">
                                     <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                         <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-grey1-50px.png" alt="" />
                                     </div>
@@ -192,10 +242,10 @@ export default class AddGroup extends Component {
                                                     let data = this.state.allUsers[item]
                                                     if (e.target.value.includes(data.email)) {
                                                         // console.log(e.target.value.includes(data.email))
-                                                        this.setState((state) => ({
+                                                        this.setState({
                                                             selectedPerson: data.user_id,
                                                             selected: true
-                                                        }))
+                                                        })
                                                     }
                                                 })
                                             }
@@ -223,13 +273,30 @@ export default class AddGroup extends Component {
                                                     selected: false,
                                                     selectedPerson: 0
                                                 })
+                                                document.getElementById('newPerson').value = ''
+                                                document.getElementById('addPerson').classList.add('hidden')
                                             }
-                                            document.getElementById('newPerson').value = ''
+
                                         }}>
                                             <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
                                         </svg>
                                     </div>
                                 </div>
+
+                                <div className="addPersonButton" style={{ margin: '0 0 15px 10px' }}>
+                                    <div style={{ color: '#0088cc', cursor: 'pointer', fontSize: '13px' }} onClick={(e) => {
+                                        document.getElementById('addPerson').classList.remove('hidden')
+                                    }}>+ Add a person</div>
+                                </div>
+
+                                <hr />
+
+                                <div className='row'>
+                                    <div onClick={this.createGroup} href="/" className="btn btn-primary btn-orange" style={{ width: '25%', paddingTop: '10px', paddingBottom: '10px', fontWeight: 'bold', margin: '0 0 0 15px' }}>
+                                        Save
+                                    </div>
+                                </div>
+
 
                             </div>
                         </form>
@@ -242,25 +309,4 @@ export default class AddGroup extends Component {
 
 
 }
-
-
-{/* <Button style={{ margin: '1rem' ,backgroundColor:'#5bc5a7' ,borderColor:'#5bc5a7'}} disabled={!this.state.selected} onClick={(event) => {
-                                                var tempList = this.state.selectedList;
-                                                tempList.push(this.state.selected);
-                                                var uniqueList = [...new Set(tempList)];
-                                                this.setState({ selectedList: uniqueList });
-                                                document.getElementById("newGroupPersons").value = '';
-                                            }}>Add</Button> */}
-
-
-                                        //     var keys = Object.keys(this.state.usersToAdd)
-                                        // if(!keys.includes(e.target.key)){
-                                        //     let data = {...this.state.allUsers[e.target.key]}
-                                        //     let selectedData = {...this.state.usersToAdd}
-                                        //     selectedData[e.target.key] = data
-                                        //     console.log(selectedData)
-                                        //     this.setState({
-                                        //         usersToAdd: selectedData,
-                                        //     })
-                                        // }
 
