@@ -30,7 +30,7 @@ export default class MyGroup extends React.Component {
             selectedId = 'tab' + this.props.tabSelected
         }
     }
-    let groupIdSelected = null
+    // let groupIdSelected = null
     let allGroupsList = []
     let keys = Object.keys(this.props.groups)
 
@@ -58,7 +58,7 @@ export default class MyGroup extends React.Component {
                             return(<div>
                             {tabItem.heading ?(<div>
                                 {this.props.groups.map((groupItem) => {
-                                    {/* console.log(groupItem) */}
+                                    
                                     let item = null
                                     if(groupItem.has_invite){
                                         item = (
@@ -130,7 +130,7 @@ export default class MyGroup extends React.Component {
                             return(<div>
                             {tabItem.heading ?(<div>
                                 {this.props.groups.map((groupItem) => {
-                                    {/* console.log(groupItem) */}
+                                    
                                     let item = null
                                     if(!groupItem.has_invite){
                                         item = (

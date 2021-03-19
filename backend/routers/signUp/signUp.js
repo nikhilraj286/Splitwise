@@ -14,7 +14,7 @@ app.post('/signup', async (req, res) => {
 			email: req.body.email,
 			password: req.body.password,
 			full_name: req.body.full_name,
-			phone: null,
+			phone: 'none',
 			currency: "USD",
 			time_zone: "-8",
 			language: "EN",

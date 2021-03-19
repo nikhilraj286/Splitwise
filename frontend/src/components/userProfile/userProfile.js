@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import '../style.css';
-import { Redirect } from 'react-router';
+// import { Redirect } from 'react-router';
 // import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { login } from '../../store/actions/loginActions/loginActions';
-import PropTypes from 'prop-types'
+// import { connect } from 'react-redux';
+// import { login } from '../../store/actions/loginActions/loginActions';
+// import PropTypes from 'prop-types'
 import 'font-awesome/css/font-awesome.min.css';
+import axios from 'axios';
 
 export default class UserProfile extends Component {
     constructor(props) {
@@ -18,6 +19,8 @@ export default class UserProfile extends Component {
             timezone: null,
             language: null,
             profilepic: null,
+            file: null,
+            fileText: null
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.fullNameChangeHandler = this.fullNameChangeHandler.bind(this)
@@ -26,13 +29,9 @@ export default class UserProfile extends Component {
         this.timeZoneChangeHandler = this.timeZoneChangeHandler.bind(this);
         this.languageChangeHandler = this.languageChangeHandler.bind(this)
         this.profilePicChangeHandler = this.profilePicChangeHandler.bind(this);
-        this.submitLogin = this.submitLogin.bind(this);
+        this.submitData = this.submitData.bind(this);
     }
-    componentWillMount() {
-        this.setState({
-            authFlag: false
-        })
-    }
+    
     emailChangeHandler = (e) => {
         this.setState({
             email: e.target.value
@@ -63,36 +62,77 @@ export default class UserProfile extends Component {
             language: e.target.value
         })
     }
+    
     profilePicChangeHandler = (e) => {
-        this.setState({
-            profilePic: e.target.value
-        })
+        if (e.target.files)
+            this.setState({
+                profilepic:e.target.files[0]
+            })
     }
-    submitLogin = async e => {
-        // var headers = new Headers();
-        e.preventDefault();
+    submitData = async e => {
+        let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+        let userId = userProfile.user_id
         const data = {
+            user_id: userId,
             email: this.state.email,
-            password: this.state.password
+            full_name: this.state.fullname,
+            phone: this.state.mobile,
+            currency: this.state.currency,
+            time_zone: this.state.timezone,
+            language: this.state.language,
+            profile_picture: this.state.profilepic
         }
-        await this.props.login(data);
-        // console.log(this.props.loginDetails)
-        // if (this.props.loginDetails.status === 200) {
-        //     localStorage.setItem('userProfile', JSON.stringify(this.props.loginDetails.user))
-        // }
-
-        // if(localStorage.getItem('userProfile')){
-        //     this.setState({
-        //         authFlag: true,
-        //         Redirect: <Redirect to="/home"/>
-        //     })
-        // } else {
-        //     this.setState({
-        //         authFlag: false,
-        //         Redirect: <Redirect to="/signup"/>
-        //     })
-        // }
+        await axios.post('http://localhost:3001/updateUser', data, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async (res) => {
+                if (res.status === 200) {
+                    console.log(res.data);
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
     }
+
+    componentDidMount = async () => {
+        if(localStorage.getItem('userProfile')){
+            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProfile.user_id
+            const data = {
+                user_id: userId
+            }
+            axios.defaults.withCredentials = true;
+            await axios.post('http://localhost:3001/getUser', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(async (res) => {
+                if (res.status === 200) {
+                    console.log(res.data);
+                    this.setState({
+                        email: res.data.email,
+                        fullname: res.data.full_name,
+                        mobile: res.data.phone,
+                        currency: res.data.currency,
+                        timezone: res.data.time_zone,
+                        language: res.data.language,
+                        profilepic: res.data.profile_picture,
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
+        }
+
+    }
+
+
+
     render() {
         // if(this.state.errMessage){
         //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
@@ -102,19 +142,21 @@ export default class UserProfile extends Component {
         //     localStorage.setItem('userProfile', JSON.stringify(this.props.loginDetails.user))
         //     redirctVar = <Redirect to="/home"/>
         // }
-        let user = JSON.parse(localStorage.getItem('userProfile'))
+        console.log(this.state)
+        
         // <img class="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
-        let img_src = 'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
-        if (user.profile_picture && user.profile_picture !== '') {
-            img_src = user.profile_picture
-        }
-        console.log(user)
+        let img_src = this.state.profilepic?'http://localhost:3001/profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
+        // if (user.profile_picture && user.profile_picture !== '') {
+        //     img_src = user.profile_picture
+        // }
+        // console.log(user)
         return (
             <div>
                 {/* {redirctVar} */}
                 <div className="container-fluid">
-                    <div className="container userProfile-main" style={{}}>
-                        <h3>Your account</h3>
+                    <div className="container userProfile-main">
+                    <div style={{margin:'40px 105px'}}><h2>Your account</h2></div>
+                        
 
                         <div className="row justify-content-center">
                             <div className='col-1'></div>
@@ -122,17 +164,29 @@ export default class UserProfile extends Component {
                                 <div className="row">
                                     <div className="col-5">
                                         <div>
-                                            <img class="picture-frame" alt='' src={img_src} />
+                                            <img class="picture-frame" alt='' src={img_src}  style={{width:'200px', height:'200px'}}/>
                                         </div>
-                                        <div>
-                                            <input type="file" id="myFile" onChange={this.profilePicChangeHandler} name="filename" disabled style={{ width: '80%', fontSize: '11px', margin: '10px 20px' }} />
+                                        <div style={{display:'flex', flexDirection:'row'}}>
+                                            <input type="file" id="myFile" onChange={this.profilePicChangeHandler} name="filename" style={{ width: '80%', fontSize: '11px', margin: '10px 0px' }} />
+                                            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', cursor:'pointer'}} onClick={()=>{
+
+                                                let formData = new FormData();
+                                                formData.append('myImage', this.state.profilepic);
+                                                const config = { headers: { 'content-type': 'multipart/form-data' } };
+                                                axios.post("http://localhost:3001/uploadPic", formData, config).then(async (res) => {
+                                                    this.setState({profilepic:res.data})
+                                                }).catch((err) => {
+                                                    console.log(err)
+                                                });
+
+                                            }}><i class="fa fa-check"></i></div>
                                         </div>
                                     </div>
                                     <div className="col-7">
                                         <div className='name field'>
                                             <p>Your name</p>
                                             <div className="initial_disp" id='name1'>
-                                                <strong>{user.full_name}</strong>
+                                                <strong>{(this.state.fullname)?this.state.fullname:''}</strong>
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.add('hidden')
                                                     document.getElementById('name2').classList.remove('hidden')
@@ -141,7 +195,7 @@ export default class UserProfile extends Component {
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='name2'>
-                                                <input type='text' id='nameInput' onchange={this.fullNameChangeHandler} placeholder={user.full_name} />
+                                                <input type='text' id='nameInput' onChange={this.fullNameChangeHandler} placeholder={(this.state.fullname)?this.state.fullname:''} />
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.remove('hidden')
                                                     document.getElementById('name2').classList.add('hidden')
@@ -155,13 +209,13 @@ export default class UserProfile extends Component {
                                                 document.getElementById('email1').classList.add('hidden')
                                                 document.getElementById('email2').classList.remove('hidden')
                                             }}>
-                                                <strong>{user.email}</strong>
+                                                <strong>{(this.state.email)?this.state.email:''}</strong>
                                                 <div>
                                                     <i class="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp  hidden' id='email2'>
-                                                <input type='text' onChange={this.emailChangeHandler} placeholder={user.email} />
+                                                <input type='text' id='emailInput' onChange={this.emailChangeHandler} placeholder={(this.state.email)?this.state.email:''} />
                                                 <div onClick={(e)=>{
                                                     document.getElementById('email1').classList.remove('hidden')
                                                     document.getElementById('email2').classList.add('hidden')
@@ -175,13 +229,13 @@ export default class UserProfile extends Component {
                                                 document.getElementById('phone1').classList.add('hidden')
                                                 document.getElementById('phone2').classList.remove('hidden')
                                             }}>
-                                                <strong>{user.phone ? user.phone : 'none'}</strong>
+                                                <strong>{(this.state.mobile)?this.state.mobile:''}</strong>
                                                 <div>
                                                     <i class="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='phone2'>
-                                                <input type='text' onChange={this.mobileChangeHandler} placeholder={user.phone ? user.phone : 'your mobile number'} />
+                                                <input type='text' id='mobileInput' onChange={this.mobileChangeHandler} placeholder={(this.state.mobile)?this.state.mobile:''} />
                                                 <div onClick={(e)=> {
                                                     document.getElementById('phone1').classList.remove('hidden')
                                                     document.getElementById('phone2').classList.add('hidden')
@@ -197,7 +251,7 @@ export default class UserProfile extends Component {
                                 <div className='currency field'>
                                     <p>Your default currency</p>
                                     <p style={{fontSize:'12px'}}>(for new expenses)</p>
-                                    <select class="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" placeholder={user.currency}>
+                                    <select class="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" value={(this.state.currency)?this.state.currency:'USD'}>
                                         <option value="USD">USD ($)</option>
                                         <option value="KWD">KWD (KWD)</option>
                                         <option value="BHD">BHD (BD)</option>
@@ -208,7 +262,7 @@ export default class UserProfile extends Component {
                                 </div>
                                 <div className='timezone field'>
                                     <p>Your time zone</p>
-                                    <select class="btn btn-light dropdown-toggle" onchange={this.timeZoneChangeHandler} name="timezone" id="timezone" placeholder={user.time_zone} style={{ width: '80%' }}>
+                                    <select class="btn btn-light dropdown-toggle" onChange={this.timeZoneChangeHandler} name="timezone" id="timezone" value={(this.state.timezone)?this.state.timezone:'-8'} style={{ width: '80%' }}>
                                         <option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
                                         <option timeZoneId="2" gmtAdjustment="GMT-11:00" useDaylightTime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
                                         <option timeZoneId="3" gmtAdjustment="GMT-10:00" useDaylightTime="0" value="-10">(GMT-10:00) Hawaii</option>
@@ -295,7 +349,7 @@ export default class UserProfile extends Component {
                                 </div>
                                 <div className='language field'>
                                     <p>Language</p>
-                                    <select class="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" placeholder={user.language}>
+                                    <select class="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" value={(this.state.language)?this.state.language:'USD'}>
                                         <option value="AF">Afrikaans</option>
                                         <option value="SQ">Albanian</option>
                                         <option value="AR">Arabic</option>
@@ -374,6 +428,11 @@ export default class UserProfile extends Component {
                             <div className='col-1'></div>
                         </div>
 
+                        <div style={{margin:'100px 425px'}}>
+                            <div href="/" className="btn btn-primary btn-orange" onClick={this.submitData} style={{ width: '100px', paddingTop: '10px', paddingBottom: '10px', fontWeight: 'bold', margin: '0 0 0 15px', float:'right' }}>
+                                Save
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

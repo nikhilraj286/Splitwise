@@ -1,8 +1,24 @@
 const express = require('express');
 const db = require('../models');
 const app = require('../app');
+const fs = require('fs');
+const path = require('path');
+
 
 const router = express.Router();
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: './public/uploads/',
+    filename: function(req, file, cb){
+      cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+  });
+const upload = multer({
+    storage: storage,
+    limits:{fileSize: 1000000},
+  }).single('myImage');
+  app.use(express.static('./public'));
 
 
 app.post('/getGroups', async (req,res) => {
@@ -48,7 +64,7 @@ app.post('/acceptInvite', async (req,res) => {
             return res.status(404).send("Groups not found!");
         }
         else if (result !== null){
-            console.log('User has acceped the invite')
+            console.log('User has accepted the invite')
             return res.status(200).send(result)
         }
         return res.status(401).send("UnAuthorized!");
@@ -114,6 +130,41 @@ app.post('/getAllUsersNames', async (req,res) => {
         console.log(err);
     }
     return res.status(500).send("Internal Server Error!");
+});
+
+
+app.post('/uploadPic', (req, res) => {
+    console.log("upload pic called");
+    upload(req, res, async (err) => {
+      if(err){
+        res.writeHead(200, {
+            'Content-Type': 'text/plain'
+        })
+        res.end("error");
+      } else {
+        if(req.file == undefined){
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            })
+            res.end("no file");
+        } else {
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            })
+            res.end(req.file.filename);
+        }
+      }
+    });
+  });
+
+  app.get('/profile/:image_id',(req,res)=>{
+    var image = path.join(__dirname)+'/public/uploads/'+req.params.image_id;
+    if(fs.existsSync(image)){
+        res.sendFile(image);
+    }
+    else{
+        res.sendFile(path.join(__dirname,'..') + '/public/uploads/default.png')
+    }
 });
 
 module.exports = router;

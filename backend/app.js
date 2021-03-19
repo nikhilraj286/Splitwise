@@ -8,6 +8,8 @@ app.set('view engine', 'ejs');
 require('./db/SQL');
 
 
+
+
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(session({
     secret              : 'cmpe273_kafka_passport_mongo',
@@ -27,6 +29,7 @@ app.use(function(req, res, next){
     res.setHeader('Cache-Control', 'no-cache');
     next();
 });
+
 
 // app configurations
 module.exports = app;

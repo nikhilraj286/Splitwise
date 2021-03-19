@@ -46,7 +46,7 @@ const LeftBar = (props) => {
                         (<div className="left-group-division" onClick={() => { props.changeTab(tabItem.key) }}>
                             <div className="left-group-heading" style={{ backgroundColor: '#eee', borderRadius: '5px', padding: '2px 0 2px 10px', color: 'gray', margin: '8px 0' }}>{tabItem.name}</div>
                             {props.groups.map((groupItem) => {
-                                {/* console.log(groupItem) */}
+                                
                                 let item = null
                                 if(!groupItem.has_invite){
                                     item = (

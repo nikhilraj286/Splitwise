@@ -2,7 +2,7 @@ import axios from 'axios'
 import React from 'react'
 // import { Link, BrowserRouter, Route } from 'react-router-dom'
 import { Button, Modal } from 'react-bootstrap'
-import { Redirect } from 'react-router'
+// import { Redirect } from 'react-router'
 
 
 
@@ -205,10 +205,10 @@ export default class ViewGroup extends React.Component {
         // console.log('state',this.state)
         // console.log('props', this.props)
         // console.clear()
-        let redirectvar = null
-        if(this.state.userleft){
-            redirectvar = <Redirect to='/'/>
-        }
+        // let redirectvar = null
+        // if(this.state.userleft){
+        //     redirectvar = <Redirect to='/'/>
+        // }
         let Expense_disp = []
         let leaveGroupClass = ''
         if (this.state.groups) {

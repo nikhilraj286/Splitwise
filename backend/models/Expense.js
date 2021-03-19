@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const Expense = sequelize.define('Expense', {
 
         amount: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.STRING,
         },
         desc: {
             type: DataTypes.STRING,
