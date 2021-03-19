@@ -7,6 +7,8 @@ import '../style.css';
 // import PropTypes from 'prop-types'
 import 'font-awesome/css/font-awesome.min.css';
 import axios from 'axios';
+import { Redirect } from 'react-router';
+import exportData from '../../config/config';
 
 export default class UserProfile extends Component {
     constructor(props) {
@@ -20,7 +22,9 @@ export default class UserProfile extends Component {
             language: null,
             profilepic: null,
             file: null,
-            fileText: null
+            fileText: null,
+            datasubmitted: false,
+            rerender: 0
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.fullNameChangeHandler = this.fullNameChangeHandler.bind(this)
@@ -82,7 +86,7 @@ export default class UserProfile extends Component {
             language: this.state.language,
             profile_picture: this.state.profilepic
         }
-        await axios.post('http://localhost:3001/updateUser', data, {
+        await axios.post(exportData.backendURL+'updateUser', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -92,6 +96,12 @@ export default class UserProfile extends Component {
                 if (res.status === 200) {
                     console.log(res.data);
                 }
+                let num = this.state.rerender
+                this.setState({
+                    rerender: num + 1,
+                    datasubmitted: true
+                })
+
             }).catch((err) => {
                 console.log(err)
             });
@@ -105,7 +115,7 @@ export default class UserProfile extends Component {
                 user_id: userId
             }
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/getUser', data, {
+            await axios.post(exportData.backendURL+'getUser', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -134,6 +144,16 @@ export default class UserProfile extends Component {
 
 
     render() {
+        let redirectVar = null;
+        let submitted_status = ''
+        if (!localStorage.getItem('userProfile')) {
+            redirectVar = <Redirect to="/login" />
+        }
+        if(this.state.datasubmitted){
+            submitted_status = (<div class="alert alert-success" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
+            User profile has been updated sucessfully
+          </div>)
+        }
         // if(this.state.errMessage){
         //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
@@ -145,14 +165,15 @@ export default class UserProfile extends Component {
         console.log(this.state)
         
         // <img class="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
-        let img_src = this.state.profilepic?'http://localhost:3001/profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
+        // let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
+        let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
         // if (user.profile_picture && user.profile_picture !== '') {
         //     img_src = user.profile_picture
         // }
         // console.log(user)
         return (
             <div>
-                {/* {redirctVar} */}
+                {redirectVar}
                 <div className="container-fluid">
                     <div className="container userProfile-main">
                     <div style={{margin:'40px 105px'}}><h2>Your account</h2></div>
@@ -173,7 +194,7 @@ export default class UserProfile extends Component {
                                                 let formData = new FormData();
                                                 formData.append('myImage', this.state.profilepic);
                                                 const config = { headers: { 'content-type': 'multipart/form-data' } };
-                                                axios.post("http://localhost:3001/uploadPic", formData, config).then(async (res) => {
+                                                axios.post(exportData.backendURL+"uploadPic", formData, config).then(async (res) => {
                                                     this.setState({profilepic:res.data})
                                                 }).catch((err) => {
                                                     console.log(err)
@@ -434,6 +455,7 @@ export default class UserProfile extends Component {
                             </div>
                         </div>
                     </div>
+                    <div className="row">{submitted_status}</div>
                 </div>
             </div>
         );

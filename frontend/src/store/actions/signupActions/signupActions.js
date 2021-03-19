@@ -1,8 +1,9 @@
 import axios from 'axios';
+import exportData from '../../../config/config';
 
 export const signup = (data) => async dispatch => {
     axios.defaults.withCredentials = true;
-    await axios.post('http://localhost:3001/signup', data, {
+    await axios.post(exportData.backendURL+'signup', data, {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

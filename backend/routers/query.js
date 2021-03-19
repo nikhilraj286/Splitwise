@@ -158,7 +158,7 @@ app.post('/uploadPic', (req, res) => {
   });
 
   app.get('/profile/:image_id',(req,res)=>{
-    var image = path.join(__dirname)+'/public/uploads/'+req.params.image_id;
+    var image = path.join(__dirname,'..')+'/public/uploads/'+req.params.image_id;
     if(fs.existsSync(image)){
         res.sendFile(image);
     }

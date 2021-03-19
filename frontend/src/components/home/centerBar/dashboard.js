@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Button, Modal } from 'react-bootstrap'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import exportData from '../../../config/config'
 
 export default class Dashboard extends React.Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class Dashboard extends React.Component {
         }
         // console.log(data)
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/settleup', data, {
+        await axios.post(exportData.backendURL+'settleup', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -59,7 +60,7 @@ export default class Dashboard extends React.Component {
 
     componentDidMount = async () => {
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/getTransactions', {
+        await axios.post(exportData.backendURL+'getTransactions', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

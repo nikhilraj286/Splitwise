@@ -10,6 +10,7 @@ import ViewGroup from './centerBar/viewGroup'
 import RecentActivity from './centerBar/recentActivity'
 import MyGroups from './centerBar/myGroups'
 import axios from 'axios';
+import exportData from '../../config/config';
 
 class Home extends Component {
     state = {
@@ -80,7 +81,7 @@ class Home extends Component {
                 group_id: groupId
             }
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/acceptInvite', data, {
+            await axios.post(exportData.backendURL+'acceptInvite', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -124,7 +125,7 @@ class Home extends Component {
                 user_id: userId
             }
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/getGroups', data, {
+            await axios.post(exportData.backendURL+'getGroups', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -146,7 +147,7 @@ class Home extends Component {
                 console.log(err)
             });
 
-            await axios.post('http://localhost:3001/getAllUsersNames', {
+            await axios.post(exportData.backendURL+'getAllUsersNames', {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -176,7 +177,7 @@ class Home extends Component {
                 user_id: userId
             }
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/getGroups', data, {
+            await axios.post(exportData.backendURL+'getGroups', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'

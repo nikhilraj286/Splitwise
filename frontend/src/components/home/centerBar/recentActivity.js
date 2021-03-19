@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React from 'react'
+import exportData from '../../../config/config'
 // import { Link } from 'react-router-dom'
 import '../../style.css'
 
@@ -16,7 +17,7 @@ export default class RecentActivity extends React.Component {
         let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         let userId = userProfile.user_id
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/getTransactions', {
+        await axios.post(exportData.backendURL+'getTransactions', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -36,7 +37,7 @@ export default class RecentActivity extends React.Component {
             user_id: userId
         }
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/getGroups', data, {
+        await axios.post(exportData.backendURL+'getGroups', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

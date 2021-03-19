@@ -2,6 +2,7 @@ import axios from 'axios'
 import React from 'react'
 // import { Link, BrowserRouter, Route } from 'react-router-dom'
 import { Button, Modal } from 'react-bootstrap'
+import exportData from '../../../config/config'
 // import { Redirect } from 'react-router'
 
 
@@ -46,7 +47,7 @@ export default class ViewGroup extends React.Component {
         }
         // console.log(data)
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/deleteUserFromGroup', data, {
+        await axios.post(exportData.backendURL+'deleteUserFromGroup', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -94,7 +95,7 @@ export default class ViewGroup extends React.Component {
             }
             console.log(data)
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/newExpense', data, {
+            await axios.post(exportData.backendURL+'newExpense', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -132,7 +133,7 @@ export default class ViewGroup extends React.Component {
                 group_id: groupId
             }
             axios.defaults.withCredentials = true;
-            await axios.post('http://localhost:3001/getGroupData', data, {
+            await axios.post(exportData.backendURL+'getGroupData', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -170,7 +171,7 @@ export default class ViewGroup extends React.Component {
                         group_id: groupId
                     }
                     axios.defaults.withCredentials = true;
-                    await axios.post('http://localhost:3001/getGroupData', data, {
+                    await axios.post(exportData.backendURL+'getGroupData', data, {
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'

@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { Component } from 'react';
 // import { Redirect } from 'react-router';
 import '../style.css'
+import exportData from '../../config/config'
+import { Redirect } from 'react-router';
 
 export default class AddGroup extends Component {
     constructor(props) {
@@ -26,7 +28,7 @@ export default class AddGroup extends Component {
         }
         console.log(data)
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/createGroup', data, {
+        await axios.post(exportData.backendURL+'createGroup', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -55,7 +57,7 @@ export default class AddGroup extends Component {
 
     componentDidMount = async () => {
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:3001/getUsers', {
+        await axios.post(exportData.backendURL+'getUsers', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -108,6 +110,12 @@ export default class AddGroup extends Component {
         // if(this.state.groupCreated){
         //     redirect = <Redirect to="/home"/>
         // }
+
+        let redirectVar = null;
+        if (!localStorage.getItem('userProfile')) {
+            redirectVar = <Redirect to="/login" />
+        }
+
         let current_user=null
         if (this.state.scroll) {
             document.getElementById('dropdown').classList.add("secondary_fields-scroll")
@@ -174,7 +182,7 @@ export default class AddGroup extends Component {
 
 
         return (<div>
-            {/* {redirect} */}
+            {redirectVar}
             <div className="container">
                 <div className="row" style={{ width: '50%', margin: 'auto', height: '100vh', padding: '100px 0px', textAlign: 'center' }}>
                     <div className="col-5" style={{ padding: 0 }}>
@@ -217,7 +225,7 @@ export default class AddGroup extends Component {
                                         <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-50px.png" alt="" />
                                     </div>
                                     <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                        <p style={{ margin: '0 0 0 10px' }} id={current_user.user_id}>{current_user.full_name} ({current_user.email})</p>
+                                        <p style={{ margin: '0 0 0 10px' }} id={(current_user)?current_user.user_id:''}>{(current_user)?current_user.full_name:''} ({(current_user)?current_user.email:''})</p>
                                     </div>
                                     <div className="col-1" style={{ padding: '0' }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" class="bi bi-record-fill" viewBox="0 0 16 16">
