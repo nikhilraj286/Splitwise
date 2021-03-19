@@ -3,7 +3,7 @@ import {Route} from 'react-router-dom';
 import login from './login/Login'
 import signup from './signup/Signup';
 import Home from './home/home'
-import Navbar from './navbar/navbar'
+import Navbar from './navbar/Navbar'
 import landing from './landing/landing'
 import AddGroup from './group/addGroup';
 import userProfile from './userProfile/userProfile';
