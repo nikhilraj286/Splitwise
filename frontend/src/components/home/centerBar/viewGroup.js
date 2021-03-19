@@ -239,8 +239,8 @@ export default class ViewGroup extends React.Component {
                 if(item.paid_by !== item.paid_to && item.payment_status === 'due'){
                     // console.log(typeof(item.amount), typeof(expense_sum[item.paid_to]), typeof(expense_sum[item.paid_by]))
                     // console.log('values before adding', (item.amount), (expense_sum[item.paid_by]), (expense_sum[item.paid_to]))
-                    expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
-                    expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (item.amount))
+                    expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (Number(item.amount))
+                    expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (Number(item.amount)))
                     // console.log('values after adding', (item.amount), (expense_sum[item.paid_by]), (expense_sum[item.paid_to]))
                     // console.log('expenses',expense_sum)
                 }

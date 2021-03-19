@@ -121,8 +121,8 @@ export default class Dashboard extends React.Component {
                     if(item.payment_status === 'due'){
                     if (((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)) {
                         // console.log(userId,item.paid_by, item.paid_to)
-                        expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
-                        expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (item.amount))
+                        expense_sum[item.paid_by] = ((expense_sum[item.paid_by]) + (Number(item.amount)))
+                        expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (Number(item.amount)))
                     }}
                 })
                 // console.log('expenses',expense_sum)
