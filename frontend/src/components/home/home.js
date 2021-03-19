@@ -50,7 +50,8 @@ class Home extends Component {
     changeTab = (id) => {
         // console.log("inside change tab - ",id)
         this.setState({
-            tabSelected: id
+            tabSelected: id,
+            rerender: this.state.rerender
         })
         let data = JSON.parse(localStorage.getItem('selectedTab'))
         data.tabSelected = id
@@ -62,7 +63,8 @@ class Home extends Component {
         // console.log("inside change group - ",tabSelected,groupSelected)
         this.setState({
             tabSelected: tabSelectedId,
-            groupSelected: groupSelectedId
+            groupSelected: groupSelectedId,
+            rerender: this.state.rerender
         });
         let data = JSON.parse(localStorage.getItem('selectedTab'))
         data.tabSelected = tabSelectedId

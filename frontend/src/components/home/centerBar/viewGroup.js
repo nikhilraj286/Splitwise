@@ -76,17 +76,23 @@ export default class ViewGroup extends React.Component {
 
     handleSubmit = async () => {
         let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
+        let userList = []
+        this.state.groups.UserToGroups.forEach(item => {
+            if(!item.has_invite){
+                userList.push(item)
+            }
+        })
         this.handleClose()
         if (this.state.expense_amount && this.state.expense_desc) {
             const data = {
                 group_id: this.props.groupID,
-                no_users: this.state.groups.total_users,
+                no_users: userList.length,
                 amount: this.state.expense_amount,
                 desc: this.state.expense_desc,
-                user_list: this.state.groups.UserToGroups,
+                user_list: userList,
                 paid_by: user_id
             }
-            // console.log(data)
+            console.log(data)
             axios.defaults.withCredentials = true;
             await axios.post('http://localhost:3001/newExpense', data, {
                 headers: {
@@ -105,7 +111,7 @@ export default class ViewGroup extends React.Component {
                             groupSelected: 0
                         }
                         localStorage.setItem('selectedTab', JSON.stringify(setItem))
-                        window.location.reload()
+                        // window.location.reload()
 
                         this.setState({ 
                             rerender: (this.state.rerender) + 1 
@@ -229,7 +235,7 @@ export default class ViewGroup extends React.Component {
                 // console.log('************************************************************')
                 // console.log('inside loop',item.paid_by, item.paid_to)
                 
-                if(item.paid_by !== item.paid_to){
+                if(item.paid_by !== item.paid_to && item.payment_status === 'due'){
                     // console.log(typeof(item.amount), typeof(expense_sum[item.paid_to]), typeof(expense_sum[item.paid_by]))
                     // console.log('values before adding', (item.amount), (expense_sum[item.paid_by]), (expense_sum[item.paid_to]))
                     expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
@@ -280,59 +286,9 @@ export default class ViewGroup extends React.Component {
                     <button className="btn btn-green" disabled style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}}>Leave Group</button>
                 </div>)
             }
-        
-
-
-
-
-
-            // console.log('state', this.state.groups)
-            // console.log('trans', trans)
         }
 
         let all_users = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
-
-
-
-
-        // var keys1 = Object.keys(this.state.usersToAdd)
-        // if (this.state.usersToAdd && keys1.length > 0) {
-        //     keys1.forEach(item => {
-        //         // {(item === current_user.user_id}
-        //         var data = this.state.usersToAdd[item]
-        //         if ((item !== current_user.user_id) && (data.canBeDeleted === 1)) {
-        //             personList.push(<div className="row personList" style={{ margin: '0 0 15px 0' }}>
-        //                 <div className="col-1" style={{ padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        //                     <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-50px.png" alt="" />
-        //                 </div>
-        //                 <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        //                     <p style={{ margin: '0 0 0 10px' }} id={data.user_id}>{data.full_name} ({data.email})</p>
-        //                 </div>
-
-
-        //                 <div className="col-1" style={{ padding: '0' }}>
-        //                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#ff652f" class="bi bi-trash-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} onClick={(e) => {
-        //                         let data = { ...this.state.usersToAdd }
-        //                         console.log('before', data)
-        //                         console.log(e.target.id)
-        //                         delete data[e.target.id]
-        //                         // console.log(data)
-        //                         console.log('after', data)
-        //                         this.setState({
-        //                             usersToAdd: data
-        //                         })
-
-        //                     }}>
-        //                         <path id={data.user_id} d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-        //                     </svg>
-        //                 </div>
-
-
-        //             </div>)
-        //         }
-
-        //     })
-        // }
 
         let groupname = (this.state.groups) ? this.state.groups.group_name : null
         let expenses = (this.state.groups) ? this.state.groups['Expenses'] : null

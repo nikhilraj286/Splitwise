@@ -8,11 +8,13 @@ export default class Dashboard extends React.Component {
         super(props)
         this.state = {
             transactions: null,
-            show: false
+            show: false,
+            selected: false,
+            selectedPerson: 0,
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
-        // this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
     handleClose = () => {
@@ -24,6 +26,34 @@ export default class Dashboard extends React.Component {
     handleShow = () => {
         this.setState({
             show: true
+        })
+    }
+
+    handleSubmit = async () => {
+        let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+        this.handleClose()
+        // console.log(userId, this.state.selectedPerson)
+        const data = {
+            user_id1: userId,
+            user_id2: this.state.selectedPerson
+        }
+        // console.log(data)
+        axios.defaults.withCredentials = true;
+        await axios.post('http://localhost:3001/settleup', data, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(async (res) => {
+            // console.log(res.status)
+            if (res.status === 200) {
+                // console.log(res)
+                window.location.reload()
+            }
+        })
+        .catch((err) => {
+            console.log(err)
         })
     }
 
@@ -63,6 +93,7 @@ export default class Dashboard extends React.Component {
 
         let you_owe = []
         let owes_you = []
+        let allUserList = [];
         let total_you_owe = 0
         let total_owes_you = 0
         let grand_total = 0
@@ -79,16 +110,19 @@ export default class Dashboard extends React.Component {
                 let temp = Object.keys(allUsers)
                 // console.log('TEMP',userId)
 
+                
+
                 temp.forEach(item => {
                     expense_sum[item] = 0
                 })
 
                 trans.forEach(item => {
+                    if(item.payment_status === 'due'){
                     if (((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)) {
                         // console.log(userId,item.paid_by, item.paid_to)
                         expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
                         expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (item.amount))
-                    }
+                    }}
                 })
                 // console.log('expenses',expense_sum)
                 temp.forEach(item => {
@@ -135,11 +169,31 @@ export default class Dashboard extends React.Component {
             }
         }
 
+        if (localStorage.getItem('allUsers')) {
+            let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+            let curuserId = JSON.parse(localStorage.getItem('userProfile')).user_id
+            // console.log('sfvfdvdv', allUsers)
+            let keys1 = Object.keys(allUsers)
+            keys1.forEach(item => {
+                // console.log(item)
+                let data = allUsers[item]
+                // console.log(data)
+                if(data.user_id !== curuserId){
+                    allUserList.push(<option key={data.user_id} dataId={data.user_id}>{data.name}</option>)
+                }
+            })
+            // console.log(allUserList)
+
+            }
+
         function getColor(amount) {
             if (amount < 0) { return '#ff652f' }
             if (amount > 0) { return '#5bc5a7' }
             return "#777"
         }
+
+        
+        
 
         // let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         return (
@@ -160,31 +214,36 @@ export default class Dashboard extends React.Component {
                                                 <Modal.Title>Add an expense</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
-                                                <div>Paid by <strong>you</strong> and <strong>split equally</strong> among all</div>
-                                                {/* <hr />
-                                                <div className="row">
-                                                    <div className="col-1"></div>
-                                                    <div className="col-3">
-                                                        <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png" class="category" />
-                                                    </div>
-                                                    <div className="col-6">
-                                                        <input type="text" placeholder="Enter a description" style={{ marginBottom: '15px' }} onChange={(e) => {
-                                                            this.setState({
-                                                                expense_desc: e.target.value
-                                                            })
-                                                        }} />
-                                                        <input type="text" placeholder="0.00" onChange={(e) => {
-                                                            this.setState({
-                                                                expense_amount: e.target.value
-                                                            })
-                                                        }} />
-                                                    </div>
-                                                    <div className="col-2"></div>
-                                                </div> */}
+                                                <p style={{margin:'0'}}>Select user you want to settle with</p>
+                                                <div>
+                                                <input class="form-control" list="dashboard" id="newPerson" placeholder="Name" onInput={async (e) => {
+                                                    // console.log(e.target.value)
+                                                    let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+                                                    var keys = Object.keys(allUsers)
+
+                                                    if (keys.length > 0) {
+                                                        keys.forEach(item => {
+                                                            
+                                                            let data = allUsers[item]
+                                                            if (e.target.value.includes(data.name)) {
+                                                                // console.log(e.target.value.includes(data.email))
+                                                                this.setState({
+                                                                    selectedPerson: data.user_id,
+                                                                    selected: true
+                                                                })
+                                                            }
+                                                        })
+                                                    }
+                                                    // console.log(this.state)
+                                                }} style={{ height: '38px', width:'50%', marginTop:'10px' }} />
+                                                    <datalist id="dashboard">
+                                                        {allUserList}
+                                                    </datalist>
+                                                </div>
                                             </Modal.Body>
                                             <Modal.Footer>
                                                 <Button className="btn btn-primary" onClick={this.handleClose}>cancel</Button>
-                                                {/* <Button className="btn btn-green" onClick={this.handleSubmit}>save</Button> */}
+                                                <Button className="btn btn-green" onClick={this.handleSubmit}>settle</Button>
                                             </Modal.Footer>
                                         </Modal>
 

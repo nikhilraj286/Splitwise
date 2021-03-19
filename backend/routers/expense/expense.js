@@ -29,6 +29,7 @@ app.post('/newExpense', async (req,res) => {
                 console.log(count, split, amount)
 
                 Promise.mapSeries(req.body.user_list, (item) => {
+                    
                     let owe_status = 'due'
                     if(req.body.paid_by === item.user_id){
                         owe_status = 'settled'
