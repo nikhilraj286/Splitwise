@@ -57,29 +57,7 @@ app.post('/createGroup',async (req,res) => {
 app.post('/getGroupData',async (req,res) => {
     console.log("Inside Login Post Request");
     console.log("Req Body : ",req.body);
-    // const transaction = await sequelize.transaction();
-    // try {
-	// 	const group = await db.Group.findAll({
-	// 		where: {
-    //             group_id: req.body.group_id
-    //         },
-    //         include: [db.UserToGroup, db.Transaction, db.Expense]
-	// 	}, { transaction: transaction }).then(
-    //         result=>{
-    //             transaction.commit();
-    //             console.log("-------------------------------result",result)
-    //             return res.status(200).send(result)
-    //         },error=>{
-    //             console.log(error)
-    //         }
-    //     )
-	// } catch (error) {
-	// 	console.log(error);
-	// 	transaction.rollback();
-	// }
     
-
-
     try {
         const result = await db.Group.findAll({
             where: {

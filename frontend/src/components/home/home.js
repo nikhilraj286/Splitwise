@@ -7,11 +7,13 @@ import LeftBar from './leftBar/LeftBar';
 // import Center from './centerBar/centerBar';
 import Dashboard from './centerBar/dashboard';
 import ViewGroup from './centerBar/viewGroup'
+import RecentActivity from './centerBar/recentActivity'
+import MyGroups from './centerBar/myGroups'
 import axios from 'axios';
 
 class Home extends Component {
     state = {
-        tabSelected: 0,
+        tabSelected: 1,
         groupSelected: 0,
         tabs: [
             {
@@ -28,13 +30,20 @@ class Home extends Component {
             },
             {
                 key: 3,
+                name: "My Groups",
+                logo: "",
+                heading: false
+            },
+            {
+                key: 4,
                 name: "Groups",
                 logo: "",
                 heading: true
             },
 
         ],
-        groups: []
+        groups: [],
+        rerender: 0
 
     }
 
@@ -43,17 +52,69 @@ class Home extends Component {
         this.setState({
             tabSelected: id
         })
+        let data = JSON.parse(localStorage.getItem('selectedTab'))
+        data.tabSelected = id
+        localStorage.setItem('selectedTab', JSON.stringify(data))
+        
     }
 
-    changeGroup = (tabSelected, groupSelected) => {
+    changeGroup = (tabSelectedId, groupSelectedId) => {
         // console.log("inside change group - ",tabSelected,groupSelected)
         this.setState({
-            tabSelected: tabSelected,
-            groupSelected: groupSelected
+            tabSelected: tabSelectedId,
+            groupSelected: groupSelectedId
         });
+        let data = JSON.parse(localStorage.getItem('selectedTab'))
+        data.tabSelected = tabSelectedId
+        data.groupSelected = groupSelectedId
+        localStorage.setItem('selectedTab', JSON.stringify(data))
+    }
+
+    acceptInvite = async (groupId) => {
+        if(localStorage.getItem('userProfile')){
+            let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+            const data = {
+                user_id: userId,
+                group_id: groupId
+            }
+            axios.defaults.withCredentials = true;
+            await axios.post('http://localhost:3001/acceptInvite', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(async (res) => {
+                // console.log("Status Code : ", res.status);
+                if (res.status === 200) {
+                    this.setState({
+                        rerender: this.state.rerender + 1
+                    })
+                    console.log(this.state)
+                    this.props.history.push('/home')
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
+        }
     }
 
     componentDidMount = async () => {
+        // console.log(this.state)
+        if(localStorage.getItem('selectedTab')){
+            let selectedTabData = JSON.parse(localStorage.getItem('selectedTab'))
+            // console.log('data',data)
+            this.setState({
+                groupSelected: selectedTabData.groupSelected,
+                tabSelected: selectedTabData.tabSelected
+            })
+        } else {
+            let setItem = {
+                tabSelected: 1,
+                groupSelected: 0
+            }
+            localStorage.setItem('selectedTab', JSON.stringify(setItem))
+        }
         if(localStorage.getItem('userProfile')){
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
             let userId = userProfile.user_id
@@ -75,7 +136,8 @@ class Home extends Component {
                     // })
                     // console.log(res.data)
                     this.setState({
-                        groups: res.data
+                        groups: res.data,
+                        rerender: 0
                     })
                 }
             }).catch((err) => {
@@ -104,8 +166,37 @@ class Home extends Component {
         }
     }
 
+    componentDidUpdate = async (prevState) => {
+        if(localStorage.getItem('userProfile' && (this.state.rerender > prevState.rerender))){
+            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProfile.user_id
+            const data = {
+                user_id: userId
+            }
+            axios.defaults.withCredentials = true;
+            await axios.post('http://localhost:3001/getGroups', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(async (res) => {
+                if (res.status === 200) {
+                    this.setState({
+                        groups: res.data,
+                        rerender: 0
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
+        }
+    }
+
     render = () => {
         // console.log(this.props, "in home");
+        // console.log('DATA', JSON.parse(localStorage.getItem('selectedTab')))
+        // console.log('STATE', this.state)
         let redirectVar = null;
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
@@ -113,7 +204,11 @@ class Home extends Component {
         var comp = ""
         if(this.state.tabSelected===1 || this.state.tabSelected===0){
             comp = <Dashboard />
-        } else if(this.state.tabSelected === 3){
+        } else if(this.state.tabSelected===2){
+            comp = <RecentActivity />
+        } else if(this.state.tabSelected===3){
+            comp = <MyGroups tabs={this.state.tabs} groups={this.state.groups} tabSelected={this.state.tabSelected} groupSelected={this.state.groupSelected} changeTab={this.changeTab} changeGroup={this.changeGroup} acceptInvite={this.acceptInvite}/>
+        }else if(this.state.tabSelected === 4){
             comp = <ViewGroup groupID={this.state.groupSelected}/>
         }
         return (
@@ -134,33 +229,6 @@ class Home extends Component {
                                 {comp}
                             </div>
                         </div>
-                        {/* <div className="col-3 rightBar"> */}
-                            {/* <div id="right_sidebar_content">
-                                <h4>Get Splitwise Pro!</h4>
-                                <img height="128" style={{ margin: '5px 0' }} alt="purple-logo" src="https://assets.splitwise.com/assets/pro/logo-337b1a7d372db4b56c075c7893d68bfc6873a65d2f77d61b27cb66b6d62c976c.svg" />
-                                <div><p>Subscribe to <strong>Splitwise Pro</strong> for no ads, currency conversion, charts, search, and more.</p></div>
-                                <button className="btn btn-primary link-orange disabled" style={{ fontWeight: 'bold', marginTop: "8px" }}>Learn more</button>
-                            </div> */}
-                            {/* <div className="ads_container">
-                                <h2 style={{marginTop:"20px"}}>Hey there!</h2>
-                                <div style="background: #eee; padding: 10px; margin: 5px 20px 10px -5px">
-                                    <div className="share">
-                                        It looks like you use an ad blocker. That’s cool! So do we :)
-                                        <div style="height: 10px">&nbsp;</div>
-                                        Please support Splitwise by telling your friends about us!
-
-                                <div className="social">
-                                    <a href="http://www.facebook.com/dialog/share?app_id=293864780643203&amp;display=popup&amp;redirect_uri=https%3A%2F%2Fwww.splitwise.com%2Fthanks&amp;href=&amp;href=https%3A%2F%2Fwww.splitwise.com" target="_blank" data-action="adblock share" className="btn btn-facebook track">
-                                        <img alt="Facebook" src="/assets/fat_rabbit/social/facebook.png">
-                                        Share
-                                    </a>
-                                    <a href="https://twitter.com/intent/tweet?text=Splitwise+makes+it+easy+to+split+expenses+with+housemates%2C+trips%2C+groups%2C+friends%2C+and+family.+Check+it+out%21&amp;url=https%3A%2F%2Fwww.splitwise.com" target="_blank" data-action="adblock tweet" className="btn btn-twitter track">
-                                        <img alt="Twitter" src="/assets/fat_rabbit/social/twitter.png">
-                                        Tweet
-                                    </a>
-                                </div>
-                            </div> */}
-                        {/* </div> */}
                     </div>
                 </div>
             </div>

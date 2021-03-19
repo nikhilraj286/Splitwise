@@ -1,0 +1,290 @@
+import axios from 'axios'
+import React from 'react'
+// import { Link } from 'react-router-dom'
+
+export default class RecentActivity extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            transactions:null
+        }
+    }
+
+    // componentDidMount = async () => {
+    //     axios.defaults.withCredentials = true;
+    //     await axios.post('http://localhost:3001/getTransactions', {
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //         .then(async (res) => {
+    //             // console.log("Status Code : ", res.status);
+    //             if (res.status === 200) {
+    //                 // this.setState({
+    //                 //     groups.
+    //                 // })
+    //                 console.log('Trasactions',res.data)
+    //                 this.setState({
+    //                     transactions: res.data
+    //                 })
+    //                 // this.setState({
+    //                 //     groups: res.data[0]
+    //                 // })
+    //                 // console.log('res', res.data[0])
+    //             }
+    //         }).catch((err) => {
+    //             console.log(err)
+    //         });
+    // }
+
+    // <img src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" class="square">
+    render = () => {
+        let element = []
+        if (this.state.transactions) {
+            let trans = this.state.transactions
+            let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+        }
+        // let you_owe = []
+        // let owes_you = []
+        // let total_you_owe = 0
+        // let total_owes_you = 0
+        // let grand_total = 0
+        // if (this.state.transactions) {
+        //     // let users_data = []
+        //     let trans = this.state.transactions
+        //     console.log(trans)
+        //     let expense_sum = {}
+
+        //     // console.log('state', this.state.groups);
+        //     let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+        //     let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+        //     let temp = Object.keys(allUsers)
+        //     // console.log('TEMP',userId)
+
+        //     temp.forEach(item => {
+        //         expense_sum[item] = 0
+        //     })
+
+        //     trans.forEach(item => {
+        //         if(((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)){
+        //             console.log(userId,item.paid_by, item.paid_to)
+        //             expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
+        //             expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (item.amount))
+        //         }
+        //     })
+        //     // console.log('expenses',expense_sum)
+        //     temp.forEach(item => {
+        //         // if(Number(item) !== userId){
+        //         if(item !== userId){
+        //             // console.log(item, userId)
+        //             var amount = expense_sum[item]
+        //             amount = Number(amount.toFixed(2))
+
+        //             if(amount<0){
+        //                 total_owes_you = total_owes_you + amount
+        //                 amount = amount * (-1)
+        //                 owes_you.push(<div>
+        //                     <div className="row" style={{margin:'0', padding:'10px 0'}}>
+        //                         <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
+        //                             <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+        //                         </div>
+        //                         <div className="col-8" style={{paddingLeft:'0'}}>
+        //                             <div style={{marginBottom:'5px'}}>{allUsers[item].name}</div>
+        //                             <div style={{fontSize:'12px', color:'#5bc5a7'}}><strong>owes you ${amount}</strong></div>
+        //                         </div>
+        //                     </div>
+        //                 </div>)
+        //             } else if(amount > 0){
+        //                 total_you_owe = total_you_owe + amount
+        //                 you_owe.push(<div>
+        //                     <div className="row" style={{margin:'0', padding:'10px 0'}}>
+        //                         <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
+        //                             <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+        //                         </div>
+        //                         <div className="col-8" style={{paddingLeft:'0'}}>
+        //                             <div style={{marginBottom:'5px'}}>{allUsers[item].name}</div>
+        //                             <div style={{fontSize:'12px', color:'#ff652f'}}><strong>you owe ${amount}</strong></div>
+        //                         </div>
+        //                     </div>
+        //                 </div>)
+        //             }
+        //             total_owes_you = Number(total_owes_you.toFixed(2))
+        //             total_you_owe = Number(total_you_owe.toFixed(2))
+        //             grand_total = total_owes_you + total_you_owe
+        //             grand_total = Number(grand_total.toFixed(2))
+        //         }
+        //     })
+        // }
+        return(<div>
+            <div className="row">
+                <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height:'100vh' }}>
+                    <div className="main_row" style={{ backgroundColor: '#eee', padding: '20px 20px', margin: '0' }}>
+                        <h3>Recent Activity</h3>
+                    </div>
+                </div>
+                <div className='col-4' style={{ fontSize: '14px' }}>
+                    <div id="right_sidebar_content">
+                        <h5>Get Splitwise Pro!</h5>
+                        <img height="128" style={{ margin: '5px 0' }} alt="purple-logo" src="https://assets.splitwise.com/assets/pro/logo-337b1a7d372db4b56c075c7893d68bfc6873a65d2f77d61b27cb66b6d62c976c.svg" />
+                        <div><p style={{ width: '80%', marginTop: '10px' }}>Subscribe to <strong>Splitwise Pro</strong> for no ads, currency conversion, charts, search, and more.</p></div>
+                        <button className="btn btn-orange disabled" style={{ fontWeight: 'bold', marginTop: "8px" }}>Learn more</button>
+                    </div>
+                </div>
+            </div>
+        </div>)
+    }
+
+}
+
+//     componentDidMount = async () => {
+//         axios.defaults.withCredentials = true;
+//         await axios.post('http://localhost:3001/getTransactions', {
+//             headers: {
+//                 'Accept': 'application/json',
+//                 'Content-Type': 'application/json'
+//             }
+//         })
+//             .then(async (res) => {
+//                 // console.log("Status Code : ", res.status);
+//                 if (res.status === 200) {
+//                     // this.setState({
+//                     //     groups.
+//                     // })
+//                     console.log('Trasactions',res.data)
+//                     this.setState({
+//                         transactions: res.data
+//                     })
+//                     // this.setState({
+//                     //     groups: res.data[0]
+//                     // })
+//                     // console.log('res', res.data[0])
+//                 }
+//             }).catch((err) => {
+//                 console.log(err)
+//             });
+//     }
+
+
+    // render = () => {}
+
+//         let Expense_disp = []
+//         let you_owe = []
+//         let owes_you = []
+//         if (this.state.transactions) {
+//             // let users_data = []
+//             let trans = this.state.transactions
+//             console.log(trans)
+//             let expense_sum = {}
+
+//             // console.log('state', this.state.groups);
+//             let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+//             let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+//             let temp = Object.keys(allUsers)
+//             // console.log('TEMP',userId)
+
+//             temp.forEach(item => {
+//                 expense_sum[item] = 0
+//             })
+
+//             trans.forEach(item => {
+//                 if(((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)){
+//                     console.log(userId,item.paid_by, item.paid_to)
+//                     expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (item.amount)
+//                     expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (item.amount))
+//                 }
+//             })
+//             console.log('expenses',expense_sum)
+//             temp.forEach(item => {
+//                 // if(Number(item) !== userId){
+//                 if(item !== userId){
+//                     // console.log(item, userId)
+//                     var amount = expense_sum[item]
+//                     amount = Number(amount.toFixed(2))
+
+//                     if(amount<0){
+//                         owes_you.push(<div>
+//                             <div className="row" style={{margin:'0', padding:'10px 0'}}>
+//                                 <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
+//                                     <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+//                                 </div>
+//                                 <div className="col-8" style={{paddingLeft:'0'}}>
+//                                     <div style={{marginBottom:'5px'}}>{allUsers[item].name}</div>
+//                                     <div style={{fontSize:'12px', color:'#5bc5a7'}}>owes you ${amount}</div>
+//                                 </div>
+//                             </div>
+//                         </div>)
+//                     } else if(amount > 0){
+//                         you_owe.push(<div>
+//                             <div className="row" style={{margin:'0', padding:'10px 0'}}>
+//                                 <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
+//                                     <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+//                                 </div>
+//                                 <div className="col-8" style={{paddingLeft:'0'}}>
+//                                     <div style={{marginBottom:'5px'}}>{allUsers[item].name}</div>
+//                                     <div style={{fontSize:'12px', color:'#ff652f'}}>you owe ${amount}</div>
+//                                 </div>
+//                             </div>
+//                         </div>)
+//                     }
+//                 }
+//             })
+//         }
+
+//         // let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+//         return (
+//             <div>
+//                 <div className="row">
+
+
+//                 <div className="col-8" style={{paddingRight:'0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)'}}> 
+//                 <div className="main_row">
+//                     <div className="row" style={{ backgroundColor: '#eee', padding: '20px 10px', margin: '0' }}>
+//                         <div className="col-4"><h3>Dashboard</h3></div>
+//                         <div className="col-8">
+//                             <ul className="nav navbar-nav navbar-right" style={{ flexDirection: 'row', float: 'right' }}>
+//                                 <Link className="btn link-green" to="/group/new" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Add Group</Link>
+//                                 <Link className="btn link-orange" to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Settle Up</Link>
+//                             </ul>
+//                         </div>
+//                     </div>
+//                     <hr style={{ margin: 0, color: '#555' }} />
+//                     <div className="summary_data row" style={{ textAlign: 'center', backgroundColor: '#eee', margin: '0', padding: '5px 10px' }}>
+//                         <div className="col" style={{ padding: '15px 0' }}>
+//                             <div>total balance</div>
+//                             <div>{this.state.totalBalance}</div>
+//                         </div>
+//                         <div className="col" style={{ boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8), -3px 0 3px -4px rgba(31, 73, 125, 0.8)', padding: '15px 0' }}>
+//                             <div>you owe</div>
+//                             <div>{this.state.youOwe}</div>
+//                         </div>
+//                         <div className="col" style={{ padding: '15px 0' }}>
+//                             <div>you are owed</div>
+//                             <div>{this.state.youAreOwed}</div>
+//                         </div>
+//                     </div>
+//                 </div>
+//                 <div>
+//                     <div className="row justify-content-center" style={{margin:'40px 0'}}>
+//                         <div className="col-5" style={{boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)'}}>{you_owe}</div>
+//                         <div className="col-5">{owes_you}</div>
+//                     </div>
+//                 </div>
+//                 </div>
+                // <div className='col-4' style={{fontSize:'14px'}}>
+                //     <div id="right_sidebar_content">
+                //         <h5>Get Splitwise Pro!</h5>
+                //         <img height="128" style={{ margin: '5px 0' }} alt="purple-logo" src="https://assets.splitwise.com/assets/pro/logo-337b1a7d372db4b56c075c7893d68bfc6873a65d2f77d61b27cb66b6d62c976c.svg" />
+                //         <div><p style={{width:'80%', marginTop:'10px'}}>Subscribe to <strong>Splitwise Pro</strong> for no ads, currency conversion, charts, search, and more.</p></div>
+                //         <button className="btn btn-orange disabled" style={{ fontWeight: 'bold', marginTop: "8px" }}>Learn more</button>
+                //     </div>
+                //  </div>
+//                 </div>
+//             </div>
+        // )
+    // }
+
+
+// }
+
+

@@ -14,11 +14,11 @@ app.post('/signup', async (req, res) => {
 			email: req.body.email,
 			password: req.body.password,
 			full_name: req.body.full_name,
-			phone: "",
+			phone: null,
 			currency: "USD",
-			time_zone: "",
-			language: "English",
-			profile_picture: ""
+			time_zone: "-8",
+			language: "EN",
+			profile_picture: null
 		}, { transaction: transaction })
 		transaction.commit();
 		req.session.user = user;

@@ -13,7 +13,7 @@ export default class AddGroup extends Component {
             selected: false,
             selectedPerson: 0,
             groupName: '',
-            groupCreated:false
+            groupCreated:false,
         }
         this.createGroup = this.createGroup.bind(this)
     }
@@ -22,7 +22,7 @@ export default class AddGroup extends Component {
         let data = {
             user_list:{...this.state.usersToAdd},
             group_name:this.state.groupName,
-            no_of_users:Object.keys(this.state.usersToAdd).length
+            no_of_users:Object.keys(this.state.usersToAdd).length,
         }
         console.log(data)
         axios.defaults.withCredentials = true;
@@ -38,6 +38,7 @@ export default class AddGroup extends Component {
             this.setState({
                 groupCreated:true
             })
+            this.props.history.push('/home')
             
         }).catch((err) => {
             console.log('group creation error -',err)
@@ -103,15 +104,17 @@ export default class AddGroup extends Component {
 
     render = () => {
         // console.log('current state', this.state)
-        let redirect = ""
-        if(this.state.groupCreated){
-            redirect = <Redirect to="/home"/>
-        }
+        // let redirect = ""
+        // if(this.state.groupCreated){
+        //     redirect = <Redirect to="/home"/>
+        // }
+        let current_user=null
         if (this.state.scroll) {
             document.getElementById('dropdown').classList.add("secondary_fields-scroll")
         }
-
-        var current_user = JSON.parse(localStorage.getItem('userProfile'))
+        if(localStorage.getItem('userProfile')){
+            current_user = JSON.parse(localStorage.getItem('userProfile'))
+        }
         // console.log(current_user)
 
         var personList = []
@@ -171,7 +174,7 @@ export default class AddGroup extends Component {
 
 
         return (<div>
-            {redirect}
+            {/* {redirect} */}
             <div className="container">
                 <div className="row" style={{ width: '50%', margin: 'auto', height: '100vh', padding: '100px 0px', textAlign: 'center' }}>
                     <div className="col-5" style={{ padding: 0 }}>
