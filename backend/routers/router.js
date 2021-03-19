@@ -2,7 +2,7 @@ const express=require('express');
 const router = express.Router();
 
 const loginRouter=require('./login/login');
-const signUpRouter=require('./signUp/signup');
+const signUpRouter=require('./signUp/signUp');
 const groupRouter=require('./group/group')
 const queryRouter=require('./query')
 const expenseRouter=require('./expense/expense')
