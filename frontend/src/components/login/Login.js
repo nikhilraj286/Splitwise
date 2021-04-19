@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { login } from '../../store/actions/loginActions/loginActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 class Login extends Component {
     constructor(props) {
@@ -14,16 +14,11 @@ class Login extends Component {
         this.state = {
             email: null,
             password: null,
-            authFlag: false
+            authFlag: false,
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
         this.submitLogin = this.submitLogin.bind(this);
-    }
-    componentWillMount() {
-        this.setState({
-            authFlag: false
-        })
     }
     emailChangeHandler = (e) => {
         this.setState({
@@ -36,22 +31,35 @@ class Login extends Component {
         })
     }
     submitLogin = async e => {
-        if(this.state.email && this.state.password){
-            e.preventDefault();
-            const data = {
-                email: this.state.email,
-                password: this.state.password
-            }
-            await this.props.login(data);
+        e.preventDefault();
+        const data = {
+            email: this.state.email,
+            password: this.state.password
         }
+        await this.props.login(data)
+        // console.log(data)
+        this.setState({login:true})
     }
     render() {
         // if(this.state.errMessage){
         //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
+        // console.log(this.props)
         let redirctVar = ""
-        if (localStorage.getItem('userProfile')) {
-            redirctVar = <Redirect to="/home"/>
+        let invalidLoginMsg = ""
+        // console.log("props in login - ",this.props)
+        // if (localStorage.getItem('userProfile')) {
+        //     redirctVar = <Redirect to="/home"/>
+        // }
+        if(this.state.login){
+            if (this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user._id) {
+                redirctVar = <Redirect to="/home"/>
+                // console.warn('reached here')
+            } else if(this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user === 404){
+                invalidLoginMsg = (<div className="alert alert-success" style={{margin:'70px auto', width:'30%', textAlign:'center'}} role="alert">
+                Incorrect username or password
+            </div>)
+            }
         }
         return (
             <div>
@@ -66,17 +74,20 @@ class Login extends Component {
                             <div className="col-3">
                                 <div className="login-form form" style={{ paddingTop: '20px' }}>
                                     <h4>WELCOME TO SPLITWISE</h4>
-                                    <div className="mb-3">
-                                        <input type="emaill" onChange={this.emailChangeHandler} className="form-control" id="exampleInputemaill1" placeholder="Email Id" />
+                                    <form onSubmit={this.submitLogin}>
+                                        <div className="mb-3">
+                                            <input type="email" onChange={this.emailChangeHandler} required className="form-control" id="exampleInputemaill1" placeholder="Email Id" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <input type="password" onChange={this.passwordChangeHandler} required className="form-control" id="exampleInputPassword1" placeholder="Password" />
+                                        </div>
+                                        <button type="submit" className="btn btn-orange" style={{ fontWeight: 'bold', color: '#fff' }}>Log in</button>
+                                    </form>
                                     </div>
-                                    <div className="mb-3">
-                                        <input type="password" onChange={this.passwordChangeHandler} className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                    </div>
-                                    <Link onClick={this.submitLogin} className="btn link-orange"  style={{fontWeight:'bold', color:'#fff'}}>Log in</Link>
-                                </div>
                             </div>
                             <div className="col-4"></div>
                         </div>
+                        <div className="row">{invalidLoginMsg}</div>
                     </div>
                 </div>
             </div>

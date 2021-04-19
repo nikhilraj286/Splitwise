@@ -1,24 +1,25 @@
 const express = require('express');
-const db = require('../../models');
-const app = require('../../app');
+const db = require('../../../models/sql');
+const app = require('../../../app');
+const passwordHash = require('password-hash');
 
 const router = express.Router();
 
 app.post('/login',async (req,res) => {
     console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const user = await db.User.findOne({
             where: {
                 email: req.body.email
             }
         });
-        console.log(user.dataValues.password);
-        console.log(req.body.password)
+        // console.log(user.dataValues.password);
+        // console.log(req.body.password)
         if (user === null) {
             return res.status(404).send("User not found!");
         }
-        else if (user.dataValues.password === req.body.password) {
+        else if (passwordHash.verify(req.body.password, user.dataValues.password)) {
             req.session.user = user;
             return res.status(200).send(user);
         }
@@ -32,7 +33,7 @@ app.post('/login',async (req,res) => {
 
 app.post('/getUser',async (req,res) => {
     console.log("Inside get User Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const user = await db.User.findOne({
             where: {
@@ -58,7 +59,7 @@ app.post('/getUser',async (req,res) => {
 
 app.post('/updateUser',async (req,res) => {
     console.log("Inside update User Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const result = await db.User.findOne({
             where: {
@@ -76,7 +77,7 @@ app.post('/updateUser',async (req,res) => {
             })
         })
         if (result === null) {
-            return res.status(404).send("Groups not found!");
+            return res.status(404).send("Update user details failed");
         }
         else if (result !== null){
             return res.status(200).send(result)
@@ -89,11 +90,11 @@ app.post('/updateUser',async (req,res) => {
     return res.status(500).send("Internal Server Error!");
 });
 
-app.post('/getUsers', async (req,res) => {
+app.get('/getUsers', async (req,res) => {
     console.log("Inside get users Post Request");
     try {
         const result = await db.User.findAll({});
-        console.log(result.dataValues);
+        // console.log(result.dataValues);
         if (result === null) {
             return res.status(404).send("Groups not found!");
         }

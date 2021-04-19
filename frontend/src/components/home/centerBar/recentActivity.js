@@ -9,7 +9,9 @@ export default class RecentActivity extends React.Component {
         super(props)
         this.state = {
             transactions:null,
-            groups:null
+            groups:null,
+            sortBy: 'dec',
+            groupBy: 'none'
         }
     }
 
@@ -17,7 +19,7 @@ export default class RecentActivity extends React.Component {
         let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         let userId = userProfile.user_id
         axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'getTransactions', {
+        await axios.get(exportData.backendURL+'getTransactions', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -61,13 +63,15 @@ export default class RecentActivity extends React.Component {
 
     }
 
-    // <img src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" class="square">
+    // <img src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" className="square">
     render = () => {
+        console.log(this.state)
+        let groupBy = []
         let element = []
-        if (this.state.transactions && this.state.groups) {
+        if (this.state.transactions && this.state.groups && localStorage.getItem('userProfile')) {
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
             let allUsers = JSON.parse(localStorage.getItem('allUsers'))
-            console.log(allUsers)
+            // console.log(allUsers)
             let userId = userProfile.user_id
             let trans = this.state.transactions
             let groups = this.state.groups
@@ -76,22 +80,25 @@ export default class RecentActivity extends React.Component {
             keys = Object.keys(groups)
             keys.forEach(item => {
                 let data = groups[item]
-                allGroups.push(data.group_id)
+                allGroups.push(data.Group.group_name)
             })
-            console.log(allGroups)
-            console.log(trans)
-            trans.forEach(item => {
-                if(item.paid_by === userId || item.paid_to === userId){
+            // console.log(allGroups)
+            // console.log(trans)
+            let iter = this.state.sortBy === 'dec' ? trans : trans.slice().reverse()
+            iter.forEach(item => {
+                // console.log(item)
+                if((item.paid_by === userId || item.paid_to === userId) && (item.paid_by !== item.paid_to) && (this.state.groupBy === 'none' || this.state.groupBy === item.Group.group_name)){
                     let date = new Date(item.updatedAt)
                     let status = (item.payment_status === 'due')? 'paid':'settled with'
                     let amount = (item.payment_status === 'due')? '$' + Number(item.amount):''
-                    let temp2 = (item.payment_status === 'due')? 'to' : ''
+                    let temp2 = (item.payment_status === 'due')? 'to' : '' 
                     let temp3 = (item.payment_status === 'due')? 'in' : ''
                     let grp = (item.payment_status === 'due')? item.Group.group_name : ''
+                    let imag = (item.payment_status === 'due')?"https://s3.amazonaws.com/splitwise/uploads/notifications/v2021/0-p.png":"https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png"
                     element.push(<div>
                         <div className='row recent_row' style={{margin:'0', padding:'10px 40px', borderBottom:'1px solid #eee'}}>
                             <div className="col-3" style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                                <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" class="square" style={{width:'55%'}}/>
+                                <img alt="" src={imag} className="square" style={{width:'55%'}}/>
                             </div>
                             <div className="col-9" style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
                                 <div>
@@ -104,14 +111,39 @@ export default class RecentActivity extends React.Component {
                 }
                 
             })
+            allGroups.forEach(item => {
+                groupBy.push(<option value={item}>{item}</option>)
+            })
         }
         
         return(<div>
             <div className="row" style={{height:'100vh'}}>
                 <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height:'100%'}}>
                     <div className="main_row" style={{ backgroundColor: '#eee', padding: '20px 20px', margin: '0',  borderBottom:'1px solid #ddd'  }}>
-                        <h3>Recent Activity</h3>
+                        <div><h3>Recent Activity</h3></div>
                     </div>
+                    <div className="row" style={{margin:'0', backgroundColor:'#eee', padding:'15px 5px'}}>
+                        <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
+                            <label for="groupBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Group By</label>
+                            <select name="groupBy" id="groupBy" style={{fontSize:'13px', padding:'3px 4px', color:'#555', width:'85%'}} value={this.state.groupBy} onChange={(e) => {
+                                this.setState({groupBy: e.target.value})
+                            }}>
+                                <option value="none">None</option>
+                                <hr></hr>
+                                {groupBy}
+                            </select>
+                        </div>
+                        <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
+                            <label for="sortBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Sort By</label>
+                            <select name="sortBy" id="sortByy" style={{fontSize:'13px', padding:'3px 4px', color:'#555', width:'85%'}} value={this.state.sortBy} onChange={(e) => {
+                                this.setState({sortBy: e.target.value})
+                            }}>
+                                <option value="dec">Most Recent: First</option>
+                                <option value="inc">Most Earliest: First</option>
+                            </select>
+                        </div>
+                    </div>
+                    <hr style={{ margin: 0, color: '#555' }}></hr>
                     <div>
                     {element}
                     </div>

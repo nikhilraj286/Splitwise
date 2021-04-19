@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import '../style.css'
 import exportData from '../../config/config'
 import { Redirect } from 'react-router';
+// import { Redirect } from 'react-router';
 
 export default class AddGroup extends Component {
     constructor(props) {
@@ -13,9 +14,8 @@ export default class AddGroup extends Component {
             allUsers: {},
             usersToAdd: {},
             selected: false,
-            selectedPerson: 0,
+            selectedPerson: null,
             groupName: '',
-            groupCreated:false,
         }
         this.createGroup = this.createGroup.bind(this)
     }
@@ -34,13 +34,12 @@ export default class AddGroup extends Component {
                 'Content-Type': 'application/json'
             }
         })
-        .then(async (res) => {
-            console.log("group creation Status Code : ", res.status);
-            console.log('group created - ', res)
+        .then(() => {
+            // console.log("group creation Status Code : ", res.status);
+            // console.log('group created - ', res)
             this.setState({
-                groupCreated:true
+                userAdded:true
             })
-            this.props.history.push('/home')
             
         }).catch((err) => {
             console.log('group creation error -',err)
@@ -57,7 +56,7 @@ export default class AddGroup extends Component {
 
     componentDidMount = async () => {
         axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'getUsers', {
+        await axios.get(exportData.backendURL+'getUsers', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -111,9 +110,16 @@ export default class AddGroup extends Component {
         //     redirect = <Redirect to="/home"/>
         // }
 
+        console.log(this.state)
+
         let redirectVar = null;
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
+        }
+
+        if(this.state.userAdded){
+            // alert('group created')
+            redirectVar = <Redirect to="/" />
         }
 
         let current_user=null
@@ -142,7 +148,7 @@ export default class AddGroup extends Component {
 
 
                         <div className="col-1" style={{ padding: '0' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#ff652f" class="bi bi-trash-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} onClick={(e) => {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#ff652f" className="bi bi-trash-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} onClick={(e) => {
                                 let data = { ...this.state.usersToAdd }
                                 console.log('before', data)
                                 console.log(e.target.id)
@@ -214,7 +220,7 @@ export default class AddGroup extends Component {
                                     <p style={{ margin: '0 0 0 10px' }}>Nikhil Raj (nikhilraj286@gmail.com)</p>
                                 </div>
                                 <div className="col-1" style={{ padding: '0' }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" class="bi bi-record-fill" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" className="bi bi-record-fill" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                                     </svg>
                                 </div>
@@ -228,7 +234,7 @@ export default class AddGroup extends Component {
                                         <p style={{ margin: '0 0 0 10px' }} id={(current_user)?current_user.user_id:''}>{(current_user)?current_user.full_name:''} ({(current_user)?current_user.email:''})</p>
                                     </div>
                                     <div className="col-1" style={{ padding: '0' }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" class="bi bi-record-fill" viewBox="0 0 16 16">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" className="bi bi-record-fill" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                                         </svg>
                                     </div>
@@ -245,12 +251,14 @@ export default class AddGroup extends Component {
                                         <img style={{ borderRadius: '25px' }} src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-grey1-50px.png" alt="" />
                                     </div>
                                     <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                        <input class="form-control" list="datalistOptions" id="newPerson" placeholder="Name or Email address" onInput={async (e) => {
+                                        <input className="form-control" list="datalistOptions" id="newPerson" placeholder="Name or Email address" onChange={async (e) => {
                                             // console.log(e.target.value)
                                             var keys = Object.keys(this.state.allUsers)
+                                            // console.log(keys)
                                             if (this.state.allUsers && keys.length > 0) {
                                                 keys.forEach(item => {
                                                     let data = this.state.allUsers[item]
+                                                    // console.log(data)
                                                     if (e.target.value.includes(data.email)) {
                                                         // console.log(e.target.value.includes(data.email))
                                                         this.setState({
@@ -272,13 +280,14 @@ export default class AddGroup extends Component {
                                         </datalist>
                                     </div>
                                     <div className="col-1" style={{ padding: '0' }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#5bc5a7" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} disabled={!this.state.selected} onClick={(e) => {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#5bc5a7" className="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16" style={{ cursor: 'pointer' }} disabled={!this.state.selected} onClick={(e) => {
                                             var keys = Object.keys(this.state.usersToAdd)
-                                            if (!keys.includes(this.state.selectedPerson) && this.state.selectedPerson > 0) {
+                                            console.log(keys)
+                                            if (!keys.includes(this.state.selectedPerson) && this.state.selectedPerson) {
                                                 let data = { ...this.state.allUsers[this.state.selectedPerson] }
                                                 let selectedData = { ...this.state.usersToAdd }
                                                 selectedData[this.state.selectedPerson] = data
-                                                // console.log('selected data',selectedData)
+                                                console.log('selected data',selectedData)
                                                 this.setState({
                                                     usersToAdd: selectedData,
                                                     selected: false,

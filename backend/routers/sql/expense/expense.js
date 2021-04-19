@@ -1,7 +1,7 @@
 const express = require('express');
-const db = require('../../models');
-const app = require('../../app');
-const sequelize = require('../../db/SQL');
+const db = require('../../../models/sql');
+const app = require('../../../app');
+const sequelize = require('../../../db/SQL');
 const Promise = require("bluebird")
 // const { now } = require('sequelize/types/lib/utils');
 
@@ -9,7 +9,7 @@ const router = express.Router();
 
 app.post('/newExpense', async (req,res) => {
     console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     res_data = []
 
     try {
@@ -26,28 +26,31 @@ app.post('/newExpense', async (req,res) => {
                 split = split.toFixed(2)
                 var amount = req.body.amount
                 let count = 0
-                console.log(count, split, amount)
+                // console.log(count, split, amount)
 
                 Promise.mapSeries(req.body.user_list, (item) => {
                     
                     let owe_status = 'due'
+                    let cleared_status = false
                     if(req.body.paid_by === item.user_id){
-                        owe_status = 'settled'
+                        owe_status = 'settled',
+                        cleared_status = true
                     }
                     count = count + 1
                     if(count == req.body.no_users){
                         split = amount
                     }
                     amount =  amount - split
-                    console.log(count, split, amount)
+                    // console.log(count, split, amount)
                     return db.Transaction.create({
                         amount: split,
                         payment_status: owe_status,
                         paid_by: req.body.paid_by,
                         paid_to: item.user_id,
-                        group_id: req.body.group_id
+                        group_id: req.body.group_id,
+                        cleared: cleared_status
                     }).then(result => {
-                        console.log('ressss', result)
+                        // console.log('ressss', result)
                         res_data.push(result)
                     })
                 })

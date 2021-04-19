@@ -10,20 +10,12 @@ import { logout } from '../../store/actions/logoutActions/logoutActions';
 
 //create the Navbar Component
 class Navbar extends Component {
-    constructor(props){
-        super(props);
-        this.handleLogout = this.handleLogout.bind(this);
-    }
-    
-    handleLogout = () => {
-        localStorage.clear();
-        this.props.logout();
-    }
     render(){
         
         let navLogin = null;
         // let displayBackground = null;
         if(localStorage.getItem('userProfile')){
+            const user1 = JSON.parse(localStorage.getItem('userProfile'))
             navLogin = (
                 <div style={{width:'100%'}}>
                     {/* <svg xmlns="http://www.w3.org/2000/svg" width="140" height="48" viewBox="0 0 140 48">
@@ -38,7 +30,7 @@ class Navbar extends Component {
                     
                     <ul className="nav navbar-nav navbar-right"  style={{flexDirection:'row', float:'right'}}>
                         {/* <button className="btn btn-primary link-green" style={{paddingTop:'0px', paddingBottom:'0px', marginRight:'10px', maxHeight:'35px'}}><Link to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold'}}> <img src={imageUser} style={{width:'20px'}} alt="userIcon"/> Your Account</Link></button> */}
-                        <Link className="btn link-green" to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'20px'}}><img src={imageUser} style={{width:'17px'}} alt="userIcon"/> Your Account</Link>
+                        <Link className="btn link-green" to="/userAccount" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'20px'}}><img src={imageUser} style={{width:'17px'}} alt="userIcon"/> {user1.full_name}</Link>
                         {/* <a onClick = {()=>{
                             localStorage.clear();
                             this.props.logout();}} href="/" className="btn link-orange" style={{paddingTop:'0px', paddingBottom:'0px', height:'35px'}}> */}
@@ -47,7 +39,8 @@ class Navbar extends Component {
                             </a> */}
                         <Link onClick = {()=>{
                             localStorage.clear();
-                            this.props.logout();}} className="btn link-orange" to="/" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'20px'}}>Logout</Link>
+                            this.props.logout();
+                            }} className="btn link-orange" style={{color:'#fff', textDecoration:'none', fontWeight:'bold', marginRight:'20px'}}>Logout</Link>
                     </ul>
                 </div>
             );

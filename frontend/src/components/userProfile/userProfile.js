@@ -150,7 +150,7 @@ export default class UserProfile extends Component {
             redirectVar = <Redirect to="/login" />
         }
         if(this.state.datasubmitted){
-            submitted_status = (<div class="alert alert-success" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
+            submitted_status = (<div className="alert alert-success" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
             User profile has been updated sucessfully
           </div>)
         }
@@ -164,7 +164,7 @@ export default class UserProfile extends Component {
         // }
         console.log(this.state)
         
-        // <img class="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
+        // <img className="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
         // let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
         let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
         // if (user.profile_picture && user.profile_picture !== '') {
@@ -185,7 +185,7 @@ export default class UserProfile extends Component {
                                 <div className="row">
                                     <div className="col-5">
                                         <div>
-                                            <img class="picture-frame" alt='' src={img_src}  style={{width:'200px', height:'200px'}}/>
+                                            <img className="picture-frame" alt='' src={img_src}  style={{width:'200px', height:'200px'}}/>
                                         </div>
                                         <div style={{display:'flex', flexDirection:'row'}}>
                                             <input type="file" id="myFile" onChange={this.profilePicChangeHandler} name="filename" style={{ width: '80%', fontSize: '11px', margin: '10px 0px' }} />
@@ -200,7 +200,7 @@ export default class UserProfile extends Component {
                                                     console.log(err)
                                                 });
 
-                                            }}><i class="fa fa-check"></i></div>
+                                            }}><i className="fa fa-check"></i></div>
                                         </div>
                                     </div>
                                     <div className="col-7">
@@ -212,7 +212,7 @@ export default class UserProfile extends Component {
                                                     document.getElementById('name1').classList.add('hidden')
                                                     document.getElementById('name2').classList.remove('hidden')
                                                 }}>
-                                                    <i class="fa fa-edit"></i> <span>Edit</span>
+                                                    <i className="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='name2'>
@@ -220,7 +220,7 @@ export default class UserProfile extends Component {
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.remove('hidden')
                                                     document.getElementById('name2').classList.add('hidden')
-                                                }}><i class="fa fa-check"></i></div>
+                                                }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
 
@@ -232,7 +232,7 @@ export default class UserProfile extends Component {
                                             }}>
                                                 <strong>{(this.state.email)?this.state.email:''}</strong>
                                                 <div>
-                                                    <i class="fa fa-edit"></i> <span>Edit</span>
+                                                    <i className="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp  hidden' id='email2'>
@@ -240,7 +240,7 @@ export default class UserProfile extends Component {
                                                 <div onClick={(e)=>{
                                                     document.getElementById('email1').classList.remove('hidden')
                                                     document.getElementById('email2').classList.add('hidden')
-                                                }}><i class="fa fa-check"></i></div>
+                                                }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
 
@@ -252,7 +252,7 @@ export default class UserProfile extends Component {
                                             }}>
                                                 <strong>{(this.state.mobile)?this.state.mobile:''}</strong>
                                                 <div>
-                                                    <i class="fa fa-edit"></i> <span>Edit</span>
+                                                    <i className="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='phone2'>
@@ -260,7 +260,7 @@ export default class UserProfile extends Component {
                                                 <div onClick={(e)=> {
                                                     document.getElementById('phone1').classList.remove('hidden')
                                                     document.getElementById('phone2').classList.add('hidden')
-                                                }}><i class="fa fa-check"></i></div>
+                                                }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
 
@@ -272,7 +272,7 @@ export default class UserProfile extends Component {
                                 <div className='currency field'>
                                     <p>Your default currency</p>
                                     <p style={{fontSize:'12px'}}>(for new expenses)</p>
-                                    <select class="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" value={(this.state.currency)?this.state.currency:'USD'}>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" value={(this.state.currency)?this.state.currency:'USD'}>
                                         <option value="USD">USD ($)</option>
                                         <option value="KWD">KWD (KWD)</option>
                                         <option value="BHD">BHD (BD)</option>
@@ -283,7 +283,7 @@ export default class UserProfile extends Component {
                                 </div>
                                 <div className='timezone field'>
                                     <p>Your time zone</p>
-                                    <select class="btn btn-light dropdown-toggle" onChange={this.timeZoneChangeHandler} name="timezone" id="timezone" value={(this.state.timezone)?this.state.timezone:'-8'} style={{ width: '80%' }}>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.timeZoneChangeHandler} name="timezone" id="timezone" value={(this.state.timezone)?this.state.timezone:'-8'} style={{ width: '80%' }}>
                                         <option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
                                         <option timeZoneId="2" gmtAdjustment="GMT-11:00" useDaylightTime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
                                         <option timeZoneId="3" gmtAdjustment="GMT-10:00" useDaylightTime="0" value="-10">(GMT-10:00) Hawaii</option>
@@ -370,7 +370,7 @@ export default class UserProfile extends Component {
                                 </div>
                                 <div className='language field'>
                                     <p>Language</p>
-                                    <select class="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" value={(this.state.language)?this.state.language:'USD'}>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" value={(this.state.language)?this.state.language:'USD'}>
                                         <option value="AF">Afrikaans</option>
                                         <option value="SQ">Albanian</option>
                                         <option value="AR">Arabic</option>

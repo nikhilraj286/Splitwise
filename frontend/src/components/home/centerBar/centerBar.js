@@ -40,7 +40,7 @@ const MyGroup = (props) => {
                         <div className="col-4"><h3>My Groups</h3></div>
                     </div>
                     <hr style={{ margin: 0, color: '#555' }} />
-                    <div class='invited_to' style={{ backgroundColor: '#eee', padding: '10px 20px', margin: '0 0 5px 0' }}>
+                    <div className='invited_to' style={{ backgroundColor: '#eee', padding: '10px 20px', margin: '0 0 5px 0' }}>
                         <div><p style={{margin:'0'}}>Groups you have been invited to:</p></div>
                     </div>
                     <div className='invited_to_list'>
@@ -71,7 +71,7 @@ const MyGroup = (props) => {
 
                     <div className='row' style={{margin:'0'}}>
                         <div className="col-4" style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                        <input class="form-control" list="dashboard" id="newGroup" placeholder="Group name" onInput={(e)=> {
+                        <input className="form-control" list="dashboard" id="newGroup" placeholder="Group name" onInput={(e)=> {
                             let keys = Object.keys(props.groups)
                             keys.forEach((item) => {
                                 let data = props.groups[item]
@@ -94,7 +94,7 @@ const MyGroup = (props) => {
 
 
                     <hr style={{ margin: 0, color: '#555' }} />
-                    <div class='accepted_groups' style={{ backgroundColor: '#eee', padding: '10px 20px', margin: '0 0 5px 0' }}>
+                    <div className='accepted_groups' style={{ backgroundColor: '#eee', padding: '10px 20px', margin: '0 0 5px 0' }}>
                         <div><p style={{margin:'0'}}>Groups you are part of:</p></div>
                     </div>
                     <div className='acceepted_groups_list'>

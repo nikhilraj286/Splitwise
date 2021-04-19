@@ -31,9 +31,9 @@ const LeftBar = (props) => {
             if(tabItem.name==='Dashboard'){
                 tabLogo.push(<img alt="" src={logo} style={{ width: '15px', height: '100%', marginTop: '-3px', marginRight: '8px' }} />)
             } else if (tabItem.name === 'Recent Activity'){
-                tabLogo.push(<i class="fa fa-flag" style={{marginRight: '8px' }}></i>)
+                tabLogo.push(<i className="fa fa-flag" style={{marginRight: '8px' }}></i>)
             } else {
-                tabLogo.push(<i class="fa fa-users" style={{marginRight: '8px' }}></i>)
+                tabLogo.push(<i className="fa fa-users" style={{marginRight: '8px' }}></i>)
             }
             
             
@@ -43,7 +43,7 @@ const LeftBar = (props) => {
                 <div>
 
                     {tabItem.heading ?
-                        (<div className="left-group-division" onClick={() => { props.changeTab(tabItem.key) }}>
+                        (<div className="left-group-division">
                             <div className="left-group-heading" style={{ backgroundColor: '#eee', borderRadius: '5px', padding: '2px 0 2px 10px', color: 'gray', margin: '8px 0' }}>{tabItem.name}</div>
                             {props.groups.map((groupItem) => {
                                 
@@ -51,11 +51,12 @@ const LeftBar = (props) => {
                                 if(!groupItem.has_invite){
                                     item = (
                                             <div className="left-group-item" href={'/home/groups/' + groupItem.group_id} id={'group'+tabItem.key+groupItem.group_id} onClick={() => { 
+                                                props.changeTab(tabItem.key)
                                                 props.changeGroup(4, groupItem.group_id)
                                                 if(document.getElementById(selectedId)){
                                                 document.getElementById(selectedId).classList.remove("selected-tab")
                                                 }
-                                                }}><i class="fa fa-tag" style={{marginRight: '10px' }}></i>{groupItem.Group.group_name}</div>
+                                                }}><i className="fa fa-tag" style={{marginRight: '10px' }}></i>{groupItem.Group.group_name}</div>
                                 )}
                                 return item
                             })}
@@ -69,7 +70,7 @@ const LeftBar = (props) => {
                                  }
                                  
                                  }}>
-                                {/* {tabItem.name === 'Dashboard' ? <img alt="" src={logo} style={{ width: '15px', height: '100%', marginTop: '-3px', marginRight: '8px' }} /> : <i class="fa fa-flag" style={{ color: '#666', marginRight: '8px' }}></i>} */}
+                                {/* {tabItem.name === 'Dashboard' ? <img alt="" src={logo} style={{ width: '15px', height: '100%', marginTop: '-3px', marginRight: '8px' }} /> : <i className="fa fa-flag" style={{ color: '#666', marginRight: '8px' }}></i>} */}
                                 {tabLogo}
                                 {tabItem.name}</div>
                         )

@@ -5,10 +5,8 @@ const cors = require('cors');
 const app = express();
 app.set('view engine', 'ejs');
 
-require('./db/SQL');
-
-
-
+// require('./db/SQL');
+require('./db/Mongo')
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(session({

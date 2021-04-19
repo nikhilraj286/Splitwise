@@ -87,14 +87,14 @@ class Home extends Component {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
+            .then((res) => {
+                console.log("Status Code : ", res.status);
                 if (res.status === 200) {
                     this.setState({
                         rerender: this.state.rerender + 1
                     })
-                    console.log(this.state)
-                    this.props.history.push('/home')
+                    // console.log("State -> ",this.state)
+                    // this.props.history.push('/home')
                 }
             }).catch((err) => {
                 console.log(err)
@@ -102,7 +102,7 @@ class Home extends Component {
         }
     }
 
-    componentDidMount = async () => {
+    componentWillMount = async () => {
         // console.log(this.state)
         if(localStorage.getItem('selectedTab')){
             let selectedTabData = JSON.parse(localStorage.getItem('selectedTab'))
@@ -120,6 +120,7 @@ class Home extends Component {
         }
         if(localStorage.getItem('userProfile')){
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            // console.warn(userProfile)
             let userId = userProfile.user_id
             const data = {
                 user_id: userId
@@ -147,7 +148,7 @@ class Home extends Component {
                 console.log(err)
             });
 
-            await axios.post(exportData.backendURL+'getAllUsersNames', {
+            await axios.get(exportData.backendURL+'getAllUsersNames', {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -169,8 +170,8 @@ class Home extends Component {
         }
     }
 
-    componentDidUpdate = async (prevState) => {
-        if(localStorage.getItem('userProfile' && (this.state.rerender > prevState.rerender))){
+    componentDidUpdate = async (prevProps, prevState) => {
+        if(localStorage.getItem('userProfile') && (this.state.rerender > prevState.rerender)){
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
             let userId = userProfile.user_id
             const data = {
@@ -219,7 +220,7 @@ class Home extends Component {
                 {redirectVar}
                 <div style={{ width: "75%" }} className="container">
                     <div className="row">
-                        <div className="col-2 leftBar" style={{marginRight:'10px'}}>
+                        <div className="col-2 leftBar" style={{marginRight:'10px', width:'18%'}}>
                             <div className="inner">
                                 <LeftBar tabs={this.state.tabs} groups={this.state.groups} tabSelected={this.state.tabSelected} groupSelected={this.state.groupSelected} changeTab={this.changeTab} changeGroup={this.changeGroup}/>
                             </div>

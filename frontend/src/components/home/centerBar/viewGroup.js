@@ -1,7 +1,9 @@
 import axios from 'axios'
+// import { Tooltip } from 'bootstrap'
 import React from 'react'
 // import { Link, BrowserRouter, Route } from 'react-router-dom'
-import { Button, Modal } from 'react-bootstrap'
+import { Button, Modal} from 'react-bootstrap'
+import { Redirect } from 'react-router'
 import exportData from '../../../config/config'
 // import { Redirect } from 'react-router'
 
@@ -18,7 +20,6 @@ export default class ViewGroup extends React.Component {
             expense_desc: null,
             expense_amount: null,
             rerender: 0,
-            userleft: false
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
@@ -40,6 +41,7 @@ export default class ViewGroup extends React.Component {
     }
 
     leaveGroup = async () => {
+       
         let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
         const data = {
             group_id: this.props.groupID,
@@ -66,7 +68,7 @@ export default class ViewGroup extends React.Component {
                         userleft: true,
                         rerender: (this.state.rerender) + 1 
                     })
-                    window.location.reload()
+                  
                 }
             })
             .catch((err) => {
@@ -76,52 +78,55 @@ export default class ViewGroup extends React.Component {
     }
 
     handleSubmit = async () => {
-        let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
-        let userList = []
-        this.state.groups.UserToGroups.forEach(item => {
-            if(!item.has_invite){
-                userList.push(item)
-            }
-        })
         this.handleClose()
-        if (this.state.expense_amount && this.state.expense_desc) {
-            const data = {
-                group_id: this.props.groupID,
-                no_users: userList.length,
-                amount: this.state.expense_amount,
-                desc: this.state.expense_desc,
-                user_list: userList,
-                paid_by: user_id
-            }
-            console.log(data)
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL+'newExpense', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+        if (this.state.expense_amount > 0) {
+
+            let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
+            let userList = []
+            this.state.groups.UserToGroups.forEach(item => {
+                if (!item.has_invite) {
+                    userList.push(item)
                 }
             })
-                .then(async (res) => {
-                    console.log(res.status)
-                    if (res.status === 200) {
-                        // console.log(res.data)
-
-
-                        let setItem = {
-                            tabSelected: 1,
-                            groupSelected: 0
-                        }
-                        localStorage.setItem('selectedTab', JSON.stringify(setItem))
-                        // window.location.reload()
-
-                        this.setState({ 
-                            rerender: (this.state.rerender) + 1 
-                        })
+            if (this.state.expense_amount && this.state.expense_desc) {
+                const data = {
+                    group_id: this.props.groupID,
+                    no_users: userList.length,
+                    amount: this.state.expense_amount,
+                    desc: this.state.expense_desc,
+                    user_list: userList,
+                    paid_by: user_id
+                }
+                console.log(data)
+                axios.defaults.withCredentials = true;
+                await axios.post(exportData.backendURL + 'newExpense', data, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
                     }
                 })
-                .catch((err) => {
-                    console.log(err)
-                })
+                    .then(async (res) => {
+                        console.log(res.status)
+                        if (res.status === 200) {
+                            // console.log(res.data)
+
+
+                            let setItem = {
+                                tabSelected: 1,
+                                groupSelected: 0
+                            }
+                            localStorage.setItem('selectedTab', JSON.stringify(setItem))
+
+
+                            this.setState({
+                                rerender: (this.state.rerender) + 1
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            }
         }
 
     }
@@ -203,13 +208,13 @@ export default class ViewGroup extends React.Component {
     // }
 
     render = () => {
-        // console.log('state',this.state)
+        console.log('state',this.state)
         // console.log('props', this.props)
         // console.clear()
-        // let redirectvar = null
-        // if(this.state.userleft){
-        //     redirectvar = <Redirect to='/'/>
-        // }
+        let redirectvar = null
+        if(this.state.userleft){
+            redirectvar = <Redirect to='/'/>
+        }
         let Expense_disp = []
         let leaveGroupClass = ''
         if (this.state.groups) {
@@ -236,7 +241,8 @@ export default class ViewGroup extends React.Component {
                 // console.log('************************************************************')
                 // console.log('inside loop',item.paid_by, item.paid_to)
                 
-                if(item.paid_by !== item.paid_to && item.payment_status === 'due'){
+                // if(item.paid_by !== item.paid_to && item.payment_status === 'due'){
+                if(item.paid_by !== item.paid_to){
                     // console.log(typeof(item.amount), typeof(expense_sum[item.paid_to]), typeof(expense_sum[item.paid_by]))
                     // console.log('values before adding', (item.amount), (expense_sum[item.paid_by]), (expense_sum[item.paid_to]))
                     expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (Number(item.amount))
@@ -248,7 +254,7 @@ export default class ViewGroup extends React.Component {
                 // console.log('************************************************************')
             })
 
-            let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+            let allUsers = (localStorage.getItem('allUsers'))?JSON.parse(localStorage.getItem('allUsers')): null
             // console.log(allUsers)
             temp.forEach(item => {
                 if(!item.has_invite){
@@ -267,7 +273,7 @@ export default class ViewGroup extends React.Component {
                     Expense_disp.push(<div>
                         <div className="row" style={{margin:'20px 0'}}>
                             <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
-                                <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+                                <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{width:'65%', borderRadius:'25px'}}/>
                             </div>
                             <div className="col-8" style={{paddingLeft:'0'}}>
                                 <div style={{marginBottom:'5px'}}>{allUsers[item.user_id].name}</div>
@@ -281,10 +287,14 @@ export default class ViewGroup extends React.Component {
             if(expense_sum[user_id] === 0){
                 leaveGroupClass = (<div>
                     <button className="btn btn-green" style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}} onClick={this.leaveGroup}>Leave Group</button>
+                    <div style={{margin:'10px', fontSize:'13px', color:'#444'}}>You can leave this group</div>
+                    <hr></hr>
                 </div>)
             } else {
                 leaveGroupClass = (<div>
-                    <button className="btn btn-green" disabled style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}}>Leave Group</button>
+                    <button className="btn btn-green" dataToggle="tooltip" style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}} title="Clear the dues to leave this group" disabled>Leave Group</button>
+                    <div style={{margin:'10px', fontSize:'13px', color:'#444'}}>Clear the dues to leave this group</div>
+                    <hr></hr>
                 </div>)
             }
         }
@@ -308,7 +318,7 @@ export default class ViewGroup extends React.Component {
                             <div>{date.getDate()}</div>
                         </div>
                         <div className="col-1" style={{ padding: '0', textAlign: 'center', display:'flex', flexDirection:'column', justifyContent:'center' }}>
-                            <img alt="" width="80%" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" class="receipt"></img>
+                            <img alt="" width="80%" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" className="receipt"></img>
                         </div>
                         <div className="col-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '18px', paddingLeft: '10px' }}><strong>{item.desc}</strong></div>
                         <div className='col-3'>
@@ -323,17 +333,17 @@ export default class ViewGroup extends React.Component {
             })
         }
 
-        // <img src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" class="receipt"></img>
+        // <img src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" className="receipt"></img>
 
 
         return (
             <div>
-            {/* {redirectvar} */}
+            {redirectvar}
                 <div className="main_row row" style={{ margin: '0' }}>
                     <div className="col-8" style={{ padding: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height: '100vh' }}>
                         <div className="row" style={{ backgroundColor: '#eee', padding: '20px 10px', margin: '0' }}>
-                            <div className="col-4"><h3>{groupname}</h3></div>
-                            <div className="col-8">
+                            <div className="col-8"><h3>{groupname}</h3></div>
+                            <div className="col-4">
                                 <ul className="nav navbar-nav navbar-right" style={{ flexDirection: 'row', float: 'right' }}>
                                     <div className="btn btn-green" onClick={this.handleShow} style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Add Expense</div>
                                     <Modal show={this.state.show} onHide={this.handleClose} backdrop="static" keyboard={false} style={{ maxHeight: "700px" }}>
@@ -346,7 +356,7 @@ export default class ViewGroup extends React.Component {
                                             <div className="row">
                                                 <div className="col-1"></div>
                                                 <div className="col-3">
-                                                    <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png" class="category" />
+                                                    <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png" className="category" />
                                                 </div>
                                                 <div className="col-6">
                                                     <input type="text" placeholder="Enter a description" style={{ marginBottom: '15px' }} onChange={(e) => {
@@ -354,7 +364,7 @@ export default class ViewGroup extends React.Component {
                                                             expense_desc: e.target.value
                                                         })
                                                     }} />
-                                                    <input type="text" placeholder="0.00" onChange={(e) => {
+                                                    <input type="number" placeholder="0.01" min="0.01" onChange={(e) => {
                                                         this.setState({
                                                             expense_amount: e.target.value
                                                         })

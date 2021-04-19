@@ -1,10 +1,19 @@
 import { combineReducers } from 'redux';
 import { LoginReducer } from './loginReducer/loginReducer';
 import { SignUpReducer } from './signupReducer/signupReducer'
-import { LogoutReducer } from './logoutReducer/logoutReducer'
+// import { LogoutReducer } from './logoutReducer/logoutReducer'
 
-export default combineReducers({
+const appReducer =  combineReducers({
     loginDetails:LoginReducer,
     signupDetails:SignUpReducer,
-    logoutDetails:LogoutReducer
+    // logoutDetails:LogoutReducer
 })
+
+const RootReducer = (state, action)=> {
+    if(action.type === 'LOGOUT'){
+        state = []
+    }
+    return appReducer(state, action)
+}
+
+export default RootReducer;

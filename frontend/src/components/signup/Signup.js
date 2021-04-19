@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { signup } from '../../store/actions/signupActions/signupActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 class SignUp extends Component{
     constructor(props){
@@ -44,15 +44,14 @@ class SignUp extends Component{
         
     submitSignUp = async e => {
         // var headers = new Headers();
-        if(this.state.email && this.state.password && this.state.full_name){
-            e.preventDefault();
-            const data = {
-                email : this.state.email,
-                password : this.state.password,
-                full_name: this.state.full_name
-            }
-            await this.props.signup(data);
+        e.preventDefault();
+        const data = {
+            email: this.state.email,
+            password: this.state.password,
+            full_name: this.state.full_name
         }
+        await this.props.signup(data);
+        this.setState({ login: true })
         // console.log(this.props.signupDetails)      
     }
     render(){
@@ -61,13 +60,22 @@ class SignUp extends Component{
         //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
         // }
         let redirctVar = ""
-        console.log("SIGN UP ************");
-        console.log(this.props);
-        console.log(this.state);
-        if (localStorage.getItem('userProfile')) {
-            // localStorage.setItem('userProfile', JSON.stringify(this.props.signupDetails.user))
+        let invalidSignupMsg = ""
+        // console.log("SIGN UP ************");
+        // console.log(this.props);
+        // console.log(this.state);
+        // if (localStorage.getItem('userProfile')) {
+        //     // localStorage.setItem('userProfile', JSON.stringify(this.props.signupDetails.user))
+        //     redirctVar = <Redirect to="/home"/>
+        // }
+        if(this.state.login){
+        if (this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user._id) {
             redirctVar = <Redirect to="/home"/>
-        }
+        } else if(this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user === 404){
+            invalidSignupMsg = (<div className="alert alert-success" style={{margin:'70px auto', width:'20%', textAlign:'center'}} role="alert">
+            Email id already exists
+          </div>)
+        }}
         // if(localStorage.getItem('userProfile')){
         //     this.setState({
         //         authFlag: true,
@@ -92,19 +100,24 @@ class SignUp extends Component{
                             <div className="col-3">
                                 <div className="login-form form" style={{paddingTop: '20px'}}>
                                     <h4>INTRODUCE YOURSELF</h4>
-                                    <div className="mb-3">
-                                        <input type="text" onChange = {this.fullNameChangeHandler} className="form-control" id="fullname" placeholder="Your full name" />
-                                    </div>
-                                    <div className="mb-3">
-                                        <input type="email" onChange = {this.emailChangeHandler} className="form-control" id="email" placeholder="Email Id" />
-                                    </div>
-                                    <div className="mb-3">
-                                        <input type="password" onChange = {this.passwordChangeHandler} className="form-control" id="password" placeholder="Password"/>
-                                    </div>
-                                    <Link onClick = {this.submitSignUp} className="btn link-orange" style={{fontWeight:'bold', color:'#fff'}}>Sign me up!</Link>
+                                    <form onSubmit={this.submitSignUp}>
+                                        <div className="mb-3">
+                                            <input type="text" onChange={this.fullNameChangeHandler} required  className="form-control" id="fullname" placeholder="Your full name" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <input type="email" onChange={this.emailChangeHandler} required  className="form-control" id="email" placeholder="Email Id" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <input type="password" onChange={this.passwordChangeHandler}  required className="form-control" id="password" placeholder="Password" />
+                                        </div>
+                                        <button type="submit" className="btn btn-orange" style={{ fontWeight: 'bold', color: '#fff' }}>Sign me up!</button>
+                                    </form>
                                 </div>
                             </div>
                             <div className="col-4"></div>
+                        </div>
+                        <div className="row">
+                        {invalidSignupMsg}
                         </div>
                     </div>
                 </div>

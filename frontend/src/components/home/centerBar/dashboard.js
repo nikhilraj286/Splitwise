@@ -12,6 +12,7 @@ export default class Dashboard extends React.Component {
             show: false,
             selected: false,
             selectedPerson: 0,
+            rerender:0
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
@@ -33,11 +34,19 @@ export default class Dashboard extends React.Component {
     handleSubmit = async () => {
         let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
         this.handleClose()
+        let trans = this.state.transactions
+        const data = []
+        trans.forEach(item => {
+            if(item.payment_status === "due" && item.cleared === false && ((item.paid_by === userId && item.paid_to === this.state.selectedPerson) || (item.paid_by === this.state.selectedPerson && item.paid_to === userId))){
+                data.push(item)
+            }
+        })
+        console.log("data --------->",data)
         // console.log(userId, this.state.selectedPerson)
-        const data = {
-            user_id1: userId,
-            user_id2: this.state.selectedPerson
-        }
+        // const data1 = {
+        //     user_id1: userId,
+        //     user_id2: this.state.selectedPerson
+        // }
         // console.log(data)
         axios.defaults.withCredentials = true;
         await axios.post(exportData.backendURL+'settleup', data, {
@@ -47,10 +56,9 @@ export default class Dashboard extends React.Component {
             }
         })
         .then(async (res) => {
-            // console.log(res.status)
+            console.log('status', res.status)
             if (res.status === 200) {
-                // console.log(res)
-                window.location.reload()
+                this.setState({rerender:this.state.rerender+1})
             }
         })
         .catch((err) => {
@@ -60,7 +68,7 @@ export default class Dashboard extends React.Component {
 
     componentDidMount = async () => {
         axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'getTransactions', {
+        await axios.get(exportData.backendURL+'getTransactions', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -86,11 +94,42 @@ export default class Dashboard extends React.Component {
             });
     }
 
+    componentDidUpdate = async (prevProps, prevState) => {
+        if (this.state.rerender > prevState.rerender) {
+            axios.defaults.withCredentials = true;
+            await axios.get(exportData.backendURL + 'getTransactions', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(async (res) => {
+                    // console.log("Status Code : ", res.status);
+                    if (res.status === 200) {
+                        // this.setState({
+                        //     groups.
+                        // })
+                        // console.log('Trasactions',res.data)
+                        this.setState({
+                            transactions: res.data
+                        })
+                        // this.setState({
+                        //     groups: res.data[0]
+                        // })
+                        // console.log('res', res.data[0])
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                });
+        }
+    }
+
 
 
 
     render = () => {
         // console.log(this.state)
+        // console.log(this.state.transactions)
 
         let you_owe = []
         let owes_you = []
@@ -103,28 +142,32 @@ export default class Dashboard extends React.Component {
             let trans = this.state.transactions
             // console.log(trans)
             let expense_sum = {}
-
+            
+            // console.log(JSON.parse(localStorage.getItem('allUsers')))
             // console.log('state', this.state.groups);
             let allUsers = JSON.parse(localStorage.getItem('allUsers'))
-            let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+            let userId = JSON.parse(localStorage.getItem('userProfile'))?JSON.parse(localStorage.getItem('userProfile')).user_id:null
             if (localStorage.getItem('allUsers')) {
                 let temp = Object.keys(allUsers)
-                // console.log('TEMP',userId)
+                // console.log('TEMP',temp)
 
                 
 
                 temp.forEach(item => {
                     expense_sum[item] = 0
                 })
-
+                // console.log(expense_sum)
                 trans.forEach(item => {
-                    if(item.payment_status === 'due'){
+                    // if(item.payment_status === 'due'){
+                    // console.log(item.paid_by, item.paid_to, userId, item.amount)
                     if (((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)) {
                         // console.log(userId,item.paid_by, item.paid_to)
                         expense_sum[item.paid_by] = ((expense_sum[item.paid_by]) + (Number(item.amount)))
                         expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (Number(item.amount)))
                     }}
-                })
+                // }
+                )
+                // console.log(expense_sum)
                 // console.log('expenses',expense_sum)
                 temp.forEach(item => {
                     if (Number(item) !== userId) {
@@ -139,7 +182,7 @@ export default class Dashboard extends React.Component {
                             owes_you.push(<div>
                                 <div className="row" style={{ margin: '0', padding: '10px 0' }}>
                                     <div className='col-3' style={{ paddingRight: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                        <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{ width: '65%', borderRadius: '25px' }} />
+                                        <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{ width: '65%', borderRadius: '25px' }} />
                                     </div>
                                     <div className="col-8" style={{ paddingLeft: '0' }}>
                                         <div style={{ marginBottom: '5px' }}>{allUsers[item].name}</div>
@@ -152,7 +195,7 @@ export default class Dashboard extends React.Component {
                             you_owe.push(<div>
                                 <div className="row" style={{ margin: '0', padding: '10px 0' }}>
                                     <div className='col-3' style={{ paddingRight: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                        <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" class="avatar" style={{ width: '65%', borderRadius: '25px' }} />
+                                        <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{ width: '65%', borderRadius: '25px' }} />
                                     </div>
                                     <div className="col-8" style={{ paddingLeft: '0' }}>
                                         <div style={{ marginBottom: '5px' }}>{allUsers[item].name}</div>
@@ -208,7 +251,7 @@ export default class Dashboard extends React.Component {
                                 <div className="col-4"><h3>Dashboard</h3></div>
                                 <div className="col-8">
                                     <ul className="nav navbar-nav navbar-right" style={{ flexDirection: 'row', float: 'right' }}>
-                                        <Link className="btn link-green" to="/group/new" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Add Group</Link>
+                                        <Link className="btn link-green" to="/group/new" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Create New Group</Link>
                                         <div className="btn btn-orange" onClick={this.handleShow} to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Settle Up</div>
                                         <Modal show={this.state.show} onHide={this.handleClose} backdrop="static" keyboard={false} style={{ maxHeight: "700px" }}>
                                             <Modal.Header>
@@ -217,7 +260,7 @@ export default class Dashboard extends React.Component {
                                             <Modal.Body>
                                                 <p style={{margin:'0'}}>Select user you want to settle with</p>
                                                 <div>
-                                                <input class="form-control" list="dashboard" id="newPerson" placeholder="Name" onInput={async (e) => {
+                                                <input className="form-control" list="dashboard" id="newPerson" placeholder="Name" onInput={async (e) => {
                                                     // console.log(e.target.value)
                                                     let allUsers = JSON.parse(localStorage.getItem('allUsers'))
                                                     var keys = Object.keys(allUsers)

@@ -1,6 +1,6 @@
 const express = require('express');
-const db = require('../models');
-const app = require('../app');
+const db = require('../../models/sql');
+const app = require('../../app');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +23,7 @@ const upload = multer({
 
 app.post('/getGroups', async (req,res) => {
     console.log("Inside get groups Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const result = await db.UserToGroup.findAll({
             where: {
@@ -31,7 +31,7 @@ app.post('/getGroups', async (req,res) => {
             },
             include: [db.Group]
         });
-        console.log(result.dataValues);
+        // console.log(result.dataValues);
         if (result === null) {
             return res.status(404).send("Groups not found!");
         }
@@ -48,7 +48,7 @@ app.post('/getGroups', async (req,res) => {
 
 app.post('/acceptInvite', async (req,res) => {
     console.log("Inside accept invite Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const result = await db.UserToGroup.findOne({
             where: {
@@ -77,7 +77,7 @@ app.post('/acceptInvite', async (req,res) => {
 
 app.post('/deleteUserFromGroup', async (req,res) => {
     console.log("Inside Delete user from group Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const result = await db.UserToGroup.findOne({
             where: {
@@ -104,7 +104,7 @@ app.post('/deleteUserFromGroup', async (req,res) => {
 
 app.post('/getAllUsersNames', async (req,res) => {
     console.log("Inside get All users names Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     try {
         const result = await db.User.findAll({
             attributes: ['user_id', 'full_name', 'email'],

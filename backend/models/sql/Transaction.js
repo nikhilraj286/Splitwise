@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        cleared: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        }
     });
 
     Transaction.associate = models => {

@@ -1,14 +1,14 @@
 const express = require('express');
-const db = require('../../models');
-const sequelize = require('../../db/SQL');
-const app = require('../../app');
+const db = require('../../../models/sql');
+const sequelize = require('../../../db/SQL');
+const app = require('../../../app');
 const Promise = require("bluebird")
 
 const router = express.Router();
 
 app.post('/createGroup',async (req,res) => {
     console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     res_data = []
     const transaction = await sequelize.transaction();
     try {
@@ -56,7 +56,7 @@ app.post('/createGroup',async (req,res) => {
 
 app.post('/getGroupData',async (req,res) => {
     console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
+    // console.log("Req Body : ",req.body);
     
     try {
         const result = await db.Group.findAll({
