@@ -13,7 +13,7 @@ const TransactionSchema = new Schema({
     },
     date_paid: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     paid_by: {
         type: Schema.Types.ObjectId,

@@ -117,7 +117,7 @@ export default class RecentActivity extends React.Component {
         }
         
         return(<div>
-            <div className="row" style={{height:'100vh'}}>
+            <div className="row" style={{minHeight:'100vh'}}>
                 <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height:'100%'}}>
                     <div className="main_row" style={{ backgroundColor: '#eee', padding: '20px 20px', margin: '0',  borderBottom:'1px solid #ddd'  }}>
                         <div><h3>Recent Activity</h3></div>

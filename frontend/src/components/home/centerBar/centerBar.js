@@ -34,7 +34,7 @@ const MyGroup = (props) => {
     }
     return (<div>
         <div className="row my_groups_main">
-            <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height: '100vh' }}>
+            <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', minHeight: '100vh' }}>
                 <div className="main_row">
                     <div className="row" style={{ backgroundColor: '#eee', padding: '20px 10px', margin: '0' }}>
                         <div className="col-4"><h3>My Groups</h3></div>

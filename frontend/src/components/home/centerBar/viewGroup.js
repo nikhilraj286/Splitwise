@@ -2,7 +2,7 @@ import axios from 'axios'
 // import { Tooltip } from 'bootstrap'
 import React from 'react'
 // import { Link, BrowserRouter, Route } from 'react-router-dom'
-import { Button, Modal} from 'react-bootstrap'
+import { Button, Modal } from 'react-bootstrap'
 import { Redirect } from 'react-router'
 import exportData from '../../../config/config'
 // import { Redirect } from 'react-router'
@@ -20,6 +20,8 @@ export default class ViewGroup extends React.Component {
             expense_desc: null,
             expense_amount: null,
             rerender: 0,
+            transactions: [],
+            expenses: []
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
@@ -41,7 +43,7 @@ export default class ViewGroup extends React.Component {
     }
 
     leaveGroup = async () => {
-       
+
         let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
         const data = {
             group_id: this.props.groupID,
@@ -49,13 +51,12 @@ export default class ViewGroup extends React.Component {
         }
         // console.log(data)
         axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'deleteUserFromGroup', data, {
+        await axios.post(exportData.backendURL + 'deleteUserFromGroup', data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        })
-            .then(async (res) => {
+        }).then(async (res) => {
                 console.log(res.status)
                 if (res.status === 200) {
                     // console.log(res.data)
@@ -64,11 +65,11 @@ export default class ViewGroup extends React.Component {
                         groupSelected: 0
                     }
                     localStorage.setItem('selectedTab', JSON.stringify(setItem))
-                    this.setState({ 
+                    this.setState({
                         userleft: true,
-                        rerender: (this.state.rerender) + 1 
+                        rerender: (this.state.rerender) + 1
                     })
-                  
+
                 }
             })
             .catch((err) => {
@@ -104,8 +105,7 @@ export default class ViewGroup extends React.Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     }
-                })
-                    .then(async (res) => {
+                }).then((res) => {
                         console.log(res.status)
                         if (res.status === 200) {
                             // console.log(res.data)
@@ -138,7 +138,7 @@ export default class ViewGroup extends React.Component {
                 group_id: groupId
             }
             axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL+'getGroupData', data, {
+            await axios.post(exportData.backendURL + 'getGroupData', data, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -152,7 +152,52 @@ export default class ViewGroup extends React.Component {
                         // })
                         // console.log(res.data)
                         this.setState({
-                            groups: res.data[0]
+                            groups: res.data
+                        })
+                        // console.log('res', res.data[0])
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                });
+
+
+            await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(async (res) => {
+                    // console.log("Status Code : ", res.status);
+                    if (res.status === 200) {
+                        // this.setState({
+                        //     groups.
+                        // })
+                        // console.log(res.data)
+                        this.setState({
+                            transactions: res.data
+                        })
+                        // console.log('res', res.data[0])
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                });
+
+            await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(async (res) => {
+                    // console.log("Status Code : ", res.status);
+                    if (res.status === 200) {
+                        // this.setState({
+                        //     groups.
+                        // })
+                        // console.log(res.data)
+                        this.setState({
+                            expenses: res.data
                         })
                         // console.log('res', res.data[0])
                     }
@@ -170,13 +215,35 @@ export default class ViewGroup extends React.Component {
             // || (this.state.groups.Transactions.length > prevState.groups.Transactions.length)
             let index = 0
             for (index; index < 2; index++) {
-                if ((this.props.groupID !== prevProps.groupID) || (this.state.rerender > prevState.rerender) || (this.state.groups.Transactions.length > prevState.groups.Transactions.length)) {
+                if ((this.props.groupID !== prevProps.groupID) || (this.state.rerender > prevState.rerender) || (this.state.transactions && (this.state.transactions.length > prevState.transactions.length))) {
                     let groupId = this.props.groupID
                     const data = {
                         group_id: groupId
                     }
                     axios.defaults.withCredentials = true;
-                    await axios.post(exportData.backendURL+'getGroupData', data, {
+                    await axios.post(exportData.backendURL + 'getGroupData', data, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(async (res) => {
+                            // console.log("Status Code : ", res.status);
+                            if (res.status === 200) {
+                                // this.setState({
+                                //     groups.
+                                // })
+                                console.log(res.data)
+                                this.setState({
+                                    groups: res.data
+                                })
+                                // console.log('res', res.data[0])
+                            }
+                        }).catch((err) => {
+                            console.log(err)
+                        });
+
+                    await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
@@ -190,7 +257,29 @@ export default class ViewGroup extends React.Component {
                                 // })
                                 // console.log(res.data)
                                 this.setState({
-                                    groups: res.data[0]
+                                    transactions: res.data
+                                })
+                                // console.log('res', res.data[0])
+                            }
+                        }).catch((err) => {
+                            console.log(err)
+                        });
+
+                    await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(async (res) => {
+                            // console.log("Status Code : ", res.status);
+                            if (res.status === 200) {
+                                // this.setState({
+                                //     groups.
+                                // })
+                                // console.log(res.data)
+                                this.setState({
+                                    expenses: res.data
                                 })
                                 // console.log('res', res.data[0])
                             }
@@ -208,41 +297,41 @@ export default class ViewGroup extends React.Component {
     // }
 
     render = () => {
-        console.log('state',this.state)
+        console.log('state', this.state)
         // console.log('props', this.props)
         // console.clear()
         let redirectvar = null
-        if(this.state.userleft){
-            redirectvar = <Redirect to='/'/>
+        if (this.state.userleft) {
+            redirectvar = <Redirect to='/' />
         }
         let Expense_disp = []
         let leaveGroupClass = ''
         if (this.state.groups) {
             let users_data = []
             let temp = null
-            let trans = this.state.groups.Transactions
+            let trans = this.state.transactions
             let expense_sum = {}
 
             // console.log('state', this.state.groups);
             temp = this.state.groups.UserToGroups
             console.log(temp)
             temp.forEach((item) => {
-                if(!item.has_invite){
+                if (!item.has_invite) {
                     users_data.push(item.user_id)
                     expense_sum[item.user_id] = 0
                 }
-                
+
             })
 
-            console.log('users', expense_sum)
-            
+            // console.log('users', expense_sum)
+
             trans.forEach(item => {
                 // console.log('item',item)
                 // console.log('************************************************************')
                 // console.log('inside loop',item.paid_by, item.paid_to)
-                
+
                 // if(item.paid_by !== item.paid_to && item.payment_status === 'due'){
-                if(item.paid_by !== item.paid_to){
+                if (item.paid_by !== item.paid_to) {
                     // console.log(typeof(item.amount), typeof(expense_sum[item.paid_to]), typeof(expense_sum[item.paid_by]))
                     // console.log('values before adding', (item.amount), (expense_sum[item.paid_by]), (expense_sum[item.paid_to]))
                     expense_sum[item.paid_by] = (expense_sum[item.paid_by]) + (Number(item.amount))
@@ -254,46 +343,49 @@ export default class ViewGroup extends React.Component {
                 // console.log('************************************************************')
             })
 
-            let allUsers = (localStorage.getItem('allUsers'))?JSON.parse(localStorage.getItem('allUsers')): null
+            console.log('users', expense_sum)
+
+            let allUsers = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
             // console.log(allUsers)
             temp.forEach(item => {
-                if(!item.has_invite){
+                if (!item.has_invite) {
                     var amount = expense_sum[item.user_id]
                     amount = Number(amount.toFixed(2))
                     var owe_status = []
-                    if(amount<0){
+                    if (amount < 0) {
                         amount = amount * (-1)
-                        owe_status.push(<div style={{color:'#ff652f'}}><strong>owes ${amount}</strong></div>)
-                    } else if(amount>0){
-                        owe_status.push(<div style={{color:'#5bc5a7'}}><strong>gets back ${amount}</strong></div>)
+                        owe_status.push(<div style={{ color: '#ff652f' }}><strong>owes ${amount}</strong></div>)
+                    } else if (amount > 0) {
+                        owe_status.push(<div style={{ color: '#5bc5a7' }}><strong>gets back ${amount}</strong></div>)
                     } else {
-                        owe_status.push(<div style={{color:'#666'}}><strong>settled up</strong></div>)
+                        owe_status.push(<div style={{ color: '#666' }}><strong>settled up</strong></div>)
                     }
 
                     Expense_disp.push(<div>
-                        <div className="row" style={{margin:'20px 0'}}>
-                            <div className='col-3' style={{paddingRight:'0', display:'flex', flexDirection:'column', justifyContent:'center'}}> 
-                                <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{width:'65%', borderRadius:'25px'}}/>
+                        <div className="row" style={{ margin: '20px 0' }}>
+                            <div className='col-3' style={{ paddingRight: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{ width: '65%', borderRadius: '25px' }} />
                             </div>
-                            <div className="col-8" style={{paddingLeft:'0'}}>
-                                <div style={{marginBottom:'5px'}}>{allUsers[item.user_id].name}</div>
-                                <div style={{fontSize:'12px'}}>{owe_status}</div>
+                            <div className="col-8" style={{ paddingLeft: '0' }}>
+                                <div style={{ marginBottom: '5px' }}>{ allUsers ? allUsers[item.user_id].name: ''}</div>
+                                <div style={{ fontSize: '12px' }}>{owe_status}</div>
                             </div>
                         </div>
                     </div>)
                 }
             })
+
             let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
-            if(expense_sum[user_id] === 0){
+            if (expense_sum[user_id] === 0) {
                 leaveGroupClass = (<div>
-                    <button className="btn btn-green" style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}} onClick={this.leaveGroup}>Leave Group</button>
-                    <div style={{margin:'10px', fontSize:'13px', color:'#444'}}>You can leave this group</div>
+                    <button className="btn btn-green" style={{ padding: '4px 8px', margin: '0 8px', fontSize: '14px', color: '#fff' }} onClick={this.leaveGroup}>Leave Group</button>
+                    <div style={{ margin: '10px', fontSize: '13px', color: '#444' }}>You can leave this group</div>
                     <hr></hr>
                 </div>)
             } else {
                 leaveGroupClass = (<div>
-                    <button className="btn btn-green" dataToggle="tooltip" style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}} title="Clear the dues to leave this group" disabled>Leave Group</button>
-                    <div style={{margin:'10px', fontSize:'13px', color:'#444'}}>Clear the dues to leave this group</div>
+                    <button className="btn btn-green" dataToggle="tooltip" style={{ padding: '4px 8px', margin: '0 8px', fontSize: '14px', color: '#fff' }} title="Clear the dues to leave this group" disabled>Leave Group</button>
+                    <div style={{ margin: '10px', fontSize: '13px', color: '#444' }}>Clear the dues to leave this group</div>
                     <hr></hr>
                 </div>)
             }
@@ -302,7 +394,7 @@ export default class ViewGroup extends React.Component {
         let all_users = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
 
         let groupname = (this.state.groups) ? this.state.groups.group_name : null
-        let expenses = (this.state.groups) ? this.state.groups['Expenses'] : null
+        let expenses = (this.state.expenses) ? this.state.expenses : null
         let expenseList = []
         // console.log(expenses, typeof(expenses)) 
         if (expenses) {
@@ -317,7 +409,7 @@ export default class ViewGroup extends React.Component {
                             <div>{date.toLocaleString('default', { month: 'short' })}</div>
                             <div>{date.getDate()}</div>
                         </div>
-                        <div className="col-1" style={{ padding: '0', textAlign: 'center', display:'flex', flexDirection:'column', justifyContent:'center' }}>
+                        <div className="col-1" style={{ padding: '0', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             <img alt="" width="80%" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" className="receipt"></img>
                         </div>
                         <div className="col-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '18px', paddingLeft: '10px' }}><strong>{item.desc}</strong></div>
@@ -338,9 +430,9 @@ export default class ViewGroup extends React.Component {
 
         return (
             <div>
-            {redirectvar}
+                {redirectvar}
                 <div className="main_row row" style={{ margin: '0' }}>
-                    <div className="col-8" style={{ padding: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height: '100vh' }}>
+                    <div className="col-8" style={{ padding: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', minHeight: '100vh' }}>
                         <div className="row" style={{ backgroundColor: '#eee', padding: '20px 10px', margin: '0' }}>
                             <div className="col-8"><h3>{groupname}</h3></div>
                             <div className="col-4">

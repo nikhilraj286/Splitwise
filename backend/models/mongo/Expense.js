@@ -10,7 +10,7 @@ const ExpenseSchema = new Schema({
     },
     date_paid: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     expense_type: {
         type: String,

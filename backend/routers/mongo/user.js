@@ -5,15 +5,15 @@ const User = require('../../models/mongo/User')
 const router = express.Router();
 
 app.post('/getUser', async (req,res) => {
-    console.log(chalk.blue("Inside Get User Post Request"));
+    // console.log(chalk.blue("Inside Get User Post Request"));
     // var res = {}
     try {
         const user = await User.findOne({ _id: req.body.user_id }, 'full_name email _id group_list currency time_zone language phone profile_picture')
         if (user === null) {
-            console.log('User not found')
+            // console.log('User not found')
             return res.status(404).send("User not found!");
         }
-        console.log('User found')
+        // console.log('User found')
         return res.status(200).send(user);
     }
     catch (err) {
@@ -32,22 +32,23 @@ app.post('/updateUser',async (req,res) => {
                 full_name: req.body.full_name,
                 phone: req.body.phone,
                 currency: req.body.currency,
-                time_zone: req.body.currency,
+                time_zone: req.body.time_zone,
                 language: req.body.language,
                 profile_picture: req.body.profile_picture
             }},
-            {new: true},
             (err, result) => {
                 if (err) {
-                    return res.status(404).send("Update user details failed");
+                    console.log(chalk.blue(err))
+                    return res.status(200).send("failed");
                 }
+                console.log(chalk.red(result))
                 return res.status(200).send(result)
             });
         }
     catch (err) {
         console.log(err);
     }
-    return res.status(500).send("Internal Server Error!");
+    // return res.status(500).send("Internal Server Error!");
 });
 
 app.get('/getUsers', async (req,res) => {

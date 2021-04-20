@@ -24,7 +24,9 @@ export default class UserProfile extends Component {
             file: null,
             fileText: null,
             datasubmitted: false,
-            rerender: 0
+            rerender: 0,
+            invalidEmail: false,
+            invalidMobile: false 
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.fullNameChangeHandler = this.fullNameChangeHandler.bind(this)
@@ -52,6 +54,7 @@ export default class UserProfile extends Component {
         })
     }
     mobileChangeHandler = (e) => {
+        
         this.setState({
             mobile: e.target.value
         })
@@ -74,37 +77,73 @@ export default class UserProfile extends Component {
             })
     }
     submitData = async e => {
-        let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-        let userId = userProfile.user_id
-        const data = {
-            user_id: userId,
-            email: this.state.email,
-            full_name: this.state.fullname,
-            phone: this.state.mobile,
-            currency: this.state.currency,
-            time_zone: this.state.timezone,
-            language: this.state.language,
-            profile_picture: this.state.profilepic
-        }
-        await axios.post(exportData.backendURL+'updateUser', data, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+        let number = this.state.mobile
+        if (number.length === 10 && /^\d{10}$/.test(number)) {
+            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProfile.user_id
+            const data = {
+                user_id: userId,
+                email: this.state.email,
+                full_name: this.state.fullname,
+                phone: this.state.mobile,
+                currency: this.state.currency,
+                time_zone: this.state.timezone,
+                language: this.state.language,
+                profile_picture: this.state.profilepic
             }
-        })
-            .then(async (res) => {
-                if (res.status === 200) {
-                    console.log(res.data);
+            await axios.post(exportData.backendURL + 'updateUser', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 }
-                let num = this.state.rerender
-                this.setState({
-                    rerender: num + 1,
-                    datasubmitted: true
-                })
+            })
+                .then(async (res) => {
+                    if (res.status === 200) {
+                        console.log(res.data);
+                        if (res.data === "failed") {
+                            this.setState({
+                                rerender: this.state.rerender + 1,
+                                invalidEmail: true,
+                                email: null,
+                                fullname: null,
+                                mobile: null,
+                                currency: null,
+                                timezone: null,
+                                language: null,
+                                profilepic: null
+                            })
+                        } else {
+                            this.setState({
+                                rerender: this.state.rerender + 1,
+                                datasubmitted: true,
+                                email: null,
+                                fullname: null,
+                                mobile: null,
+                                currency: null,
+                                timezone: null,
+                                language: null,
+                                profilepic: null
+                            })
+                        }
+                    }
 
-            }).catch((err) => {
-                console.log(err)
-            });
+
+                }).catch((err) => {
+                    console.log(err)
+                });
+        } else {
+            this.setState({
+                rerender: this.state.rerender + 1,
+                invalidMobile: true,
+                email: null,
+                fullname: null,
+                mobile: null,
+                currency: null,
+                timezone: null,
+                language: null,
+                profilepic: null
+            })
+        }
     }
 
     componentDidMount = async () => {
@@ -122,6 +161,7 @@ export default class UserProfile extends Component {
                 }
             })
             .then(async (res) => {
+                console.log('status',res.status)
                 if (res.status === 200) {
                     console.log(res.data);
                     this.setState({
@@ -141,18 +181,80 @@ export default class UserProfile extends Component {
 
     }
 
+    componentWillUpdate = async (prevProps, prevState) => {
+        // console.log(this.state, prevState)
+        if (this.state.rerender !== prevState.rerender) {
+            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProfile.user_id
+            const data = {
+                user_id: userId
+            }
+            axios.defaults.withCredentials = true;
+            await axios.post(exportData.backendURL+'getUser', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(async (res) => {
+                // console.log('status',res.status)
+                if (res.status === 200) {
+                    console.log(res.data);
+                    this.setState({
+                        email: res.data.email,
+                        fullname: res.data.full_name,
+                        mobile: res.data.phone,
+                        currency: res.data.currency,
+                        timezone: res.data.time_zone,
+                        language: res.data.language,
+                        profilepic: res.data.profile_picture,
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            });
+        }
+    }
+
 
 
     render() {
         let redirectVar = null;
+        let errMessage = ''
         let submitted_status = ''
+        let invalidMobileMsg = ''
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
         }
         if(this.state.datasubmitted){
-            submitted_status = (<div className="alert alert-success" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
+            submitted_status = (<div className="alert alert-success" id="successDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
             User profile has been updated sucessfully
           </div>)
+          setTimeout(() => {
+              if(document.getElementById('successDisp')){
+                document.getElementById('successDisp').classList.add('hidden')
+              }
+            },3500)
+        }
+        if (this.state.invalidEmail) {
+            errMessage = (<div className="alert alert-warning" id="failDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
+                Email Id has been taken. Try again.
+            </div>)
+            setTimeout(() => {
+                if(document.getElementById('failDisp')){
+                document.getElementById('failDisp').classList.add('hidden')
+                }
+            },3500)
+        }
+        if (this.state.invalidMobile) {
+            invalidMobileMsg = (<div className="alert alert-warning" id="invalidMobileDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
+                Invalid Details Entered
+            </div>)
+            setTimeout(() => {
+                if(document.getElementById('invalidMobileDisp')){
+                document.getElementById('invalidMobileDisp').classList.add('hidden')
+                }
+            },3500)
         }
         // if(this.state.errMessage){
         //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
@@ -220,6 +322,7 @@ export default class UserProfile extends Component {
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.remove('hidden')
                                                     document.getElementById('name2').classList.add('hidden')
+                                                    document.getElementById('nameInput').value = ''
                                                 }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
@@ -456,6 +559,8 @@ export default class UserProfile extends Component {
                         </div>
                     </div>
                     <div className="row">{submitted_status}</div>
+                    <div className="row">{errMessage}</div>
+                    <div className="row">{invalidMobileMsg}</div>
                 </div>
             </div>
         );

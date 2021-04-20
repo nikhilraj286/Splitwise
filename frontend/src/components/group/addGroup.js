@@ -190,7 +190,7 @@ export default class AddGroup extends Component {
         return (<div>
             {redirectVar}
             <div className="container">
-                <div className="row" style={{ width: '50%', margin: 'auto', height: '100vh', padding: '100px 0px', textAlign: 'center' }}>
+                <div className="row" style={{ width: '50%', margin: 'auto', minHeight: '100vh', padding: '100px 0px', textAlign: 'center' }}>
                     <div className="col-5" style={{ padding: 0 }}>
                         <img height="200" width="200" className="envelope" alt="" src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg" />
                         <input type="file" id="myFile" name="filename" disabled style={{ width: '60%', fontSize: '11px', margin: '10px 0' }} />
