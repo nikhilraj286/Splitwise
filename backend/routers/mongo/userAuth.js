@@ -53,7 +53,7 @@ app.post('/signup', async (req, res) => {
         currency: "USD",
         time_zone: "-8",
         language: "EN",
-        profile_picture: null
+        profile_picture: 'default.png'
     }, 'full_name email _id group_list currency time_zone language phone profile_picture')
 	try {
 		await user.save()

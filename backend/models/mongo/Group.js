@@ -21,7 +21,7 @@ const GroupSchema = new Schema({
         has_invite: {
             type: Boolean
         }
-    }]
+    }],
 })
 
 module.exports = mongoose.model('Group', GroupSchema)

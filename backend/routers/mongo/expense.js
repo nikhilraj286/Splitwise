@@ -1,5 +1,5 @@
 const express = require('express');
-// const chalk = require('chalk');
+const chalk = require('chalk');
 const app = require('../../app');
 const Expense = require('../../models/mongo/Expense')
 const Transaction = require('../../models/mongo/Transaction')
@@ -15,12 +15,14 @@ app.post('/getExpensesForGroup', async (req, res) => {
             output = []
             for (let item of result) {
                 data = {}
+                data.exp_id = item._id
                 data.amount = item.amount
                 data.desc = item.desc
                 data.date_paid = item.date_paid
                 data.expense_type = item.expense_type
                 data.paid_by = item.paid_by
                 data.Group = item.group_id
+                data.comments = item.comments
                 output.push(data)
             }
             return res.status(200).send(output)
@@ -74,6 +76,65 @@ app.post('/newExpense', async (req, res) => {
     catch (err) {
         console.log(err);
         return res.status(400).send(err);
+    }
+});
+
+app.post('/newComment', async (req, res) => {
+    // console.log("Inside New Comment Post Request");
+    try {
+        await Expense.findOneAndUpdate({
+            _id: req.body.expense_id
+        },
+        { $push: { comments: {
+            user_id: req.body.user_id,
+            name: req.body.user_name,
+            comment: req.body.comment
+        }}}
+        ).exec((err, result) => {
+            if (err) {return res.status(404).send(err)}
+            return res.status(200).send({})
+        })
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error!");
+    }
+});
+
+app.post('/deleteComment', async (req, res) => {
+    // console.log("Inside Delete Comment Post Request");
+    // console.log(req)
+    try {
+        await Expense.findOneAndUpdate({
+            _id: req.body.expense_id
+        },
+        { $pull: { 'comments': {
+            _id: req.body.comment_id
+        }}}
+        ).exec((err, result) => {
+            if (err) {return res.status(404).send(err)}
+            return res.status(200).send({})
+        })
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error!");
+    }
+});
+
+app.post('deleteExpense', async (req, res) => {
+    // console.log("Inside Delete Expense Post Request");
+    // console.log(req)
+    try {
+        await Expense.findOne({
+            _id: req.body.expense_id
+        })
+        .remove()
+        .exec((err, result) => {
+            if (err) {return res.status(404).send(err)}
+            return res.status(200).send({})
+        })
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error!");
     }
 });
 

@@ -14,6 +14,7 @@ export default class UserProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            userProfile: null,
             email: null,
             fullname:null,
             mobile:null,
@@ -26,7 +27,8 @@ export default class UserProfile extends Component {
             datasubmitted: false,
             rerender: 0,
             invalidEmail: false,
-            invalidMobile: false 
+            invalidMobile: false,
+            imageUrl: null 
         }
         this.emailChangeHandler = this.emailChangeHandler.bind(this);
         this.fullNameChangeHandler = this.fullNameChangeHandler.bind(this)
@@ -77,79 +79,96 @@ export default class UserProfile extends Component {
             })
     }
     submitData = async e => {
-        let number = this.state.mobile
-        if (number.length === 10 && /^\d{10}$/.test(number)) {
-            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-            let userId = userProfile.user_id
-            const data = {
-                user_id: userId,
-                email: this.state.email,
-                full_name: this.state.fullname,
-                phone: this.state.mobile,
-                currency: this.state.currency,
-                time_zone: this.state.timezone,
-                language: this.state.language,
-                profile_picture: this.state.profilepic
-            }
-            await axios.post(exportData.backendURL + 'updateUser', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+        if (this.state.email || this.state.fullname || this.state.mobile || this.state.currency || this.state.timezone || this.state.language || this.state.imageUrl) {
+            if (this.state.mobile === null || this.state.email === null
+                || (this.state.mobile && this.state.mobile.length === 10 && /^\d{10}$/.test(this.state.mobile)) 
+                || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))) {
+                let userProf = JSON.parse(localStorage.getItem('userProfile'))
+                let userId = userProf.user_id
+                const data = {
+                    user_id: userId,
+                    email: this.state.email,
+                    full_name: this.state.fullname,
+                    phone: this.state.mobile,
+                    currency: this.state.currency,
+                    time_zone: this.state.timezone,
+                    language: this.state.language,
+                    profile_picture: this.state.imageUrl
                 }
-            })
-                .then(async (res) => {
-                    if (res.status === 200) {
-                        console.log(res.data);
-                        if (res.data === "failed") {
-                            this.setState({
-                                rerender: this.state.rerender + 1,
-                                invalidEmail: true,
-                                email: null,
-                                fullname: null,
-                                mobile: null,
-                                currency: null,
-                                timezone: null,
-                                language: null,
-                                profilepic: null
-                            })
-                        } else {
-                            this.setState({
-                                rerender: this.state.rerender + 1,
-                                datasubmitted: true,
-                                email: null,
-                                fullname: null,
-                                mobile: null,
-                                currency: null,
-                                timezone: null,
-                                language: null,
-                                profilepic: null
-                            })
-                        }
+                this.setState({
+                    email: null,
+                    fullname: null,
+                    mobile: null,
+                    currency: null,
+                    timezone: null,
+                    language: null,
+                    profilepic: null
+                })
+                document.getElementById('nameInput').value = ''
+                document.getElementById('emailInput').value = ''
+                document.getElementById('mobileInput').value = ''
+                await axios.post(exportData.backendURL + 'updateUser', data, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
                     }
+                })
+                    .then(async (res) => {
+                        if (res.status === 200) {
+                            console.log(res.data);
+                            if (res.data === "failed") {
+                                this.setState({
+                                    rerender: this.state.rerender + 1,
+                                    invalidEmail: true,
+                                    // email: null,
+                                    // fullname: null,
+                                    // mobile: null,
+                                    // currency: null,
+                                    // timezone: null,
+                                    // language: null,
+                                    // profilepic: null
+                                })
+                            } else {
+                                this.setState({
+                                    rerender: this.state.rerender + 1,
+                                    datasubmitted: true,
+                                    // email: null,
+                                    // fullname: null,
+                                    // mobile: null,
+                                    // currency: null,
+                                    // timezone: null,
+                                    // language: null,
+                                    // profilepic: null
+                                })
+                            }
+                        }
 
 
-                }).catch((err) => {
-                    console.log(err)
-                });
-        } else {
-            this.setState({
-                rerender: this.state.rerender + 1,
-                invalidMobile: true,
-                email: null,
-                fullname: null,
-                mobile: null,
-                currency: null,
-                timezone: null,
-                language: null,
-                profilepic: null
-            })
+                    }).catch((err) => {
+                        console.log(err)
+                    });
+            } else {
+                this.setState({
+                    rerender: this.state.rerender + 1,
+                    invalidMobile: true,
+                    mobile: null,
+                    email: null,
+                    // fullname: null,
+                    // currency: null,
+                    // timezone: null,
+                    // language: null,
+                    // profilepic: null
+                })
+                document.getElementById('emailInput').value = ''
+                document.getElementById('mobileInput').value = ''
+            }
         }
     }
 
     componentDidMount = async () => {
         if(localStorage.getItem('userProfile')){
-            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-            let userId = userProfile.user_id
+            let userProf = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProf.user_id
             const data = {
                 user_id: userId
             }
@@ -165,13 +184,14 @@ export default class UserProfile extends Component {
                 if (res.status === 200) {
                     console.log(res.data);
                     this.setState({
-                        email: res.data.email,
-                        fullname: res.data.full_name,
-                        mobile: res.data.phone,
-                        currency: res.data.currency,
-                        timezone: res.data.time_zone,
-                        language: res.data.language,
-                        profilepic: res.data.profile_picture,
+                        userProfile: res.data
+                        // email: res.data.email,
+                        // fullname: res.data.full_name,
+                        // mobile: res.data.phone,
+                        // currency: res.data.currency,
+                        // timezone: res.data.time_zone,
+                        // language: res.data.language,
+                        // profilepic: res.data.profile_picture,
                     })
                 }
             }).catch((err) => {
@@ -184,8 +204,8 @@ export default class UserProfile extends Component {
     componentWillUpdate = async (prevProps, prevState) => {
         // console.log(this.state, prevState)
         if (this.state.rerender !== prevState.rerender) {
-            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-            let userId = userProfile.user_id
+            let userProf = JSON.parse(localStorage.getItem('userProfile'))
+            let userId = userProf.user_id
             const data = {
                 user_id: userId
             }
@@ -201,13 +221,14 @@ export default class UserProfile extends Component {
                 if (res.status === 200) {
                     console.log(res.data);
                     this.setState({
-                        email: res.data.email,
-                        fullname: res.data.full_name,
-                        mobile: res.data.phone,
-                        currency: res.data.currency,
-                        timezone: res.data.time_zone,
-                        language: res.data.language,
-                        profilepic: res.data.profile_picture,
+                        userProfile: res.data
+                        // email: res.data.email,
+                        // fullname: res.data.full_name,
+                        // mobile: res.data.phone,
+                        // currency: res.data.currency,
+                        // timezone: res.data.time_zone,
+                        // language: res.data.language,
+                        // profilepic: res.data.profile_picture,
                     })
                 }
             }).catch((err) => {
@@ -231,9 +252,10 @@ export default class UserProfile extends Component {
             User profile has been updated sucessfully
           </div>)
           setTimeout(() => {
-              if(document.getElementById('successDisp')){
-                document.getElementById('successDisp').classList.add('hidden')
-              }
+              this.setState({
+                  datasubmitted: false,
+                  rerender: this.state.rerender + 1
+              })
             },3500)
         }
         if (this.state.invalidEmail) {
@@ -241,9 +263,10 @@ export default class UserProfile extends Component {
                 Email Id has been taken. Try again.
             </div>)
             setTimeout(() => {
-                if(document.getElementById('failDisp')){
-                document.getElementById('failDisp').classList.add('hidden')
-                }
+                this.setState({
+                    invalidEmail: false,
+                    rerender: this.state.rerender + 1
+                })
             },3500)
         }
         if (this.state.invalidMobile) {
@@ -251,9 +274,10 @@ export default class UserProfile extends Component {
                 Invalid Details Entered
             </div>)
             setTimeout(() => {
-                if(document.getElementById('invalidMobileDisp')){
-                document.getElementById('invalidMobileDisp').classList.add('hidden')
-                }
+                this.setState({
+                    invalidMobile: false,
+                    rerender: this.state.rerender + 1
+                })
             },3500)
         }
         // if(this.state.errMessage){
@@ -268,7 +292,12 @@ export default class UserProfile extends Component {
         
         // <img className="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
         // let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
-        let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
+        // axios.get(exportData.backendURL+'profile/'+this.state.profilepic).then(async (res) => {
+        //     this.setState({
+
+        //     })
+        // })
+        let img_src = this.state.profilepic?this.state.profilepic:'https://spitwise.s3-us-west-2.amazonaws.com/' + (this.state.imageUrl?this.state.imageUrl:(this.state.userProfile?this.state.userProfile.profile_picture:null))
         // if (user.profile_picture && user.profile_picture !== '') {
         //     img_src = user.profile_picture
         // }
@@ -290,26 +319,35 @@ export default class UserProfile extends Component {
                                             <img className="picture-frame" alt='' src={img_src}  style={{width:'200px', height:'200px'}}/>
                                         </div>
                                         <div style={{display:'flex', flexDirection:'row'}}>
-                                            <input type="file" id="myFile" onChange={this.profilePicChangeHandler} name="filename" style={{ width: '80%', fontSize: '11px', margin: '10px 0px' }} />
-                                            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', cursor:'pointer'}} onClick={()=>{
+                                            <input type="file" id="myFile" onChange={this.profilePicChangeHandler} name="profilePic" style={{ width: '80%', fontSize: '11px', margin: '10px 0px' }} />
+                                            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', cursor:'pointer'}} onClick={async ()=>{
 
                                                 let formData = new FormData();
                                                 formData.append('myImage', this.state.profilepic);
                                                 const config = { headers: { 'content-type': 'multipart/form-data' } };
-                                                axios.post(exportData.backendURL+"uploadPic", formData, config).then(async (res) => {
-                                                    this.setState({profilepic:res.data})
+                                                await axios.post(exportData.backendURL+"uploadPic", formData, config).then(async (res) => {
+                                                    console.log('image', res)
+                                                    this.setState({imageUrl:res.data, profilepic:null})
                                                 }).catch((err) => {
                                                     console.log(err)
                                                 });
+
+                                                // await axios.get(exportData.backendURL+'profile/'+this.state.profilepic).then(async (res) => {
+                                                //     if(res.status === 200){
+                                                //         this.setState({
+                                                //             imageUrl: 'https://spitwise.s3-us-west-2.amazonaws.com/' + 
+                                                //         })
+                                                //     }
+                                                // })
 
                                             }}><i className="fa fa-check"></i></div>
                                         </div>
                                     </div>
                                     <div className="col-7">
                                         <div className='name field'>
-                                            <p>Your name</p>
+                                            <p>Your Name</p>
                                             <div className="initial_disp" id='name1'>
-                                                <strong>{(this.state.fullname)?this.state.fullname:''}</strong>
+                                                <strong>{(this.state.fullname)?this.state.fullname:(this.state.userProfile?this.state.userProfile.full_name:'')}</strong>
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.add('hidden')
                                                     document.getElementById('name2').classList.remove('hidden')
@@ -318,48 +356,53 @@ export default class UserProfile extends Component {
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='name2'>
-                                                <input type='text' id='nameInput' onChange={this.fullNameChangeHandler} placeholder={(this.state.fullname)?this.state.fullname:''} />
+                                                <input type='text' id='nameInput' onChange={this.fullNameChangeHandler} placeholder={this.state.userProfile?this.state.userProfile.full_name:''} />
                                                 <div onClick={(e)=>{
                                                     document.getElementById('name1').classList.remove('hidden')
                                                     document.getElementById('name2').classList.add('hidden')
-                                                    document.getElementById('nameInput').value = ''
                                                 }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
 
                                         <div className='email field'>
-                                            <p>Your name</p>
+                                            <p>Your Email ID</p>
                                             <div className="initial_disp" id='email1' onClick={(e)=> {
                                                 document.getElementById('email1').classList.add('hidden')
                                                 document.getElementById('email2').classList.remove('hidden')
                                             }}>
-                                                <strong>{(this.state.email)?this.state.email:''}</strong>
+                                                <strong>{(this.state.email)?this.state.email:(this.state.userProfile?this.state.userProfile.email:'')}</strong>
                                                 <div>
                                                     <i className="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp  hidden' id='email2'>
-                                                <input type='text' id='emailInput' onChange={this.emailChangeHandler} placeholder={(this.state.email)?this.state.email:''} />
+                                                <input type='email' id='emailInput' onChange={this.emailChangeHandler} placeholder={this.state.userProfile?this.state.userProfile.email:''} />
                                                 <div onClick={(e)=>{
-                                                    document.getElementById('email1').classList.remove('hidden')
-                                                    document.getElementById('email2').classList.add('hidden')
+                                                    // if(this.state.email === null || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))){
+                                                    //     document.getElementById('email1').classList.remove('hidden')
+                                                    //     document.getElementById('email2').classList.add('hidden')
+                                                    // }
+                                                    // if(this.state.email === null || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))){
+                                                        document.getElementById('email1').classList.remove('hidden')
+                                                        document.getElementById('email2').classList.add('hidden')
+                                                    // }
                                                 }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
 
                                         <div className='mobile field'>
-                                            <p>Your phone number</p>
+                                            <p>Your Mobile</p>
                                             <div className="initial_disp" id='phone1' onClick={(e)=>{
                                                 document.getElementById('phone1').classList.add('hidden')
                                                 document.getElementById('phone2').classList.remove('hidden')
                                             }}>
-                                                <strong>{(this.state.mobile)?this.state.mobile:''}</strong>
+                                                <strong>{(this.state.mobile)?this.state.mobile:(this.state.userProfile?this.state.userProfile.phone:'')}</strong>
                                                 <div>
                                                     <i className="fa fa-edit"></i> <span>Edit</span>
                                                 </div>
                                             </div>
                                             <div className='hidden_disp hidden' id='phone2'>
-                                                <input type='text' id='mobileInput' onChange={this.mobileChangeHandler} placeholder={(this.state.mobile)?this.state.mobile:''} />
+                                                <input type='number' id='mobileInput' onChange={this.mobileChangeHandler} placeholder={this.state.userProfile?this.state.userProfile.phone:''} />
                                                 <div onClick={(e)=> {
                                                     document.getElementById('phone1').classList.remove('hidden')
                                                     document.getElementById('phone2').classList.add('hidden')
@@ -373,9 +416,9 @@ export default class UserProfile extends Component {
                             <div className='col-1'></div>
                             <div className="col-4">
                                 <div className='currency field'>
-                                    <p>Your default currency</p>
+                                    <p>Your Default Currency</p>
                                     <p style={{fontSize:'12px'}}>(for new expenses)</p>
-                                    <select className="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" value={(this.state.currency)?this.state.currency:'USD'}>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.currencyChangeHandler} name="currency" id="currency" value={(this.state.currency)?this.state.currency:(this.state.userProfile?this.state.userProfile.currency:'USD')}>
                                         <option value="USD">USD ($)</option>
                                         <option value="KWD">KWD (KWD)</option>
                                         <option value="BHD">BHD (BD)</option>
@@ -385,8 +428,8 @@ export default class UserProfile extends Component {
                                     </select>
                                 </div>
                                 <div className='timezone field'>
-                                    <p>Your time zone</p>
-                                    <select className="btn btn-light dropdown-toggle" onChange={this.timeZoneChangeHandler} name="timezone" id="timezone" value={(this.state.timezone)?this.state.timezone:'-8'} style={{ width: '80%' }}>
+                                    <p>Your Time Zone</p>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.timeZoneChangeHandler} name="timezone" id="timezone" value={(this.state.timezone)?this.state.timezone:(this.state.userProfile?this.state.userProfile.time_zone:'-8')} style={{ width: '80%' }}>
                                         <option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
                                         <option timeZoneId="2" gmtAdjustment="GMT-11:00" useDaylightTime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
                                         <option timeZoneId="3" gmtAdjustment="GMT-10:00" useDaylightTime="0" value="-10">(GMT-10:00) Hawaii</option>
@@ -472,8 +515,8 @@ export default class UserProfile extends Component {
                                     </select>
                                 </div>
                                 <div className='language field'>
-                                    <p>Language</p>
-                                    <select className="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" value={(this.state.language)?this.state.language:'USD'}>
+                                    <p>Your Language</p>
+                                    <select className="btn btn-light dropdown-toggle" onChange={this.languageChangeHandler} name="language" id="language" value={(this.state.language)?this.state.language:(this.state.userProfile?this.state.userProfile.language:'EN')}>
                                         <option value="AF">Afrikaans</option>
                                         <option value="SQ">Albanian</option>
                                         <option value="AR">Arabic</option>

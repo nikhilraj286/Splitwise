@@ -22,7 +22,23 @@ const ExpenseSchema = new Schema({
     group_id: {
         type: Schema.Types.ObjectId,
         ref: "Group"
-    }
+    },
+    comments:[{
+        user_id:{
+            type: Schema.Types.ObjectId, 
+            ref: "User"
+        },
+        name:{
+            type: String, 
+        },
+        comment:{
+            type: String
+        },
+        date_posted: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 })
 
 module.exports = mongoose.model('Expense', ExpenseSchema)

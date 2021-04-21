@@ -88,6 +88,48 @@
     background-color: #eee;
 }
 
+.expense_row:hover{
+    cursor: pointer;
+}
+
+.expense_row:hover .fa-times{
+    color: red
+}
+
+.expense_row:hover .fa-comments{
+    color: orange
+}
+
+.expense_row:hover .expense-desc{
+    text-decoration: underline;
+}
+
+.delete-comment:hover {
+    cursor: pointer;
+}
+
+.delete-comment:hover .fa-trash{
+    color: red;
+}
+
+.bg_gray {
+    background-color: #eee;
+    border-top: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd */
+}
+
+.bg_gray .fa-times {
+    color: red
+}
+
+.bg_gray .fa-comments {
+    color: orange
+}
+
+.bg_gray .expense-desc {
+    text-decoration: underline;
+}
+
 
 .selected-tab{
     border-left: 6px solid #5bc5a7;

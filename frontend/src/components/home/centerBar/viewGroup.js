@@ -21,12 +21,20 @@ export default class ViewGroup extends React.Component {
             expense_amount: null,
             rerender: 0,
             transactions: [],
-            expenses: []
+            expenses: [],
+            newComment: null,
+            commentFor: null,
+            deleteComment: null,
+            deleteCommentFor: null,
+            ddeleteExpense: null
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
         this.leaveGroup = this.leaveGroup.bind(this)
+        this.postComent = this.postComent.bind(this)
+        this.deleteComment = this.deleteComment.bind(this)
+        this.deleteExpense = this.deleteExpense.bind(this)
         // alert('hello')
     }
 
@@ -78,13 +86,97 @@ export default class ViewGroup extends React.Component {
 
     }
 
+    postComent = async e => {
+        e.preventDefault()
+        if(this.state.commentFor && this.state.newComment){
+            let userProfile = JSON.parse(localStorage.getItem('userProfile'))
+            let data = {
+                expense_id: this.state.commentFor,
+                comment: this.state.newComment,
+                user_id: userProfile.user_id,
+                user_name: userProfile.full_name
+            }
+            // console.log(data)
+            this.setState({
+                newComment: null
+            })
+            document.getElementById('ta' + this.state.commentFor).value = ""
+            axios.defaults.withCredentials = true;
+            await axios.post(exportData.backendURL + 'newComment', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+                if(res.status === 200){
+                    this.setState({
+                        rerender: (this.state.rerender) + 1
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }
+
+    deleteComment = async e => {
+        e.preventDefault()
+        if(this.state.deleteCommentFor && this.state.deleteComment){
+            let data = {
+                expense_id: this.state.deleteCommentFor,
+                comment_id: this.state.deleteComment,
+            }
+            // console.log(data)
+            axios.defaults.withCredentials = true;
+            await axios.post(exportData.backendURL + 'deleteComment', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+                if(res.status === 200){
+                    this.setState({
+                        rerender: (this.state.rerender) + 1
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }
+
+    deleteExpense = async e => {
+        e.preventDefault()
+        if(this.state.deleteExpense){
+            let data = {
+                expense_id: this.state.deleteExpense,
+            }
+            // console.log(data)
+            axios.defaults.withCredentials = true;
+            await axios.post(exportData.backendURL + 'deleteExpense', data, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+                if(res.status === 200){
+                    this.setState({
+                        rerender: (this.state.rerender) + 1
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }
+
     handleSubmit = async () => {
         this.handleClose()
         if (this.state.expense_amount > 0) {
 
             let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
             let userList = []
-            this.state.groups.UserToGroups.forEach(item => {
+            this.state.groups.userToGroups.forEach(item => {
                 if (!item.has_invite) {
                     userList.push(item)
                 }
@@ -313,7 +405,7 @@ export default class ViewGroup extends React.Component {
             let expense_sum = {}
 
             // console.log('state', this.state.groups);
-            temp = this.state.groups.UserToGroups
+            temp = this.state.groups.userToGroups
             console.log(temp)
             temp.forEach((item) => {
                 if (!item.has_invite) {
@@ -375,7 +467,7 @@ export default class ViewGroup extends React.Component {
                 }
             })
 
-            let user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
+            let user_id = localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')).user_id : null
             if (expense_sum[user_id] === 0) {
                 leaveGroupClass = (<div>
                     <button className="btn btn-green" style={{ padding: '4px 8px', margin: '0 8px', fontSize: '14px', color: '#fff' }} onClick={this.leaveGroup}>Leave Group</button>
@@ -396,15 +488,68 @@ export default class ViewGroup extends React.Component {
         let groupname = (this.state.groups) ? this.state.groups.group_name : null
         let expenses = (this.state.expenses) ? this.state.expenses : null
         let expenseList = []
+        let user_id = localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')).user_id : null
         // console.log(expenses, typeof(expenses)) 
         if (expenses) {
             expenses = expenses.slice().reverse()
             expenses.forEach((item) => {
+                let comments = item.comments ? item.comments : []
+                let commentIcon = (comments.length > 0) ? <div style={{marginLeft:'10px'}}><i class="fa fa-comments"></i></div>: null
                 let date = new Date(item.date_paid)
+                let comment_disp = []
+                if(comments.length > 0){
+                    comments.forEach((comment) => {
+                        let commentDeleteButton = (comment.user_id === user_id) ? <i class="fa fa-trash"></i> : null
+                        comment_disp.push(
+                            <div className="comment_div row" key={comment._id} id={comment._id} style={{ backgroundColor:'white', borderRadius:'5px', padding:'10px', margin:'10px 0', border:'1px solid #ced4da'}}>
+                                <div className='col-11' style={{fontSize:'14px'}}>
+                                    <div style={{color:'black', fontWeight: 'bold'}}>{comment.name}</div>
+                                    <div style={{whiteSpace:'pre-wrap'}}>{comment.comment}</div>
+                                </div>
+                                <div className='col-1 delete-comment' style={{display:'flex', flexDirection:'column', justifyContent:'center'}} onClick={ async e => {
+                                    await this.setState({
+                                        deleteComment: comment._id,
+                                        deleteCommentFor: item.exp_id
+                                    })
+                                    this.deleteComment(e)
+                                }}>
+                                    {commentDeleteButton}
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+                let commentBody = (
+                    <div className='comment-pane hidden' id={item.exp_id} style={{backgroundColor: '#eee', padding:'10px 110px', borderBottom:'1px solid #ddd'}}>
+                        <hr style={{ margin: 0, marginBottom:'15px' }}/>
+                        <div style={{fontSize: '12px', fontWeight: 'bold', color:'#777'}}>NOTES AND COMMENTS</div>
+                        {comment_disp}
+                        <textarea class="form-control" id={'ta' + item.exp_id} rows="2" style={{width:'75%'}} onChange={(e)=>{
+                            this.setState({newComment: e.target.value})
+                        }}></textarea>
+                        <div className='btn btn-orange' style={{fontSize: '14px', color:'white', margin:'10px 0'}} onClick={ async e => {
+                            await this.setState({commentFor: item.exp_id})
+                            this.postComent(e)
+                        }}>Post</div>
+                    </div>)
                 // console.log(date)
                 // console.log(item)
                 expenseList.push(
-                    <div className="expense_row row" style={{ margin: '0', padding: '15px 0', boxShadow: '0 1px 1px -1px gray' }}>
+                    <div>
+                    <div className="expense_row row" id={'e' + item.exp_id} style={{ margin: '0', padding: '15px 0', boxShadow: '0 1px 1px -1px gray' }} onClick={(e)=>{
+                        if (document.getElementById(item.exp_id)) {
+                            let comm = document.getElementById(item.exp_id)
+                            if (comm.classList.contains('hidden')) {
+                                document.getElementById('e' + item.exp_id).classList.add('bg_gray')
+                                // e.target.style.backgroundColor = '#eee'
+                                comm.classList.remove('hidden')
+                            } else {
+                                // document.getElementById('e' + item.exp_id).style.backgroundColor = '#fff'
+                                document.getElementById('e' + item.exp_id).classList.remove('bg_gray')
+                                comm.classList.add('hidden')
+                            }
+                        }
+                    }}>
                         <div className="col-2" style={{ padding: '0', textAlign: 'center' }}>
                             <div>{date.toLocaleString('default', { month: 'short' })}</div>
                             <div>{date.getDate()}</div>
@@ -412,11 +557,20 @@ export default class ViewGroup extends React.Component {
                         <div className="col-1" style={{ padding: '0', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             <img alt="" width="80%" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/food-and-drink/groceries@2x.png" className="receipt"></img>
                         </div>
-                        <div className="col-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '18px', paddingLeft: '10px' }}><strong>{item.desc}</strong></div>
-                        <div className='col-3'>
-                            <div style={{ fontSize: '12px', color: '#777' }}>{all_users[item.paid_by].name} paid</div>
+                        <div className="col-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '18px', paddingLeft: '10px' }}>
+                            <div className="expense-desc" style={{display: 'flex'}}><strong>{item.desc}</strong> {commentIcon}</div>
+                        </div>
+                        <div className='col-2'>
+                            <div style={{ fontSize: '12px', color: '#777' }}><strong>{all_users ? all_users[item.paid_by].name : null}</strong> paid</div>
                             <div><strong>$ {item.amount}</strong></div>
                         </div>
+                        {/* <div className='col-1' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
+                            <i class="fa fa-times"></i>
+                        </div> */}
+
+                        
+                    </div>
+                        {commentBody}
                     </div>
 
                 )
@@ -432,7 +586,7 @@ export default class ViewGroup extends React.Component {
             <div>
                 {redirectvar}
                 <div className="main_row row" style={{ margin: '0' }}>
-                    <div className="col-8" style={{ padding: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', minHeight: '100vh' }}>
+                    <div className="col-9" style={{ padding: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', minHeight: '100vh' }}>
                         <div className="row" style={{ backgroundColor: '#eee', padding: '20px 10px', margin: '0' }}>
                             <div className="col-8"><h3>{groupname}</h3></div>
                             <div className="col-4">
@@ -478,7 +632,7 @@ export default class ViewGroup extends React.Component {
                         {expenseList}
 
                     </div>
-                    <div className="col-4" style={{ paddingTop: '15px' }}>
+                    <div className="col-3" style={{ paddingTop: '15px' }}>
                         {leaveGroupClass}
                         {Expense_disp}
                     </div>

@@ -24,18 +24,20 @@ app.post('/getUser', async (req,res) => {
 
 app.post('/updateUser',async (req,res) => {
     console.log("Inside update User Post Request");
+    console.log(req.body)
+    let data = {}
+    if(req.body.email){data.email = req.body.email}
+    if(req.body.full_name){data.full_name = req.body.full_name}
+    if(req.body.phone){data.phone = req.body.phone}
+    if(req.body.currency){data.currency = req.body.currency}
+    if(req.body.time_zone){data.time_zone = req.body.time_zone}
+    if(req.body.language){data.language = req.body.language}
+    if(req.body.profile_picture){data.profile_picture = req.body.profile_picture}
+    console.log(data)
     try {
         await User.findOneAndUpdate(
             { _id: req.body.user_id},
-            {$set:{
-                email: req.body.email,
-                full_name: req.body.full_name,
-                phone: req.body.phone,
-                currency: req.body.currency,
-                time_zone: req.body.time_zone,
-                language: req.body.language,
-                profile_picture: req.body.profile_picture
-            }},
+            {$set:data},
             (err, result) => {
                 if (err) {
                     console.log(chalk.blue(err))

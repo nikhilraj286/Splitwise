@@ -80,6 +80,7 @@ app.post('/getGroupData', async (req,res) => {
     // console.log("Inside Get Group data Request");
     
     try {
+        // .populate({path:'comments._id',model:'User'})
         await Group.findOne({_id: req.body.group_id})
         .populate({path:'user_list._id',model:'User'})
         .exec((err, result) => {
@@ -92,15 +93,25 @@ app.post('/getGroupData', async (req,res) => {
             output.group_name = result.group_name
             output.group_desc = result.group_desc
             output.total_users = result.total_users
-            output.UserToGroups = []
+            output.userToGroups = []
+            // output.comments = []
             for (let item of result.user_list){
                 data = {}
                 data.user_id = item._id._id
                 data.full_name = item._id.full_name
                 data.email = item._id.email
                 data.has_invite = item.has_invite
-                output.UserToGroups.push(data)
+                output.userToGroups.push(data)
             }
+            // output.comments = result.comments
+            // for (let item of result.comments){
+            //     data = {}
+            //     data.user_id = item._id._id
+            //     data.name = item._id.full_name
+            //     data.comment = item.comment
+            //     data.date_posted = item.date_posted
+            //     output.comments.push(data)
+            // }
             // console.log(output)
             return res.status(200).send(output)
         })
