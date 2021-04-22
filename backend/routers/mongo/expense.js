@@ -5,8 +5,9 @@ const Expense = require('../../models/mongo/Expense')
 const Transaction = require('../../models/mongo/Transaction')
 const Promise = require("bluebird");
 const router = express.Router();
+const { checkAuth } = require("../../utils/passport");
 
-app.post('/getExpensesForGroup', async (req, res) => {
+app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
     // console.log("Inside Get Expenses for group Request");
     try {
         Expense.find({ group_id: req.body.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
@@ -33,7 +34,7 @@ app.post('/getExpensesForGroup', async (req, res) => {
     }
 });
 
-app.post('/newExpense', async (req, res) => {
+app.post('/newExpense', checkAuth, async (req, res) => {
     // console.log("Inside New Expense Post Request");
     try {
         const expense = new Expense({
@@ -79,7 +80,7 @@ app.post('/newExpense', async (req, res) => {
     }
 });
 
-app.post('/newComment', async (req, res) => {
+app.post('/newComment', checkAuth, async (req, res) => {
     // console.log("Inside New Comment Post Request");
     try {
         await Expense.findOneAndUpdate({
@@ -100,7 +101,7 @@ app.post('/newComment', async (req, res) => {
     }
 });
 
-app.post('/deleteComment', async (req, res) => {
+app.post('/deleteComment', checkAuth, async (req, res) => {
     // console.log("Inside Delete Comment Post Request");
     // console.log(req)
     try {
@@ -120,7 +121,7 @@ app.post('/deleteComment', async (req, res) => {
     }
 });
 
-app.post('deleteExpense', async (req, res) => {
+app.post('deleteExpense', checkAuth, async (req, res) => {
     // console.log("Inside Delete Expense Post Request");
     // console.log(req)
     try {

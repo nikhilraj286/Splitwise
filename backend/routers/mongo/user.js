@@ -3,8 +3,9 @@ const chalk = require('chalk');
 const app = require('../../app');
 const User = require('../../models/mongo/User')
 const router = express.Router();
+const { checkAuth } = require("../../utils/passport");
 
-app.post('/getUser', async (req,res) => {
+app.post('/getUser', checkAuth, async (req,res) => {
     // console.log(chalk.blue("Inside Get User Post Request"));
     // var res = {}
     try {
@@ -22,9 +23,9 @@ app.post('/getUser', async (req,res) => {
     return res.status(500).send("Internal Server Error!");
 });
 
-app.post('/updateUser',async (req,res) => {
-    console.log("Inside update User Post Request");
-    console.log(req.body)
+app.post('/updateUser', checkAuth, async (req,res) => {
+    // console.log("Inside update User Post Request");
+    // console.log(req.body)
     let data = {}
     if(req.body.email){data.email = req.body.email}
     if(req.body.full_name){data.full_name = req.body.full_name}
@@ -33,17 +34,17 @@ app.post('/updateUser',async (req,res) => {
     if(req.body.time_zone){data.time_zone = req.body.time_zone}
     if(req.body.language){data.language = req.body.language}
     if(req.body.profile_picture){data.profile_picture = req.body.profile_picture}
-    console.log(data)
+    // console.log(data)
     try {
         await User.findOneAndUpdate(
             { _id: req.body.user_id},
             {$set:data},
             (err, result) => {
                 if (err) {
-                    console.log(chalk.blue(err))
+                    console.log(err)
                     return res.status(200).send("failed");
                 }
-                console.log(chalk.red(result))
+                // console.log(chalk.red(result))
                 return res.status(200).send(result)
             });
         }
@@ -53,7 +54,7 @@ app.post('/updateUser',async (req,res) => {
     // return res.status(500).send("Internal Server Error!");
 });
 
-app.get('/getUsers', async (req,res) => {
+app.get('/getUsers', checkAuth, async (req,res) => {
     // console.log("Inside Get users Request");
     try {
         await User.find({},
@@ -66,7 +67,7 @@ app.get('/getUsers', async (req,res) => {
                 for(let item of result){
                     let data = JSON.parse(JSON.stringify(item))
                     data.user_id = String(item._id)
-                    // console.log(data)
+                    console.log(data)
                     // console.log('*************************')
                     output.push(data)
                 }
@@ -79,7 +80,7 @@ app.get('/getUsers', async (req,res) => {
     // return res.status(500).send("Internal Server Error!");
 });
 
-app.get('/getAllUsersNames', async (req,res) => {
+app.get('/getAllUsersNames', checkAuth, async (req,res) => {
     // console.log("Inside Get users Request");
     try {
         await User.find({},

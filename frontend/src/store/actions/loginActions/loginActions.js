@@ -1,5 +1,6 @@
 import axios from 'axios';
 import exportData from '../../../config/config';
+import jwt_decode from 'jwt-decode';
 
 export const login = (data) => async dispatch => {
     axios.defaults.withCredentials = true;
@@ -12,11 +13,20 @@ export const login = (data) => async dispatch => {
     .then(async res => {
         // console.log(res);
         if(res.status === 200) {
-            // console.log(res);
-            localStorage.setItem('userProfile', JSON.stringify(res.data))
+            // console.log(res.data);
+            const jwttoken = res.data
+            localStorage.setItem("token", jwttoken)
+            var decoded = jwt_decode(jwttoken.split(' ')[1])
+            // console.log(decoded);
+            let userprofile = {
+                user_id: decoded.user_id,
+                full_name: decoded.full_name,
+                email: decoded.email
+            }
+            localStorage.setItem('userProfile', JSON.stringify(userprofile))
             dispatch({
                 type: 'LOGIN',
-                payload: res.data
+                payload: userprofile
             })
         } else {
             console.log(res);
@@ -26,7 +36,7 @@ export const login = (data) => async dispatch => {
         console.log(err);
         dispatch({
             type: 'LOGIN',
-            payload: 404
+            payload: 400
         })
     })
 }

@@ -1,10 +1,13 @@
-import axios from 'axios'
+// import axios from 'axios'
 import { Button, Modal } from 'react-bootstrap'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import exportData from '../../../config/config'
+// import exportData from '../../../config/config'
+import { connect } from 'react-redux';
+import { settleup } from '../../../store/actions/transactionActions/settleupActions'
+import { getTransactions } from '../../../store/actions/transactionActions/getTransactionsActions'
 
-export default class Dashboard extends React.Component {
+class Dashboard extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -42,87 +45,105 @@ export default class Dashboard extends React.Component {
             }
         })
         console.log("data --------->",data)
-        // console.log(userId, this.state.selectedPerson)
-        // const data1 = {
-        //     user_id1: userId,
-        //     user_id2: this.state.selectedPerson
-        // }
-        // console.log(data)
-        axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'settleup', data, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(async (res) => {
-            console.log('status', res.status)
-            if (res.status === 200) {
-                this.setState({rerender:this.state.rerender+1})
-            }
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+        // axios.defaults.withCredentials = true;
+        // await axios.post(exportData.backendURL+'settleup', data, {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+        // .then(async (res) => {
+        //     console.log('status', res.status)
+        //     if (res.status === 200) {
+        //         await this.setState({rerender:this.state.rerender+1})
+        //     }
+        // })
+        // .catch((err) => {
+        //     console.log(err)
+        // })
+        await this.props.settleup(data)
+        // console.log('after settleup - ', this.props)
+        if(this.props.settleupDetails === 200){
+            this.setState({
+                settledUp: true
+            })
+        }
+        await this.props.getTransactions()
+        // console.log('after get in mount - ', this.props)
+        if(this.props.getTransactionsDetails !== 400){
+            this.setState({
+                transactions: this.props.getTransactionsDetails,
+            })
+        }
     }
 
     componentDidMount = async () => {
-        axios.defaults.withCredentials = true;
-        await axios.get(exportData.backendURL+'getTransactions', {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    // this.setState({
-                    //     groups.
-                    // })
-                    // console.log('Trasactions',res.data)
-                    this.setState({
-                        transactions: res.data
-                    })
-                    // this.setState({
-                    //     groups: res.data[0]
-                    // })
-                    // console.log('res', res.data[0])
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
-    }
+        // axios.defaults.withCredentials = true;
+        // await axios.get(exportData.backendURL+'getTransactions', {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+        //     .then(async (res) => {
+        //         // console.log("Status Code : ", res.status);
+        //         if (res.status === 200) {
+        //             // this.setState({
+        //             //     groups.
+        //             // })
+        //             // console.log('Trasactions',res.data)
+        //             this.setState({
+        //                 transactions: res.data,
+        //                 rerender: (this.state.rerender) + 1
+        //             })
+        //             // this.setState({
+        //             //     groups: res.data[0]
+        //             // })
+        //             // console.log('res', res.data[0])
+        //         }
+        //     }).catch((err) => {
+        //         console.log(err)
+        //     });
 
-    componentDidUpdate = async (prevProps, prevState) => {
-        if (this.state.rerender > prevState.rerender) {
-            axios.defaults.withCredentials = true;
-            await axios.get(exportData.backendURL + 'getTransactions', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
+        await this.props.getTransactions()
+        // console.log('after get in mount - ', this.props)
+        if(this.props.getTransactionsDetails !== 400){
+            this.setState({
+                transactions: this.props.getTransactionsDetails,
+                // rerender: (this.state.rerender) + 1
             })
-                .then(async (res) => {
-                    // console.log("Status Code : ", res.status);
-                    if (res.status === 200) {
-                        // this.setState({
-                        //     groups.
-                        // })
-                        // console.log('Trasactions',res.data)
-                        this.setState({
-                            transactions: res.data
-                        })
-                        // this.setState({
-                        //     groups: res.data[0]
-                        // })
-                        // console.log('res', res.data[0])
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                });
         }
     }
+
+    // componentDidUpdate = async (prevProps, prevState) => {
+        // if (this.state.rerender > prevState.rerender) {
+        //     axios.defaults.withCredentials = true;
+        //     await axios.get(exportData.backendURL + 'getTransactions', {
+        //         headers: {
+        //             'Accept': 'application/json',
+        //             'Content-Type': 'application/json'
+        //         }
+        //     })
+        //         .then(async (res) => {
+        //             // console.log("Status Code : ", res.status);
+        //             if (res.status === 200) {
+        //                 // this.setState({
+        //                 //     groups.
+        //                 // })
+        //                 // console.log('Trasactions',res.data)
+        //                 this.setState({
+        //                     transactions: res.data
+        //                 })
+        //                 // this.setState({
+        //                 //     groups: res.data[0]
+        //                 // })
+        //                 // console.log('res', res.data[0])
+        //             }
+        //         }).catch((err) => {
+        //             console.log(err)
+        //         });
+        // }
+    // }
 
 
 
@@ -146,6 +167,8 @@ export default class Dashboard extends React.Component {
             // console.log(JSON.parse(localStorage.getItem('allUsers')))
             // console.log('state', this.state.groups);
             let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+            // console.log(allUsers)
+            // let userListToSettle = []
             let userId = JSON.parse(localStorage.getItem('userProfile'))?JSON.parse(localStorage.getItem('userProfile')).user_id:null
             if (localStorage.getItem('allUsers')) {
                 let temp = Object.keys(allUsers)
@@ -170,12 +193,14 @@ export default class Dashboard extends React.Component {
                 // console.log(expense_sum)
                 // console.log('expenses',expense_sum)
                 temp.forEach(item => {
-                    if (Number(item) !== userId) {
+                    if (item !== userId) {
                         // if(item !== userId){
                         // console.log(item, userId)
                         var amount = expense_sum[item]
                         amount = Number(amount.toFixed(2))
-
+                        if (amount !== 0){
+                            allUserList.push(<option key={item} dataId={item}>{allUsers[item].name}</option>)
+                        }
                         if (amount < 0) {
                             total_owes_you = total_owes_you + amount
                             amount = amount * (-1)
@@ -213,22 +238,22 @@ export default class Dashboard extends React.Component {
             }
         }
 
-        if (localStorage.getItem('allUsers')) {
-            let allUsers = JSON.parse(localStorage.getItem('allUsers'))
-            let curuserId = JSON.parse(localStorage.getItem('userProfile')).user_id
-            // console.log('sfvfdvdv', allUsers)
-            let keys1 = Object.keys(allUsers)
-            keys1.forEach(item => {
-                // console.log(item)
-                let data = allUsers[item]
-                // console.log(data)
-                if(data.user_id !== curuserId){
-                    allUserList.push(<option key={data.user_id} dataId={data.user_id}>{data.name}</option>)
-                }
-            })
-            // console.log(allUserList)
+        // if (localStorage.getItem('allUsers')) {
+        //     let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+        //     let curuserId = JSON.parse(localStorage.getItem('userProfile')).user_id
+        //     // console.log('sfvfdvdv', allUsers)
+        //     let keys1 = Object.keys(allUsers)
+        //     keys1.forEach(item => {
+        //         // console.log(item)
+        //         let data = allUsers[item]
+        //         // console.log(data)
+        //         if(data.user_id !== curuserId){
+        //             allUserList.push(<option key={data.user_id} dataId={data.user_id}>{data.name}</option>)
+        //         }
+        //     })
+        //     // console.log(allUserList)
 
-            }
+        //     }
 
         function getColor(amount) {
             if (amount < 0) { return '#ff652f' }
@@ -237,7 +262,7 @@ export default class Dashboard extends React.Component {
         }
 
         
-        
+        // console.log(you_owe.length === 0)
 
         // let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         return (
@@ -304,13 +329,13 @@ export default class Dashboard extends React.Component {
                                 </div>
                                 <div className="col" style={{ boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8), -3px 0 3px -4px rgba(31, 73, 125, 0.8)', padding: '15px 0' }}>
                                     <div>you owe</div>
-                                    <div style={{ color: getColor(total_you_owe) }}>
+                                    <div style={{ color: getColor(total_you_owe * (-1)) }}>
                                         ${(total_you_owe < 0) ? (total_you_owe * (-1)) : (total_you_owe)}
                                     </div>
                                 </div>
                                 <div className="col" style={{ padding: '15px 0' }}>
                                     <div>you are owed</div>
-                                    <div style={{ color: getColor(total_owes_you) }}>
+                                    <div style={{ color: getColor(total_owes_you * (-1)) }}>
                                         ${(total_owes_you < 0) ? (total_owes_you * (-1)) : (total_owes_you)}
                                     </div>
                                 </div>
@@ -320,6 +345,11 @@ export default class Dashboard extends React.Component {
                             <div className="row justify-content-center" style={{ margin: '40px 0' }}>
                                 <div className="col-5" style={{ boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)' }}>{you_owe}</div>
                                 <div className="col-5">{owes_you}</div>
+                                {owes_you.length === 0 && you_owe.length === 0?
+                                <div><div class="alert alert-light" style={{textAlign: 'center'}} role="alert">
+                                No data to display
+                                </div></div>
+                                : null}
                             </div>
                         </div>
                     </div>
@@ -337,4 +367,12 @@ export default class Dashboard extends React.Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    console.log(state)
+    return({
+        settleupDetails:state.settleupDetails.user,
+        getTransactionsDetails:state.getTransactionsDetails.user
+    })
+}
 
+export default connect(mapStateToProps, {settleup, getTransactions})(Dashboard)

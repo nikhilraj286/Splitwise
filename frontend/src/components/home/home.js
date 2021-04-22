@@ -9,8 +9,12 @@ import Dashboard from './centerBar/dashboard';
 import ViewGroup from './centerBar/viewGroup'
 import RecentActivity from './centerBar/recentActivity'
 import MyGroups from './centerBar/myGroups'
-import axios from 'axios';
-import exportData from '../../config/config';
+// import axios from 'axios';
+// import exportData from '../../config/config';
+import { connect } from 'react-redux'
+import { acceptInvite } from '../../store/actions/groupActions/acceptInviteActions'
+import { getGroups } from '../../store/actions/groupActions/getGroupsActions'
+import { getAllUsersNames } from '../../store/actions/userActions/getAllUserNamesActions'
 
 class Home extends Component {
     state = {
@@ -44,7 +48,8 @@ class Home extends Component {
 
         ],
         groups: [],
-        rerender: 0
+        rerender: 0,
+        inviteAccepted: false
 
     }
 
@@ -52,7 +57,7 @@ class Home extends Component {
         // console.log("inside change tab - ",id)
         this.setState({
             tabSelected: id,
-            rerender: this.state.rerender
+            rerender: this.state.rerender + 1
         })
         let data = JSON.parse(localStorage.getItem('selectedTab'))
         data.tabSelected = id
@@ -61,11 +66,11 @@ class Home extends Component {
     }
 
     changeGroup = (tabSelectedId, groupSelectedId) => {
-        // console.log("inside change group - ",tabSelected,groupSelected)
+        console.log("inside change group - ",tabSelectedId,groupSelectedId)
         this.setState({
             tabSelected: tabSelectedId,
             groupSelected: groupSelectedId,
-            rerender: this.state.rerender
+            rerender: this.state.rerender + 1
         });
         let data = JSON.parse(localStorage.getItem('selectedTab'))
         data.tabSelected = tabSelectedId
@@ -80,29 +85,38 @@ class Home extends Component {
                 user_id: userId,
                 group_id: groupId
             }
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL+'acceptInvite', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL+'acceptInvite', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            // .then((res) => {
+            //     console.log("Status Code : ", res.status);
+            //     if (res.status === 200) {
+            //         this.setState({
+            //             rerender: this.state.rerender + 1
+            //         })
+            //         // console.log("State -> ",this.state)
+            //         // this.props.history.push('/home')
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // });
+            this.setState({
+                inviteAccepted: false
             })
-            .then((res) => {
-                console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    this.setState({
-                        rerender: this.state.rerender + 1
-                    })
-                    // console.log("State -> ",this.state)
-                    // this.props.history.push('/home')
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
+            await this.props.acceptInvite(data)
+            if(this.props.acceptInviteDetails === 200){
+                this.setState({
+                    inviteAccepted: true
+                })
+            }
         }
     }
 
-    componentWillMount = async () => {
+    componentDidMount = async () => {
         // console.log(this.state)
         if(localStorage.getItem('selectedTab')){
             let selectedTabData = JSON.parse(localStorage.getItem('selectedTab'))
@@ -125,75 +139,93 @@ class Home extends Component {
             const data = {
                 user_id: userId
             }
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL+'getGroups', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    // this.setState({
-                    //     groups.
-                    // })
-                    // console.log(res.data)
-                    this.setState({
-                        groups: res.data,
-                        rerender: 0
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL+'getGroups', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            // .then(async (res) => {
+            //     // console.log("Status Code : ", res.status);
+            //     if (res.status === 200) {
+            //         // this.setState({
+            //         //     groups.
+            //         // })
+            //         // console.log(res.data)
+            //         this.setState({
+            //             groups: res.data,
+            //             rerender: 0
+            //         })
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // });
 
-            await axios.get(exportData.backendURL+'getAllUsersNames', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    // this.setState({
-                    //     groups.
-                    // })
-                    // console.log(res.data)
-                    localStorage.setItem('allUsers', JSON.stringify(res.data))
+            await this.props.getGroups(data)
+            if(this.props.getGroupsDetails !== 400){
+                this.setState({
+                    groups: this.props.getGroupsDetails
+                })
+            }
+
+            // await axios.get(exportData.backendURL+'getAllUsersNames', {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            // .then(async (res) => {
+            //     // console.log("Status Code : ", res.status);
+            //     if (res.status === 200) {
+            //         // this.setState({
+            //         //     groups.
+            //         // })
+            //         // console.log(res.data)
+            //         localStorage.setItem('allUsers', JSON.stringify(res.data))
                     
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // });
+
+            await this.props.getAllUsersNames()
+            if(this.props.getAllUsersNamesDetails !== 400){
+                localStorage.setItem('allUsers', JSON.stringify(this.props.getAllUsersNamesDetails))
+            }
         }
     }
 
     componentDidUpdate = async (prevProps, prevState) => {
-        if(localStorage.getItem('userProfile') && (this.state.rerender > prevState.rerender)){
+        if(localStorage.getItem('userProfile') && (this.state.inviteAccepted === true && prevState.inviteAccepted === false)){
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
             let userId = userProfile.user_id
             const data = {
                 user_id: userId
             }
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL+'getGroups', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(async (res) => {
-                if (res.status === 200) {
-                    this.setState({
-                        groups: res.data,
-                        rerender: 0
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
+            await this.props.getGroups(data)
+            if(this.props.getGroupsDetails !== 400){
+                this.setState({
+                    groups: this.props.getGroupsDetails
+                })
+            }
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL+'getGroups', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            // .then(async (res) => {
+            //     if (res.status === 200) {
+            //         this.setState({
+            //             groups: res.data,
+            //             rerender: 0
+            //         })
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // });
         }
     }
 
@@ -240,4 +272,16 @@ class Home extends Component {
     }
 }
 //export Home Component
-export default Home;
+// export default Home;
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return({
+        acceptInviteDetails:state.acceptInviteDetails.user,
+        getGroupsDetails:state.getGroupsDetails.user,
+        getAllUsersNamesDetails:state.getAllUsersNamesDetails.user,
+    })
+}
+
+export default connect(mapStateToProps, 
+    {acceptInvite, getGroups, getAllUsersNames})(Home)

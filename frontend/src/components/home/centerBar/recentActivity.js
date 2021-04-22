@@ -1,10 +1,13 @@
-import axios from 'axios'
+// import axios from 'axios'
 import React from 'react'
-import exportData from '../../../config/config'
+import { connect } from 'react-redux'
+import { getGroups } from '../../../store/actions/groupActions/getGroupsActions'
+import { getTransactionsForUser } from '../../../store/actions/transactionActions/getTransactionsForUserActions'
+// import exportData from '../../../config/config'
 // import { Link } from 'react-router-dom'
 import '../../style.css'
 
-export default class RecentActivity extends React.Component {
+class RecentActivity extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -18,54 +21,37 @@ export default class RecentActivity extends React.Component {
     componentDidMount = async () => {
         let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         let userId = userProfile.user_id
-        axios.defaults.withCredentials = true;
-        await axios.get(exportData.backendURL+'getTransactions', {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(async (res) => {
-                if (res.status === 200) {
-                    this.setState({
-                        transactions: res.data
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
+        // axios.defaults.withCredentials = true;
+        let data = {user_id: userId}
 
-        const data = {
-            user_id: userId
+        await this.props.getGroups(data)
+        console.log('get groups after', this.props)
+        if(this.props.getGroupsDetails !== 400 && this.props.getGroupsDetails !== []){
+            this.setState({
+                groups: this.props.getGroupsDetails
+            })
+            let group_list = []
+            // console.log(typeof(this.props.getGroupsDetails) === 'object')
+            if(this.props.getGroupsDetails && typeof(this.props.getGroupsDetails) === 'object'){
+                this.props.getGroupsDetails.forEach(item => {
+                    group_list.push(item.group_id)
+                })
+            }
+            data = {groupList: group_list}
+            console.log(data)
+            await this.props.getTransactionsForUser(data)
+            console.log('get trans for user after', this.props)
+            if(this.props.getTransactionsForUserDetails !== 400 && this.props.getTransactionsForUserDetails !== []){
+                this.setState({
+                    transactions: this.props.getTransactionsForUserDetails
+                })
+            }
         }
-        axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'getGroups', data, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    // this.setState({
-                    //     groups.
-                    // })
-                    // console.log(res.data)
-                    this.setState({
-                        groups: res.data,
-                        rerender: 0
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            });
-
     }
 
     // <img src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" className="square">
     render = () => {
-        console.log(this.state)
+        console.log(this.props)
         let groupBy = []
         let element = []
         if (this.state.transactions && this.state.groups && localStorage.getItem('userProfile')) {
@@ -88,12 +74,14 @@ export default class RecentActivity extends React.Component {
             iter.forEach(item => {
                 // console.log(item)
                 if((item.paid_by === userId || item.paid_to === userId) && (item.paid_by !== item.paid_to) && (this.state.groupBy === 'none' || this.state.groupBy === item.Group.group_name)){
+                    console.log(this.state.groupBy , item.Group.group_name)
                     let date = new Date(item.updatedAt)
                     let status = (item.payment_status === 'due')? 'paid':'settled with'
                     let amount = (item.payment_status === 'due')? '$' + Number(item.amount):''
                     let temp2 = (item.payment_status === 'due')? 'to' : '' 
                     let temp3 = (item.payment_status === 'due')? 'in' : ''
-                    let grp = (item.payment_status === 'due')? item.Group.group_name : ''
+                    // let grp = (item.payment_status === 'due')? item.Group.group_name : ''
+                    let grp = item.Group.group_name
                     let imag = (item.payment_status === 'due')?"https://s3.amazonaws.com/splitwise/uploads/notifications/v2021/0-p.png":"https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png"
                     element.push(<div>
                         <div className='row recent_row' style={{margin:'0', padding:'10px 40px', borderBottom:'1px solid #eee'}}>
@@ -118,7 +106,7 @@ export default class RecentActivity extends React.Component {
         
         return(<div>
             <div className="row" style={{minHeight:'100vh'}}>
-                <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', height:'100%'}}>
+                <div className="col-8" style={{ paddingRight: '0', boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)', minHeight:'100vh'}}>
                     <div className="main_row" style={{ backgroundColor: '#eee', padding: '20px 20px', margin: '0',  borderBottom:'1px solid #ddd'  }}>
                         <div><h3>Recent Activity</h3></div>
                     </div>
@@ -146,6 +134,11 @@ export default class RecentActivity extends React.Component {
                     <hr style={{ margin: 0, color: '#555' }}></hr>
                     <div>
                     {element}
+                    {element.length === 0? <div>
+                        <div class="alert alert-light" style={{textAlign: 'center'}} role="alert">
+                            No data to display
+                        </div>
+                    </div>: null}
                     </div>
                 </div>
                 <div className='col-4' style={{ fontSize: '14px' }}>
@@ -162,5 +155,13 @@ export default class RecentActivity extends React.Component {
 
 }
 
+const mapStateToProps = (state) => {
+    console.log(state)
+    return({
+        getGroupsDetails:state.getGroupsDetails.user,
+        getTransactionsForUserDetails:state.getTransactionsForUserDetails.user
+    })
+}
 
+export default connect(mapStateToProps, {getGroups, getTransactionsForUser})(RecentActivity)
 

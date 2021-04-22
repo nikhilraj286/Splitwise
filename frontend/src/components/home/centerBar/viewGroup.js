@@ -1,16 +1,24 @@
-import axios from 'axios'
+// import axios from 'axios'
 // import { Tooltip } from 'bootstrap'
 import React from 'react'
+import { connect } from 'react-redux'
 // import { Link, BrowserRouter, Route } from 'react-router-dom'
 import { Button, Modal } from 'react-bootstrap'
 import { Redirect } from 'react-router'
-import exportData from '../../../config/config'
+// import exportData from '../../../config/config'
+import { deleteUserFromGroup } from '../../../store/actions/groupActions/deleteUserFromGroupActions'
+import { newComment } from '../../../store/actions/expenseActions/newCommentActions'
+import { deleteComment } from '../../../store/actions/expenseActions/deleteCommentActions'
+import { newExpense } from '../../../store/actions/expenseActions/newExpenseActions'
+import { getGroupData } from '../../../store/actions/groupActions/getGroupDataActions'
+import { getTransactionsForGroup } from '../../../store/actions/transactionActions/getTransactionsForGroupActions'
+import { getExpensesForGroup } from '../../../store/actions/expenseActions/getExpensesForGroupActions'
 // import { Redirect } from 'react-router'
 
 
 
 
-export default class ViewGroup extends React.Component {
+class ViewGroup extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -26,7 +34,10 @@ export default class ViewGroup extends React.Component {
             commentFor: null,
             deleteComment: null,
             deleteCommentFor: null,
-            ddeleteExpense: null
+            ddeleteExpense: null,
+            commentCreated: null,
+            commentDeleted: null,
+            expenseCreated: null,
         }
         this.handleClose = this.handleClose.bind(this)
         this.handleShow = this.handleShow.bind(this)
@@ -34,7 +45,7 @@ export default class ViewGroup extends React.Component {
         this.leaveGroup = this.leaveGroup.bind(this)
         this.postComent = this.postComent.bind(this)
         this.deleteComment = this.deleteComment.bind(this)
-        this.deleteExpense = this.deleteExpense.bind(this)
+        // this.deleteExpense = this.deleteExpense.bind(this)
         // alert('hello')
     }
 
@@ -58,31 +69,44 @@ export default class ViewGroup extends React.Component {
             user_id: user_id
         }
         // console.log(data)
-        axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL + 'deleteUserFromGroup', data, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(async (res) => {
-                console.log(res.status)
-                if (res.status === 200) {
-                    // console.log(res.data)
-                    let setItem = {
-                        tabSelected: 1,
-                        groupSelected: 0
-                    }
-                    localStorage.setItem('selectedTab', JSON.stringify(setItem))
-                    this.setState({
-                        userleft: true,
-                        rerender: (this.state.rerender) + 1
-                    })
+        // axios.defaults.withCredentials = true;
+        // await axios.post(exportData.backendURL + 'deleteUserFromGroup', data, {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(async (res) => {
+        //         console.log(res.status)
+        //         if (res.status === 200) {
+        //             // console.log(res.data)
+        //             let setItem = {
+        //                 tabSelected: 1,
+        //                 groupSelected: 0
+        //             }
+        //             localStorage.setItem('selectedTab', JSON.stringify(setItem))
+        //             this.setState({
+        //                 userleft: true,
+        //                 rerender: (this.state.rerender) + 1
+        //             })
 
-                }
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+
+        await this.props.deleteUserFromGroup(data)
+        if(this.props.deleteUserFromGroupDetails === 200){
+            let setItem = {
+                tabSelected: 1,
+                groupSelected: 0
+            }
+            localStorage.setItem('selectedTab', JSON.stringify(setItem))
+            this.setState({
+                userleft: true,
+                // rerender: (this.state.rerender) + 1
             })
-            .catch((err) => {
-                console.log(err)
-            })
+        }
 
     }
 
@@ -98,24 +122,33 @@ export default class ViewGroup extends React.Component {
             }
             // console.log(data)
             this.setState({
-                newComment: null
+                newComment: null,
+                commentCreated: false
             })
             document.getElementById('ta' + this.state.commentFor).value = ""
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL + 'newComment', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then((res) => {
-                if(res.status === 200){
-                    this.setState({
-                        rerender: (this.state.rerender) + 1
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            })
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL + 'newComment', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // }).then((res) => {
+            //     if(res.status === 200){
+            //         this.setState({
+            //             rerender: (this.state.rerender) + 1
+            //         })
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // })
+
+            await this.props.newComment(data)
+            if(this.props.newCommentDetails === 200){
+                this.setState({
+                    commentCreated: true
+                    // rerender: (this.state.rerender) + 1
+                })
+            }
         }
     }
 
@@ -126,49 +159,59 @@ export default class ViewGroup extends React.Component {
                 expense_id: this.state.deleteCommentFor,
                 comment_id: this.state.deleteComment,
             }
-            // console.log(data)
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL + 'deleteComment', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then((res) => {
-                if(res.status === 200){
-                    this.setState({
-                        rerender: (this.state.rerender) + 1
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
+            this.setState({
+                commentDeleted: false
             })
+            // console.log(data)
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL + 'deleteComment', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // }).then((res) => {
+            //     if(res.status === 200){
+            //         this.setState({
+            //             rerender: (this.state.rerender) + 1
+            //         })
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // })
+            await this.props.deleteComment(data)
+            if(this.props.deleteCommentDetails === 200){
+                this.setState({
+                    commentDeleted: true
+                    // rerender: (this.state.rerender) + 1
+                })
+            }
         }
     }
 
-    deleteExpense = async e => {
-        e.preventDefault()
-        if(this.state.deleteExpense){
-            let data = {
-                expense_id: this.state.deleteExpense,
-            }
-            // console.log(data)
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL + 'deleteExpense', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then((res) => {
-                if(res.status === 200){
-                    this.setState({
-                        rerender: (this.state.rerender) + 1
-                    })
-                }
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
-    }
+    // deleteExpense = async e => {
+    //     e.preventDefault()
+    //     if(this.state.deleteExpense){
+    //         let data = {
+    //             expense_id: this.state.deleteExpense,
+    //         }
+    //         // console.log(data)
+    //         axios.defaults.withCredentials = true;
+    //         await axios.post(exportData.backendURL + 'deleteExpense', data, {
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         }).then((res) => {
+    //             if(res.status === 200){
+    //                 this.setState({
+    //                     rerender: (this.state.rerender) + 1
+    //                 })
+    //             }
+    //         }).catch((err) => {
+    //             console.log(err)
+    //         })
+    //     }
+    // }
 
     handleSubmit = async () => {
         this.handleClose()
@@ -190,34 +233,48 @@ export default class ViewGroup extends React.Component {
                     user_list: userList,
                     paid_by: user_id
                 }
-                console.log(data)
-                axios.defaults.withCredentials = true;
-                await axios.post(exportData.backendURL + 'newExpense', data, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }).then((res) => {
-                        console.log(res.status)
-                        if (res.status === 200) {
-                            // console.log(res.data)
+                // console.log(data)
+                this.setState({
+                    expenseCreated: false
+                })
+                // axios.defaults.withCredentials = true;
+                // await axios.post(exportData.backendURL + 'newExpense', data, {
+                //     headers: {
+                //         'Accept': 'application/json',
+                //         'Content-Type': 'application/json'
+                //     }
+                // }).then((res) => {
+                //         console.log(res.status)
+                //         if (res.status === 200) {
+                //             // console.log(res.data)
 
 
-                            let setItem = {
-                                tabSelected: 1,
-                                groupSelected: 0
-                            }
-                            localStorage.setItem('selectedTab', JSON.stringify(setItem))
+                //             let setItem = {
+                //                 tabSelected: 1,
+                //                 groupSelected: 0
+                //             }
+                //             localStorage.setItem('selectedTab', JSON.stringify(setItem))
 
 
-                            this.setState({
-                                rerender: (this.state.rerender) + 1
-                            })
-                        }
+                //             this.setState({
+                //                 rerender: (this.state.rerender) + 1
+                //             })
+                //         }
+                //     })
+                //     .catch((err) => {
+                //         console.log(err)
+                //     })
+                await this.props.newExpense(data)
+                if(this.props.newExpenseDetails === 200){
+                    // let setItem = {
+                    //     tabSelected: 1,
+                    //     groupSelected: 0
+                    // }
+                    // localStorage.setItem('selectedTab', JSON.stringify(setItem))
+                    this.setState({
+                        expenseCreated: true
                     })
-                    .catch((err) => {
-                        console.log(err)
-                    })
+                }
             }
         }
 
@@ -229,159 +286,212 @@ export default class ViewGroup extends React.Component {
             const data = {
                 group_id: groupId
             }
-            axios.defaults.withCredentials = true;
-            await axios.post(exportData.backendURL + 'getGroupData', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(async (res) => {
-                    // console.log("Status Code : ", res.status);
-                    if (res.status === 200) {
-                        // this.setState({
-                        //     groups.
-                        // })
-                        // console.log(res.data)
-                        this.setState({
-                            groups: res.data
-                        })
-                        // console.log('res', res.data[0])
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                });
+            // axios.defaults.withCredentials = true;
+            // await axios.post(exportData.backendURL + 'getGroupData', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            //     .then(async (res) => {
+            //         // console.log("Status Code : ", res.status);
+            //         if (res.status === 200) {
+            //             // this.setState({
+            //             //     groups.
+            //             // })
+            //             // console.log(res.data)
+            //             this.setState({
+            //                 groups: res.data
+            //             })
+            //             // console.log('res', res.data[0])
+            //         }
+            //     }).catch((err) => {
+            //         console.log(err)
+            //     });
+
+            await this.props.getGroupData(data)
+            if(this.props.getGroupDataDetails !== 400){
+                this.setState({
+                    groups: this.props.getGroupDataDetails
+                })
+            }
 
 
-            await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(async (res) => {
-                    // console.log("Status Code : ", res.status);
-                    if (res.status === 200) {
-                        // this.setState({
-                        //     groups.
-                        // })
-                        // console.log(res.data)
-                        this.setState({
-                            transactions: res.data
-                        })
-                        // console.log('res', res.data[0])
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                });
+            // await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            //     .then(async (res) => {
+            //         // console.log("Status Code : ", res.status);
+            //         if (res.status === 200) {
+            //             // this.setState({
+            //             //     groups.
+            //             // })
+            //             // console.log(res.data)
+            //             this.setState({
+            //                 transactions: res.data
+            //             })
+            //             // console.log('res', res.data[0])
+            //         }
+            //     }).catch((err) => {
+            //         console.log(err)
+            //     });
 
-            await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(async (res) => {
-                    // console.log("Status Code : ", res.status);
-                    if (res.status === 200) {
-                        // this.setState({
-                        //     groups.
-                        // })
-                        // console.log(res.data)
-                        this.setState({
-                            expenses: res.data
-                        })
-                        // console.log('res', res.data[0])
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                });
+            await this.props.getTransactionsForGroup(data)
+            if(this.props.getTransactionsForGroupDetails !== 400){
+                this.setState({
+                    transactions: this.props.getTransactionsForGroupDetails
+                })
+            }
+
+            // await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            //     .then(async (res) => {
+            //         // console.log("Status Code : ", res.status);
+            //         if (res.status === 200) {
+            //             // this.setState({
+            //             //     groups.
+            //             // })
+            //             // console.log(res.data)
+            //             this.setState({
+            //                 expenses: res.data
+            //             })
+            //             // console.log('res', res.data[0])
+            //         }
+            //     }).catch((err) => {
+            //         console.log(err)
+            //     });
+
+            await this.props.getExpensesForGroup(data)
+            if(this.props.getExpensesForGroupDetails !== 400){
+                this.setState({
+                    expenses: this.props.getExpensesForGroupDetails
+                })
+            }
         }
     }
 
     componentDidUpdate = async (prevProps, prevState) => {
-        // console.log('inside did update', this.state, prevState.groups)
-        if (this.state.groups && prevState.groups) {
-            // console.log('in update 1', this.state.groups.Transactions.length)
-            // console.log('in update 2', prevState)
-            // || (this.state.groups.Transactions.length > prevState.groups.Transactions.length)
-            let index = 0
-            for (index; index < 2; index++) {
-                if ((this.props.groupID !== prevProps.groupID) || (this.state.rerender > prevState.rerender) || (this.state.transactions && (this.state.transactions.length > prevState.transactions.length))) {
-                    let groupId = this.props.groupID
-                    const data = {
-                        group_id: groupId
-                    }
-                    axios.defaults.withCredentials = true;
-                    await axios.post(exportData.backendURL + 'getGroupData', data, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(async (res) => {
-                            // console.log("Status Code : ", res.status);
-                            if (res.status === 200) {
-                                // this.setState({
-                                //     groups.
-                                // })
-                                console.log(res.data)
-                                this.setState({
-                                    groups: res.data
-                                })
-                                // console.log('res', res.data[0])
-                            }
-                        }).catch((err) => {
-                            console.log(err)
-                        });
+        if((prevState.commentCreated === false && this.state.commentCreated === true)
+            || (prevState.commentDeleted === false && this.state.commentDeleted === true)
+            || (prevState.expenseCreated === false && this.state.expenseCreated === true)
+            || (this.props.groupID !== prevProps.groupID)
+        ){
+            let groupId = this.props.groupID
+            const data = {
+                group_id: groupId
+            }
+            
+            await this.props.getGroupData(data)
+            if(this.props.getGroupDataDetails !== 400){
+                this.setState({
+                    groups: this.props.getGroupDataDetails
+                })
+            }
 
-                    await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(async (res) => {
-                            // console.log("Status Code : ", res.status);
-                            if (res.status === 200) {
-                                // this.setState({
-                                //     groups.
-                                // })
-                                // console.log(res.data)
-                                this.setState({
-                                    transactions: res.data
-                                })
-                                // console.log('res', res.data[0])
-                            }
-                        }).catch((err) => {
-                            console.log(err)
-                        });
-
-                    await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(async (res) => {
-                            // console.log("Status Code : ", res.status);
-                            if (res.status === 200) {
-                                // this.setState({
-                                //     groups.
-                                // })
-                                // console.log(res.data)
-                                this.setState({
-                                    expenses: res.data
-                                })
-                                // console.log('res', res.data[0])
-                            }
-                        }).catch((err) => {
-                            console.log(err)
-                        });
-                }
+            await this.props.getTransactionsForGroup(data)
+            if(this.props.getTransactionsForGroupDetails !== 400){
+                this.setState({
+                    transactions: this.props.getTransactionsForGroupDetails
+                })
+            }
+            
+            await this.props.getExpensesForGroup(data)
+            if(this.props.getExpensesForGroupDetails !== 400){
+                this.setState({
+                    expenses: this.props.getExpensesForGroupDetails
+                })
             }
         }
     }
+
+    // // console.log('inside did update', this.state, prevState.groups)
+    // if (this.state.groups && prevState.groups) {
+    //     // console.log('in update 1', this.state.groups.Transactions.length)
+    //     // console.log('in update 2', prevState)
+    //     // || (this.state.groups.Transactions.length > prevState.groups.Transactions.length)
+    //     let index = 0
+    //     for (index; index < 2; index++) {
+    //         if ((this.props.groupID !== prevProps.groupID) || (this.state.rerender > prevState.rerender) || (this.state.transactions && (this.state.transactions.length > prevState.transactions.length))) {
+    //             let groupId = this.props.groupID
+    //             const data = {
+    //                 group_id: groupId
+    //             }
+    //             axios.defaults.withCredentials = true;
+    //             await axios.post(exportData.backendURL + 'getGroupData', data, {
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             })
+    //                 .then(async (res) => {
+    //                     // console.log("Status Code : ", res.status);
+    //                     if (res.status === 200) {
+    //                         // this.setState({
+    //                         //     groups.
+    //                         // })
+    //                         console.log(res.data)
+    //                         this.setState({
+    //                             groups: res.data
+    //                         })
+    //                         // console.log('res', res.data[0])
+    //                     }
+    //                 }).catch((err) => {
+    //                     console.log(err)
+    //                 });
+
+    //             await axios.post(exportData.backendURL + 'getTransactionsForGroup', data, {
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             })
+    //                 .then(async (res) => {
+    //                     // console.log("Status Code : ", res.status);
+    //                     if (res.status === 200) {
+    //                         // this.setState({
+    //                         //     groups.
+    //                         // })
+    //                         // console.log(res.data)
+    //                         this.setState({
+    //                             transactions: res.data
+    //                         })
+    //                         // console.log('res', res.data[0])
+    //                     }
+    //                 }).catch((err) => {
+    //                     console.log(err)
+    //                 });
+
+    //             await axios.post(exportData.backendURL + 'getExpensesForGroup', data, {
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             })
+    //                 .then(async (res) => {
+    //                     // console.log("Status Code : ", res.status);
+    //                     if (res.status === 200) {
+    //                         // this.setState({
+    //                         //     groups.
+    //                         // })
+    //                         // console.log(res.data)
+    //                         this.setState({
+    //                             expenses: res.data
+    //                         })
+    //                         // console.log('res', res.data[0])
+    //                     }
+    //                 }).catch((err) => {
+    //                     console.log(err)
+    //                 });
+    //         }
+    //     }
+    // }
 
 
     // prepareNumber = (num) => {
@@ -389,7 +499,7 @@ export default class ViewGroup extends React.Component {
     // }
 
     render = () => {
-        console.log('state', this.state)
+        // console.log('state', this.state)
         // console.log('props', this.props)
         // console.clear()
         let redirectvar = null
@@ -406,7 +516,7 @@ export default class ViewGroup extends React.Component {
 
             // console.log('state', this.state.groups);
             temp = this.state.groups.userToGroups
-            console.log(temp)
+            // console.log(temp)
             temp.forEach((item) => {
                 if (!item.has_invite) {
                     users_data.push(item.user_id)
@@ -435,7 +545,7 @@ export default class ViewGroup extends React.Component {
                 // console.log('************************************************************')
             })
 
-            console.log('users', expense_sum)
+            // console.log('users', expense_sum)
 
             let allUsers = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
             // console.log(allUsers)
@@ -630,6 +740,11 @@ export default class ViewGroup extends React.Component {
                         </div>
                         <hr style={{ margin: 0, color: '#555' }} />
                         {expenseList}
+                        {expenseList.length === 0? <div>
+                            <div class="alert alert-light" style={{textAlign: 'center'}} role="alert">
+                                No data to display
+                            </div>
+                        </div>: null}
 
                     </div>
                     <div className="col-3" style={{ paddingTop: '15px' }}>
@@ -641,3 +756,21 @@ export default class ViewGroup extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return({
+        deleteUserFromGroupDetails:state.deleteUserFromGroupDetails.user,
+        newCommentDetails:state.newCommentDetails.user,
+        deleteCommentDetails:state.deleteCommentDetails.user,
+        newExpenseDetails:state.newExpenseDetails.user,
+        getGroupDataDetails:state.getGroupDataDetails.user,
+        getTransactionsForGroupDetails:state.getTransactionsForGroupDetails.user,
+        getExpensesForGroupDetails:state.getExpensesForGroupDetails.user,
+    })
+}
+
+export default connect(mapStateToProps, 
+    {deleteUserFromGroup, newComment, deleteComment, newExpense,
+        getGroupData, getTransactionsForGroup, getExpensesForGroup
+    })(ViewGroup)

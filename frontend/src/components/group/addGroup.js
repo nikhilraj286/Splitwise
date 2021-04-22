@@ -1,12 +1,15 @@
-import axios from 'axios';
+// import axios from 'axios';
 import React, { Component } from 'react';
 // import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
+import { getUsers } from '../../store/actions/userActions/getUsersActions'
+import { createGroup } from '../../store/actions/groupActions/createGroupActions'
 import '../style.css'
-import exportData from '../../config/config'
+// import exportData from '../../config/config'
 import { Redirect } from 'react-router';
 // import { Redirect } from 'react-router';
 
-export default class AddGroup extends Component {
+class AddGroup extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -16,6 +19,7 @@ export default class AddGroup extends Component {
             selected: false,
             selectedPerson: null,
             groupName: '',
+            filter: null
         }
         this.createGroup = this.createGroup.bind(this)
     }
@@ -27,23 +31,30 @@ export default class AddGroup extends Component {
             no_of_users:Object.keys(this.state.usersToAdd).length,
         }
         console.log(data)
-        axios.defaults.withCredentials = true;
-        await axios.post(exportData.backendURL+'createGroup', data, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(() => {
-            // console.log("group creation Status Code : ", res.status);
-            // console.log('group created - ', res)
-            this.setState({
-                userAdded:true
-            })
+        // axios.defaults.withCredentials = true;
+        // await axios.post(exportData.backendURL+'createGroup', data, {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+        // .then(() => {
+        //     // console.log("group creation Status Code : ", res.status);
+        //     // console.log('group created - ', res)
+        //     this.setState({
+        //         userAdded:true
+        //     })
             
-        }).catch((err) => {
-            console.log('group creation error -',err)
-        });
+        // }).catch((err) => {
+        //     console.log('group creation error -',err)
+        // });
+        await this.props.createGroup(data)
+        // console.log('after create group - ', this.props)
+        // if(this.props.createGroupDetails === 200){
+        //     this.setState({
+        //         userAdded:true
+        //     })
+        // }
     }
 
 
@@ -55,52 +66,85 @@ export default class AddGroup extends Component {
     // }
 
     componentDidMount = async () => {
-        axios.defaults.withCredentials = true;
-        await axios.get(exportData.backendURL+'getUsers', {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(async (res) => {
-                // console.log("Status Code : ", res.status);
-                if (res.status === 200) {
-                    // console.log(res.data)
-                    let index = 0
-                    let current_user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
-                    let temp_data = res.data
-                    // console.log(temp_data)
-                    // let user_data = []
-                    let user_data_1 = {}
-                    let user_data_2 = {}
-                    for (index; index < temp_data.length; index++) {
-                        let temp_val = temp_data[index]
-                        let data = {
-                            user_id: temp_val.user_id,
-                            email: temp_val.email,
-                            full_name: temp_val.full_name,
-                            canBeDeleted: 0
-                        }
-                        if (temp_val.user_id === current_user_id) {
-                            user_data_1[temp_val.user_id] = data
-                            // user_data.splice(0, 0, data)
-                            // temp_data.splice(index, 1)
-                            // console.log(temp_data)
-                        } else {
-                            data.canBeDeleted = 1
-                            user_data_2[temp_val.user_id] = data
-                        }
-                    }
-                    this.setState({
-                        allUsers: user_data_2,
-                        usersToAdd: user_data_1
-                    })
-                    // console.log('all users - ', this.state.allUsers)
-                    // console.log('users to add - ', this.state.usersToAdd)
+        // axios.defaults.withCredentials = true;
+        // await axios.get(exportData.backendURL+'getUsers', {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+        //     .then(async (res) => {
+        //         // console.log("Status Code : ", res.status);
+        //         if (res.status === 200) {
+        //             // console.log(res.data)
+        //             let index = 0
+        //             let current_user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
+        //             let temp_data = res.data
+        //             // console.log(temp_data)
+        //             // let user_data = []
+        //             let user_data_1 = {}
+        //             let user_data_2 = {}
+        //             for (index; index < temp_data.length; index++) {
+        //                 let temp_val = temp_data[index]
+        //                 let data = {
+        //                     user_id: temp_val.user_id,
+        //                     email: temp_val.email,
+        //                     full_name: temp_val.full_name,
+        //                     canBeDeleted: 0
+        //                 }
+        //                 if (temp_val.user_id === current_user_id) {
+        //                     user_data_1[temp_val.user_id] = data
+        //                     // user_data.splice(0, 0, data)
+        //                     // temp_data.splice(index, 1)
+        //                     // console.log(temp_data)
+        //                 } else {
+        //                     data.canBeDeleted = 1
+        //                     user_data_2[temp_val.user_id] = data
+        //                 }
+        //             }
+        //             this.setState({
+        //                 allUsers: user_data_2,
+        //                 usersToAdd: user_data_1
+        //             })
+        //             // console.log('all users - ', this.state.allUsers)
+        //             // console.log('users to add - ', this.state.usersToAdd)
+        //         }
+        //     }).catch((err) => {
+        //         console.log(err)
+        //     });
+        await this.props.getUsers()
+        console.log('after get users - ', this.props)
+        if (this.props.getUsersDetails !== 400) {
+            let index = 0
+            let current_user_id = JSON.parse(localStorage.getItem('userProfile')).user_id
+            let temp_data = this.props.getUsersDetails
+            // console.log(temp_data)
+            // let user_data = []
+            let user_data_1 = {}
+            let user_data_2 = {}
+            for (index; index < temp_data.length; index++) {
+                let temp_val = temp_data[index]
+                let data = {
+                    user_id: temp_val.user_id,
+                    email: temp_val.email,
+                    full_name: temp_val.full_name,
+                    canBeDeleted: 0
                 }
-            }).catch((err) => {
-                console.log(err)
-            });
+                if (temp_val.user_id === current_user_id) {
+                    user_data_1[temp_val.user_id] = data
+                    // user_data.splice(0, 0, data)
+                    // temp_data.splice(index, 1)
+                    // console.log(temp_data)
+                } else {
+                    data.canBeDeleted = 1
+                    user_data_2[temp_val.user_id] = data
+                }
+            }
+            await this.setState({
+                allUsers: user_data_2,
+                usersToAdd: user_data_1
+            })
+        }
     }
 
     render = () => {
@@ -111,13 +155,14 @@ export default class AddGroup extends Component {
         // }
 
         console.log(this.state)
+        console.log(this.props)
 
         let redirectVar = null;
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
         }
 
-        if(this.state.userAdded){
+        if(this.props.createGroupDetails === 200){
             // alert('group created')
             redirectVar = <Redirect to="/" />
         }
@@ -174,12 +219,14 @@ export default class AddGroup extends Component {
         var availableUserList = [];
         var keys2 = Object.keys(this.state.allUsers)
         if (this.state.allUsers && keys2.length > 0) {
+            if(this.state.filter && this.state.filter.length > 2){
             keys2.forEach(item => {
                 var data = this.state.allUsers[item]
                 // console.log(item,'--------',data)
                 // console.log(data.full_name , data.email, data.user_id)
+                if(data.full_name.includes(this.state.filter) || data.email.includes(this.state.filter)){
                 availableUserList.push(<option key={data.user_id} dataId={data.user_id}>{data.full_name} / {data.email}</option>)
-            })
+            }})}
         }
 
 
@@ -253,6 +300,9 @@ export default class AddGroup extends Component {
                                     <div className="col-10" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                         <input className="form-control" list="datalistOptions" id="newPerson" placeholder="Name or Email address" onChange={async (e) => {
                                             // console.log(e.target.value)
+                                            await this.setState({
+                                                filter:e.target.value
+                                            })
                                             var keys = Object.keys(this.state.allUsers)
                                             // console.log(keys)
                                             if (this.state.allUsers && keys.length > 0) {
@@ -330,3 +380,12 @@ export default class AddGroup extends Component {
 
 }
 
+const mapStateToProps = (state) => {
+    console.log(state)
+    return({
+        getUsersDetails:state.getUsersDetails.user,
+        createGroupDetails:state.createGroupDetails.user
+    })
+}
+
+export default connect(mapStateToProps, {createGroup,getUsers})(AddGroup)

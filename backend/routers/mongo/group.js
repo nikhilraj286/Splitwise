@@ -6,9 +6,10 @@ const Group = require('../../models/mongo/Group')
 const Expense = require('../../models/mongo/Expense')
 const Transaction = require('../../models/mongo/Transaction')
 const router = express.Router();
+const { checkAuth } = require("../../utils/passport");
 
-app.post('/createGroup',async (req,res) => {
-    console.log("Inside Create Group Request");
+app.post('/createGroup', checkAuth, async (req,res) => {
+    // console.log("Inside Create Group Request");
     userList = []
     keys = Object.keys(req.body.user_list)
     keys.forEach(item => {
@@ -28,7 +29,7 @@ app.post('/createGroup',async (req,res) => {
     })
     try {
 		await group.save()
-        console.log('group created')
+        // console.log('group created')
         return res.status(200).send(group)
 	} catch (error) {
 		console.log(error);
@@ -37,7 +38,7 @@ app.post('/createGroup',async (req,res) => {
     // return res.status(500).send("Internal Server Error!");
 });
 
-app.post('/getGroups', async (req,res) => {
+app.post('/getGroups', checkAuth, async (req,res) => {
     // console.log("Inside get groups Post Request");
     // console.log("Req Body : ",req.body.user_id);
     try {
@@ -76,7 +77,7 @@ app.post('/getGroups', async (req,res) => {
     // return res.status(500).send("Internal Server Error!");
 });
 
-app.post('/getGroupData', async (req,res) => {
+app.post('/getGroupData', checkAuth, async (req,res) => {
     // console.log("Inside Get Group data Request");
     
     try {
@@ -121,8 +122,8 @@ app.post('/getGroupData', async (req,res) => {
     }
 });
 
-app.post('/acceptInvite', async (req,res) => {
-    console.log("Inside accept invite Post Request");
+app.post('/acceptInvite', checkAuth, async (req,res) => {
+    // console.log("Inside accept invite Post Request");
     // console.log("Req Body : ",req.body);
     try {
         await Group.findOneAndUpdate(
@@ -144,7 +145,7 @@ app.post('/acceptInvite', async (req,res) => {
     }
 });
 
-app.post('/deleteUserFromGroup', async (req,res) => {
+app.post('/deleteUserFromGroup', checkAuth, async (req,res) => {
     // console.log("Inside Delete user from group Post Request");
     // console.log("Req Body : ",req.body.user_id);
     try {

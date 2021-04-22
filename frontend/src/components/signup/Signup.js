@@ -69,9 +69,9 @@ class SignUp extends Component{
         //     redirctVar = <Redirect to="/home"/>
         // }
         if(this.state.login){
-        if (this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user._id) {
+        if (this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user.user_id) {
             redirctVar = <Redirect to="/home"/>
-        } else if(this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user === 404){
+        } else if(this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user === 400){
             invalidSignupMsg = (<div className="alert alert-success" style={{margin:'70px auto', width:'20%', textAlign:'center'}} role="alert">
             Email id already exists
           </div>)

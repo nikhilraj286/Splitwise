@@ -37,7 +37,7 @@ class Login extends Component {
             password: this.state.password
         }
         await this.props.login(data)
-        // console.log(data)
+        console.log(this.props.loginDetails)
         this.setState({login:true})
     }
     render() {
@@ -52,10 +52,10 @@ class Login extends Component {
         //     redirctVar = <Redirect to="/home"/>
         // }
         if(this.state.login){
-            if (this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user._id) {
+            if (this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user.user_id) {
                 redirctVar = <Redirect to="/home"/>
                 // console.warn('reached here')
-            } else if(this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user === 404){
+            } else if(this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user === 400){
                 invalidLoginMsg = (<div className="alert alert-success" style={{margin:'70px auto', width:'30%', textAlign:'center'}} role="alert">
                 Incorrect username or password
             </div>)

@@ -7,6 +7,7 @@ const multer = require('multer');
 const multerS3 = require('multer-s3')
 const dotenv = require('dotenv');
 const AWS = require("aws-sdk")
+const { checkAuth } = require("../../utils/passport");
 
 dotenv.config({ path: __dirname+'/./../config/config.env'});
 
@@ -32,14 +33,14 @@ const upload = multer({
             cb(null, metadataObj);
         },
         key: function (req, file, cb) {
-            console.log(file);
+            // console.log(file);
             imgName = Date.now() + file.originalname
             cb(null, imgName); //use Date.now() for unique file keys
         }
     })
 }).single('myImage');
 
-app.post('/uploadPic', async (req, res) => {
+app.post('/uploadPic', checkAuth, async (req, res) => {
     upload(req, res, (err) => {
         if(err){res.status(400).send('error')}
         res.status(200).send(imgName);
