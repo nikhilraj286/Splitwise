@@ -190,9 +190,9 @@ class Home extends Component {
             // });
 
             await this.props.getAllUsersNames()
-            if(this.props.getAllUsersNamesDetails !== 400){
-                localStorage.setItem('allUsers', JSON.stringify(this.props.getAllUsersNamesDetails))
-            }
+            // if(this.props.getAllUsersNamesDetails !== 400){
+            //     localStorage.setItem('allUsers', JSON.stringify(this.props.getAllUsersNamesDetails))
+            // }
         }
     }
 

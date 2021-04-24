@@ -36,7 +36,7 @@ const getTransactionsHandler = async (msg, callback) => {
 const getTransactionsForGroupHandler = async (msg, callback) => {
     res = {}
     try {
-        Transaction.find({ group_id: msg.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
+        await Transaction.find({ group_id: msg.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { 
                 res.status = 404
                 callback(null, res)
@@ -68,7 +68,31 @@ const getTransactionsForGroupHandler = async (msg, callback) => {
 const getTransactionsForUserHandler = async (msg, callback) => {
     res = {}
     try {
-        Transaction.find({ group_id: { $in: msg.groupList } }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
+        let skip = msg.page * msg.size
+        // let count = await Transaction.count({ group_id: { $in: msg.groupList } })
+        // await Transaction.find({ group_id: { $in: msg.groupList } })
+        let count = await Transaction.count({
+            $and: [
+                {group_id: { $in: msg.groupList }},
+                {$or: [
+                    {paid_by: {"$ne": msg.user_id}},
+                    {paid_to: {"$ne": msg.user_id}}
+                ]}
+            ]
+        })
+        await Transaction.find({
+            $and: [
+                {group_id: { $in: msg.groupList }},
+                {$or: [
+                    {paid_by: {"$ne": msg.user_id}},
+                    {paid_to: {"$ne": msg.user_id}}
+                ]}
+            ]
+        }).sort({ date_paid: msg.orderBy })
+        .populate('group_id')
+        .limit(msg.size)
+        .skip(skip)
+        .exec((err, result) => {
             if (err) { 
                 res.status = 404
                 callback(null, res)
@@ -87,7 +111,10 @@ const getTransactionsForUserHandler = async (msg, callback) => {
                 output.push(data)
             }
             res.status = 200
-            res.data = JSON.stringify(output)
+            res.data = JSON.stringify({
+                length: count,
+                data: output
+            })
             callback(null, res)
         })
     }

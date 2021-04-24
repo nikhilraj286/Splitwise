@@ -188,4 +188,19 @@
     margin-top: 5px;
 }
 
+.pagination-icons div .fa{
+    cursor: pointer;
+    font-size: 24px;
+    margin-right: 25px
+}
+
+.pagination-icons .pageno{
+    font-size: 18px;
+    margin-right: 25px
+}
+
+.pagination-icons div:hover .fa{
+    color: #5bc5a7;
+}
+
 /* 3px 0 3px -4px rgba(31, 73, 125, 0.8), */

@@ -28,9 +28,9 @@ app.post('/updateUser', checkAuth, async (req,res) => {
             return res.status(200).send(JSON.parse(result.data));
         }
         if(result.status === 400){
-            return res.status(400).send("failed");
+            return res.status(200).send("failed");
         }
-        return res.status(500).send("Internal Server Error!");
+        return res.status(400).send("Internal Server Error!");
     })
 })
 

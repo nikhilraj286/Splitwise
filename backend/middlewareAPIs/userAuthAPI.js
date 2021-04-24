@@ -14,7 +14,7 @@ app.post('/login', async (req,res) => {
         console.log(result)
         if(result.status === 200){
             const user = JSON.parse(result.data)
-            const payload = { user_id: user._id, full_name: user.full_name, email: user.email}
+            const payload = { user_id: user._id, full_name: user.full_name, email: user.email, currency: user.currency}
             const token = jwt.sign(payload, secret)
             return res.status(200).send("JWT " + token);
         }else if(result.status === 401){
@@ -31,7 +31,7 @@ app.post('/signup', async (req,res) => {
     kafka.make_request('userAuth', req.body, (error, result) => {
         if(result.status === 200){
             const user = JSON.parse(result.data)
-            const payload = { user_id: user._id, full_name: user.full_name, email: user.email}
+            const payload = { user_id: user._id, full_name: user.full_name, email: user.email, currency: user.currency}
             const token = jwt.sign(payload, secret)
             return res.status(200).send("JWT " + token);
         }else if(result.status === 400){

@@ -17,13 +17,22 @@ export const login = (data) => async dispatch => {
             const jwttoken = res.data
             localStorage.setItem("token", jwttoken)
             var decoded = jwt_decode(jwttoken.split(' ')[1])
-            // console.log(decoded);
+            console.log(decoded);
             let userprofile = {
                 user_id: decoded.user_id,
                 full_name: decoded.full_name,
                 email: decoded.email
             }
             localStorage.setItem('userProfile', JSON.stringify(userprofile))
+            console.log(decoded)
+            let currency = ''
+            if(decoded.currency === 'BHD'){currency = 'BD'}
+            if(decoded.currency === 'KWD'){currency = 'KWD'}
+            if(decoded.currency === 'USD'){currency = '$'}
+            if(decoded.currency === 'GBP'){currency = '£'}
+            if(decoded.currency === 'EUR'){currency = '€'}
+            if(decoded.currency === 'CAD'){currency = '$'}
+            localStorage.setItem('currency', JSON.stringify(currency))
             dispatch({
                 type: 'LOGIN',
                 payload: userprofile

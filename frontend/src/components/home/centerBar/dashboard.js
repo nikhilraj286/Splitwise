@@ -159,6 +159,7 @@ class Dashboard extends React.Component {
         let total_you_owe = 0
         let total_owes_you = 0
         let grand_total = 0
+        let currencyIcon = JSON.parse(localStorage.getItem('currency'))
         if (this.state.transactions) {
             // let users_data = []
             let trans = this.state.transactions
@@ -167,11 +168,12 @@ class Dashboard extends React.Component {
             
             // console.log(JSON.parse(localStorage.getItem('allUsers')))
             // console.log('state', this.state.groups);
-            let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+            // let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+            let allUsers = this.props.getAllUsersNamesDetails
             // console.log(allUsers)
             // let userListToSettle = []
             let userId = JSON.parse(localStorage.getItem('userProfile'))?JSON.parse(localStorage.getItem('userProfile')).user_id:null
-            if (localStorage.getItem('allUsers')) {
+            if (allUsers) {
                 let temp = Object.keys(allUsers)
                 // console.log('TEMP',temp)
 
@@ -212,7 +214,7 @@ class Dashboard extends React.Component {
                                     </div>
                                     <div className="col-8" style={{ paddingLeft: '0' }}>
                                         <div style={{ marginBottom: '5px' }}>{allUsers[item].name}</div>
-                                        <div style={{ fontSize: '12px', color: '#5bc5a7' }}><strong>owes you ${amount}</strong></div>
+                                        <div style={{ fontSize: '12px', color: '#5bc5a7' }}><strong>owes you {currencyIcon}{amount}</strong></div>
                                     </div>
                                 </div>
                             </div>)
@@ -225,7 +227,7 @@ class Dashboard extends React.Component {
                                     </div>
                                     <div className="col-8" style={{ paddingLeft: '0' }}>
                                         <div style={{ marginBottom: '5px' }}>{allUsers[item].name}</div>
-                                        <div style={{ fontSize: '12px', color: '#ff652f' }}><strong>you owe ${amount}</strong></div>
+                                        <div style={{ fontSize: '12px', color: '#ff652f' }}><strong>you owe {currencyIcon}{amount}</strong></div>
                                     </div>
                                 </div>
                             </div>)
@@ -288,7 +290,8 @@ class Dashboard extends React.Component {
                                                 <div>
                                                 <input className="form-control" list="dashboard" id="newPerson" placeholder="Name" onInput={async (e) => {
                                                     // console.log(e.target.value)
-                                                    let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+                                                    // let allUsers = JSON.parse(localStorage.getItem('allUsers'))
+                                                    let allUsers = this.props.getAllUsersNamesDetails
                                                     var keys = Object.keys(allUsers)
 
                                                     if (keys.length > 0) {
@@ -325,19 +328,19 @@ class Dashboard extends React.Component {
                                 <div className="col" style={{ padding: '15px 0' }}>
                                     <div>total balance</div>
                                     <div style={{ color: getColor(grand_total * (-1)) }}>
-                                        {(grand_total < 0) ? ('+') : ('')}{(grand_total > 0) ? ('-') : ('')}${(grand_total < 0) ? (grand_total * (-1)) : (grand_total)}
+                                        {(grand_total < 0) ? ('+') : ('')}{(grand_total > 0) ? ('-') : ('')}{currencyIcon}{(grand_total < 0) ? (grand_total * (-1)) : (grand_total)}
                                     </div>
                                 </div>
                                 <div className="col" style={{ boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8), -3px 0 3px -4px rgba(31, 73, 125, 0.8)', padding: '15px 0' }}>
                                     <div>you owe</div>
                                     <div style={{ color: getColor(total_you_owe * (-1)) }}>
-                                        ${(total_you_owe < 0) ? (total_you_owe * (-1)) : (total_you_owe)}
+                                        {currencyIcon}{(total_you_owe < 0) ? (total_you_owe * (-1)) : (total_you_owe)}
                                     </div>
                                 </div>
                                 <div className="col" style={{ padding: '15px 0' }}>
                                     <div>you are owed</div>
                                     <div style={{ color: getColor(total_owes_you * (-1)) }}>
-                                        ${(total_owes_you < 0) ? (total_owes_you * (-1)) : (total_owes_you)}
+                                        {currencyIcon}{(total_owes_you < 0) ? (total_owes_you * (-1)) : (total_owes_you)}
                                     </div>
                                 </div>
                             </div>
@@ -372,7 +375,8 @@ const mapStateToProps = (state) => {
     console.log(state)
     return({
         settleupDetails:state.settleupDetails.user,
-        getTransactionsDetails:state.getTransactionsDetails.user
+        getTransactionsDetails:state.getTransactionsDetails.user,
+        getAllUsersNamesDetails:state.getAllUsersNamesDetails.user
     })
 }
 

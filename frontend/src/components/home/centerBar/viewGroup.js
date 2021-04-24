@@ -504,6 +504,7 @@ class ViewGroup extends React.Component {
         // console.log('props', this.props)
         // console.clear()
         let redirectvar = null
+        let currencyIcon = JSON.parse(localStorage.getItem('currency'))
         if (this.state.userleft) {
             redirectvar = <Redirect to='/' />
         }
@@ -548,7 +549,8 @@ class ViewGroup extends React.Component {
 
             // console.log('users', expense_sum)
 
-            let allUsers = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
+            // let all_users = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
+            let allUsers = (this.props.getAllUsersNamesDetails) ? this.props.getAllUsersNamesDetails : null
             // console.log(allUsers)
             temp.forEach(item => {
                 if (!item.has_invite) {
@@ -557,9 +559,9 @@ class ViewGroup extends React.Component {
                     var owe_status = []
                     if (amount < 0) {
                         amount = amount * (-1)
-                        owe_status.push(<div style={{ color: '#ff652f' }}><strong>owes ${amount}</strong></div>)
+                        owe_status.push(<div style={{ color: '#ff652f' }}><strong>owes {currencyIcon}{amount}</strong></div>)
                     } else if (amount > 0) {
-                        owe_status.push(<div style={{ color: '#5bc5a7' }}><strong>gets back ${amount}</strong></div>)
+                        owe_status.push(<div style={{ color: '#5bc5a7' }}><strong>gets back {currencyIcon}{amount}</strong></div>)
                     } else {
                         owe_status.push(<div style={{ color: '#666' }}><strong>settled up</strong></div>)
                     }
@@ -594,7 +596,8 @@ class ViewGroup extends React.Component {
             }
         }
 
-        let all_users = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
+        // let all_users = (localStorage.getItem('allUsers')) ? JSON.parse(localStorage.getItem('allUsers')) : null
+        let all_users = (this.props.getAllUsersNamesDetails) ? this.props.getAllUsersNamesDetails : null
 
         let groupname = (this.state.groups) ? this.state.groups.group_name : null
         let expenses = (this.state.expenses) ? this.state.expenses : null
@@ -673,7 +676,7 @@ class ViewGroup extends React.Component {
                         </div>
                         <div className='col-3'>
                             <div style={{ fontSize: '12px', color: '#777' }}><strong style={{textTransform:'capitalize'}}>{all_users ? all_users[item.paid_by].name : null}</strong> paid</div>
-                            <div><strong>$ {item.amount}</strong></div>
+                            <div><strong>{currencyIcon} {item.amount}</strong></div>
                         </div>
                         {/* <div className='col-1' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
                             <i class="fa fa-times"></i>
@@ -768,6 +771,7 @@ const mapStateToProps = (state) => {
         getGroupDataDetails:state.getGroupDataDetails.user,
         getTransactionsForGroupDetails:state.getTransactionsForGroupDetails.user,
         getExpensesForGroupDetails:state.getExpensesForGroupDetails.user,
+        getAllUsersNamesDetails:state.getAllUsersNamesDetails.user
     })
 }
 

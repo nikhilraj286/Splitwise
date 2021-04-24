@@ -65,7 +65,7 @@ export default class MyGroup extends React.Component {
                                     if(groupItem.has_invite){
                                         item = (
                                             <div className="left-group-item row" style={{borderBottom:'1px dotted #ddd', padding:'20px 50px', margin:'0', cursor:'auto'}}>
-                                                <div className="col-8" href={'/home/groups/' + groupItem.group_id} id={'group'+tabItem.key+groupItem.group_id}>{groupItem.Group.group_name}</div>
+                                                <div className="col-8" href={'/home/groups/' + groupItem.group_id} id={'group'+tabItem.key+groupItem.group_id} style={{fontWeight: 'bold', textTransform:'capitalize', fontSize:'20px'}}>{groupItem.Group.group_name}</div>
                                                 <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
                                                         <button className="btn btn-green" style={{padding:'4px 8px', margin:'0 8px', fontSize:'14px', color:'#fff'}} onClick={() => {
                                                             this.props.acceptInvite(groupItem.group_id)
@@ -109,7 +109,7 @@ export default class MyGroup extends React.Component {
                                                     this.props.changeGroup(4, groupItem.group_id)
                                                     document.getElementById(selectedId).classList.remove("selected-tab")
                                                 }}>
-                                                <div className="col-8" href={'/home/groups/' + groupItem.group_id} id={'group'+tabItem.key+groupItem.group_id}>{groupItem.Group.group_name}</div>
+                                                <div className="col-8" href={'/home/groups/' + groupItem.group_id} id={'group'+tabItem.key+groupItem.group_id} style={{fontWeight: 'bold', textTransform:'capitalize', fontSize:'20px'}}>{groupItem.Group.group_name}</div>
                                                 <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
                                                     <div style={{fontSize:'10px', margin:'0 22px', cursor: 'pointer' }}>
                                                         view Group -----&gt;

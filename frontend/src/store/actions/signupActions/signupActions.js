@@ -24,6 +24,14 @@ export const signup = (data) => async dispatch => {
                 email: decoded.email
             }
             localStorage.setItem('userProfile', JSON.stringify(userprofile))
+            let currency = ''
+            if(decoded.currency === 'BHD'){currency = 'BD'}
+            if(decoded.currency === 'KWD'){currency = 'KWD'}
+            if(decoded.currency === 'USD'){currency = '$'}
+            if(decoded.currency === 'GBP'){currency = '£'}
+            if(decoded.currency === 'EUR'){currency = '€'}
+            if(decoded.currency === 'CAD'){currency = '$'}
+            localStorage.setItem('currency', JSON.stringify(currency))
             dispatch({
                 type: 'SIGNUP',
                 payload: userprofile

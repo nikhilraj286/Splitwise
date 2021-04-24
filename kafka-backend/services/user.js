@@ -3,7 +3,7 @@ const User = require('./../models/mongo/User')
 const getUserHandler = async (msg, callback) => {
     res = {}
     try {
-        const user = await User.findOne({ _id: msg.user_id }, 'full_name email _id group_list currency time_zone language phone profile_picture')
+        const user = await User.findOne({ _id: msg.user_id }, 'full_name email _id currency time_zone language phone profile_picture')
         if (user === null) {
             // console.log('User not found')
             res.status = 404
@@ -55,7 +55,7 @@ const updateUserHandler = async (msg, callback) => {
 const getUsersHandler = async (msg, callback) => {
     res = {}
     try {
-        await User.find({}, 'full_name email _id group_list currency time_zone language phone profile_picture',
+        await User.find({}, 'full_name email _id currency time_zone language phone profile_picture',
         (err, result) => {
             if (err) {
                 res.status = 404
@@ -85,7 +85,7 @@ const getAllUsersNamesHandler = async (msg, callback) => {
     res = {}
     try {
         await User.find({},
-            'full_name email _id group_list currency time_zone language phone profile_picture',
+            'full_name email _id',
             (err, result) => {
                 if (err) {
                     res.status = 404
@@ -98,6 +98,7 @@ const getAllUsersNamesHandler = async (msg, callback) => {
                     data.user_id = String(item._id)
                     data.name = item.full_name
                     delete data.full_name
+                    delete data._id
                     // data.remove(full_name)
                     // console.log(data)
                     // console.log('*************************')
