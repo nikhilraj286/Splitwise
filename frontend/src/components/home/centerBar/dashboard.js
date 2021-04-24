@@ -61,7 +61,8 @@ class Dashboard extends React.Component {
         // .catch((err) => {
         //     console.log(err)
         // })
-        await this.props.settleup(data)
+
+        await this.props.settleup({transList: data})
         // console.log('after settleup - ', this.props)
         if(this.props.settleupDetails === 200){
             this.setState({

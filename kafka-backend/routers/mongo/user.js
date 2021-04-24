@@ -42,7 +42,7 @@ app.post('/updateUser', checkAuth, async (req,res) => {
             (err, result) => {
                 if (err) {
                     console.log(err)
-                    return res.status(400).send("failed");
+                    return res.status(200).send("failed");
                 }
                 // console.log(chalk.red(result))
                 return res.status(200).send(result)

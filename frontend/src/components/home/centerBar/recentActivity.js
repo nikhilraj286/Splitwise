@@ -74,13 +74,15 @@ class RecentActivity extends React.Component {
             iter.forEach(item => {
                 // console.log(item)
                 if((item.paid_by === userId || item.paid_to === userId) && (item.paid_by !== item.paid_to) && (this.state.groupBy === 'none' || this.state.groupBy === item.Group.group_name)){
-                    console.log(this.state.groupBy , item.Group.group_name)
-                    let date = new Date(item.updatedAt)
+                    // console.log(this.state.groupBy , item.Group.group_name)
+                    let date = new Date(item.date_paid)
+                    console.log('date', date)
                     let status = (item.payment_status === 'due')? 'paid':'settled with'
                     let amount = (item.payment_status === 'due')? '$' + Number(item.amount):''
                     let temp2 = (item.payment_status === 'due')? 'to' : '' 
-                    let temp3 = (item.payment_status === 'due')? 'in' : ''
+                    // let temp3 = (item.payment_status === 'due')? 'in' : ''
                     // let grp = (item.payment_status === 'due')? item.Group.group_name : ''
+                    let temp3 = 'in'
                     let grp = item.Group.group_name
                     let imag = (item.payment_status === 'due')?"https://s3.amazonaws.com/splitwise/uploads/notifications/v2021/0-p.png":"https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png"
                     element.push(<div>

@@ -265,6 +265,7 @@ class ViewGroup extends React.Component {
                 //         console.log(err)
                 //     })
                 await this.props.newExpense(data)
+                console.log('after new expense', this.props)
                 if(this.props.newExpenseDetails === 200){
                     // let setItem = {
                     //     tabSelected: 1,
@@ -499,7 +500,7 @@ class ViewGroup extends React.Component {
     // }
 
     render = () => {
-        // console.log('state', this.state)
+        console.log('state', this.state)
         // console.log('props', this.props)
         // console.clear()
         let redirectvar = null
@@ -611,10 +612,10 @@ class ViewGroup extends React.Component {
                     comments.forEach((comment) => {
                         let commentDeleteButton = (comment.user_id === user_id) ? <i class="fa fa-trash"></i> : null
                         comment_disp.push(
-                            <div className="comment_div row" key={comment._id} id={comment._id} style={{ backgroundColor:'white', borderRadius:'5px', padding:'10px', margin:'10px 0', border:'1px solid #ced4da'}}>
-                                <div className='col-11' style={{fontSize:'14px'}}>
-                                    <div style={{color:'black', fontWeight: 'bold'}}>{comment.name}</div>
-                                    <div style={{whiteSpace:'pre-wrap'}}>{comment.comment}</div>
+                            <div className="comment_div row" key={comment._id} id={comment._id} style={{ backgroundColor:'white', borderRadius:'5px', padding:'7px 10px 7px 20px', margin:'10px 0', border:'1px solid #ced4da'}}>
+                                <div className='col-11' style={{fontSize:'15px', padding: 0}}>
+                                    <div style={{textTransform:'capitalize', fontSize: '13px', color:'#ff7240', fontWeight: 'bold'}}>{comment.name}</div>
+                                    <div style={{whiteSpace:'pre-wrap', paddingRight:'60px'}}>{comment.comment}</div>
                                 </div>
                                 <div className='col-1 delete-comment' style={{display:'flex', flexDirection:'column', justifyContent:'center'}} onClick={ async e => {
                                     await this.setState({
@@ -670,8 +671,8 @@ class ViewGroup extends React.Component {
                         <div className="col-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '18px', paddingLeft: '10px' }}>
                             <div className="expense-desc" style={{display: 'flex'}}><strong>{item.desc}</strong> {commentIcon}</div>
                         </div>
-                        <div className='col-2'>
-                            <div style={{ fontSize: '12px', color: '#777' }}><strong>{all_users ? all_users[item.paid_by].name : null}</strong> paid</div>
+                        <div className='col-3'>
+                            <div style={{ fontSize: '12px', color: '#777' }}><strong style={{textTransform:'capitalize'}}>{all_users ? all_users[item.paid_by].name : null}</strong> paid</div>
                             <div><strong>$ {item.amount}</strong></div>
                         </div>
                         {/* <div className='col-1' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
