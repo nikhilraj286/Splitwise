@@ -11,7 +11,7 @@ class App extends Component {
     return (
       <Provider store={Store}>
         <BrowserRouter>
-          <div style={{minHeight:"100vh"}}>
+          <div id='main' style={{minHeight:"100vh"}}>
             <Main />
           </div>
         </BrowserRouter>

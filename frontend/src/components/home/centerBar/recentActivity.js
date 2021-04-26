@@ -150,7 +150,7 @@ class RecentActivity extends React.Component {
                     </div>
                     <div className="row" style={{margin:'0', backgroundColor:'#eee', padding:'15px 5px'}}>
                         <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                            <label for="groupBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Group By</label>
+                            <label htmlFor="groupBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Group By</label>
                             <select name="groupBy" id="groupBy" style={{fontSize:'13px', padding:'3px 4px', color:'#555', width:'85%'}} value={this.state.groupBy} onChange={(e) => {
                                 if(e.target.value === "none"){
                                     this.setState({
@@ -169,12 +169,12 @@ class RecentActivity extends React.Component {
                                 
                             }}>
                                 <option value="none">None</option>
-                                <hr></hr>
+                                {/* <hr></hr> */}
                                 {groupBy}
                             </select>
                         </div>
                         <div className='col-4' style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                            <label for="sortBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Sort By</label>
+                            <label htmlFor="sortBy" style={{marginBottom:'5px', fontSize:'12px', marginLeft:'5px'}}>Sort By</label>
                             <select name="sortBy" id="sortByy" style={{fontSize:'13px', padding:'3px 4px', color:'#555', width:'85%'}} value={this.state.sortBy} onChange={(e) => {
                                 this.setState({
                                     sortBy: e.target.value,
@@ -190,7 +190,7 @@ class RecentActivity extends React.Component {
                     <div>
                     {element}
                     {element.length === 0? <div>
-                        <div class="alert alert-light" style={{textAlign: 'center'}} role="alert">
+                        <div className="alert alert-light" style={{textAlign: 'center'}} role="alert">
                             No data to display
                         </div>
                     </div>: null}
@@ -205,7 +205,7 @@ class RecentActivity extends React.Component {
                                         page: 1
                                     })
                                 }}>
-                                    <option selected="selected" value="2">2</option>
+                                    <option value="2">2</option>
                                     <option value="5">5</option>
                                     <option value="10">10</option>
                                 </select>
@@ -219,27 +219,27 @@ class RecentActivity extends React.Component {
                                 this.setState({
                                     page: 1
                                 })
-                            }}><i class="fa fa-angle-double-left"></i></div>
+                            }}><i className="fa fa-angle-double-left"></i></div>
                             <div onClick={(e)=> {
                                 if(this.state.page > 1){
                                     this.setState({
                                         page: this.state.page - 1
                                     })
                                 }
-                            }}><i class="fa fa-angle-left"></i></div>
-                            <div class="pageno">{this.state.page}</div>
+                            }}><i className="fa fa-angle-left"></i></div>
+                            <div className="pageno">{this.state.page}</div>
                             <div onClick={(e)=> {
                                 if(this.state.page < this.state.total_pages){
                                     this.setState({
                                         page: this.state.page + 1
                                     })
                                 }
-                            }}><i class="fa fa-angle-right"></i></div>
+                            }}><i className="fa fa-angle-right"></i></div>
                             <div onClick={(e)=> {
                                 this.setState({
                                     page: this.state.total_pages
                                 })
-                            }}><i class="fa fa-angle-double-right"></i></div>
+                            }}><i className="fa fa-angle-double-right"></i></div>
                         </div>
                         <div className='col-1'></div>
                     </div>

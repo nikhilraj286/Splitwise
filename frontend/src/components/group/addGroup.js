@@ -154,7 +154,7 @@ class AddGroup extends Component {
                                     </div>
                                     <div className="col-1" style={{ padding: '0' }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="100%" fill="#fff" className="bi bi-record-fill" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                            <path fillRule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                                         </svg>
                                     </div>
                                 </div>

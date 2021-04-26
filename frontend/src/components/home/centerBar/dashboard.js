@@ -154,7 +154,7 @@ class Dashboard extends React.Component {
                                 <div className="col-4"><h3>Dashboard</h3></div>
                                 <div className="col-8">
                                     <ul className="nav navbar-nav navbar-right" style={{ flexDirection: 'row', float: 'right' }}>
-                                        <Link className="btn link-green" to="/group/new" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Create New Group</Link>
+                                        <Link className="btn link-green" id="createGroup" to="/group/new" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Create New Group</Link>
                                         <div className="btn btn-orange" onClick={this.handleShow} to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', marginRight: '15px' }}>Settle Up</div>
                                         <Modal show={this.state.show} onHide={this.handleClose} backdrop="static" keyboard={false} style={{ maxHeight: "700px" }}>
                                             <Modal.Header>
@@ -221,7 +221,7 @@ class Dashboard extends React.Component {
                                 <div className="col-5" style={{ boxShadow: '3px 0 3px -4px rgba(31, 73, 125, 0.8)' }}>{you_owe}</div>
                                 <div className="col-5">{owes_you}</div>
                                 {owes_you.length === 0 && you_owe.length === 0?
-                                <div><div class="alert alert-light" style={{textAlign: 'center'}} role="alert">
+                                <div><div className="alert alert-light" style={{textAlign: 'center'}} role="alert">
                                 No data to display
                                 </div></div>
                                 : null}

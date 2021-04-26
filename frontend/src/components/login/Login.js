@@ -61,7 +61,7 @@ class Login extends Component {
                             </div>
                             <div className="col-3">
                                 <div className="login-form form" style={{ paddingTop: '20px' }}>
-                                    <h4>WELCOME TO SPLITWISE</h4>
+                                    <h4 id='loginHeading'>WELCOME TO SPLITWISE</h4>
                                     <form onSubmit={this.submitLogin}>
                                         <div className="mb-3">
                                             <input type="email" onChange={this.emailChangeHandler} required className="form-control" id="exampleInputemaill1" placeholder="Email Id" />
