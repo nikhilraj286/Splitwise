@@ -12,24 +12,6 @@ function auth() {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
         secretOrKey: secret
     };
-    // passport.use(
-    //     new JwtStrategy(opts, (jwt_payload, callback) => {
-    //         const user_id = jwt_payload.user_id;
-    //         User.findById(user_id, (err, results) => {
-    //             if (err) {
-    //                 return callback(err, false);
-    //             }
-    //             if (results) {
-    //                 // console.log('res', results)
-    //                 callback(null, results);
-    //             }
-    //             else {
-    //                 callback(null, false);
-    //             }
-    //         });
-    //     })
-    // )
-
     passport.use(
         new JwtStrategy(opts, (jwt_payload, callback) => {
             const user_id = jwt_payload.user_id;
@@ -42,7 +24,6 @@ function auth() {
                     callback(res.data, false)
                 }
                 if(result.status === 200){
-                    // console.log('xxxxx', result.data)
                     callback(null, result.data)
                 }
                 else {

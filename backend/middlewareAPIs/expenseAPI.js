@@ -6,9 +6,7 @@ const kafka = require('../kafka/client')
 
 app.post('/getExpensesForGroup', checkAuth, async (req,res) => {
     req.body.path = "get-expenses-for-group"
-    // console.log('stuck here')
     kafka.make_request('expense', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -21,9 +19,7 @@ app.post('/getExpensesForGroup', checkAuth, async (req,res) => {
 
 app.post('/newExpense', checkAuth, async (req,res) => {
     req.body.path = "new-expense"
-    // console.log('stuck here')
     kafka.make_request('expense', req.body, (error, result) => {
-        console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }
@@ -36,9 +32,7 @@ app.post('/newExpense', checkAuth, async (req,res) => {
 
 app.post('/newComment', checkAuth, async (req,res) => {
     req.body.path = "new-comment"
-    // console.log('stuck here')
     kafka.make_request('expense', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }
@@ -51,9 +45,7 @@ app.post('/newComment', checkAuth, async (req,res) => {
 
 app.post('/deleteComment', checkAuth, async (req,res) => {
     req.body.path = "delete-comment"
-    // console.log('stuck here')
     kafka.make_request('expense', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }

@@ -6,9 +6,7 @@ const kafka = require('../kafka/client')
 
 app.post('/getUser', checkAuth, async (req,res) => {
     req.body.path = "get-user"
-    // console.log('stuck here')
     kafka.make_request('user', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -21,9 +19,7 @@ app.post('/getUser', checkAuth, async (req,res) => {
 
 app.post('/updateUser', checkAuth, async (req,res) => {
     req.body.path = "update-user"
-    // console.log('stuck here')
     kafka.make_request('user', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -38,9 +34,7 @@ app.get('/getUsers', checkAuth, async (req,res) => {
     req = {}
     req.body = {}
     req.body.path = "get-users"
-    // console.log('stuck here')
     kafka.make_request('user', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -55,9 +49,7 @@ app.get('/getAllUsersNames', checkAuth, async (req,res) => {
     req = {}
     req.body = {}
     req.body.path = "get-all-users-names"
-    // console.log('stuck here')
     kafka.make_request('user', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }

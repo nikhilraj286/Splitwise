@@ -8,8 +8,8 @@ var expect = require('chai').expect;
 var agent = require('chai').request.agent(app);
 
 
-ROOT_URL="http://34.209.25.230:3001"
-// ROOT_URL="http://localhost:3001"
+// ROOT_URL="http://34.209.25.230:3001"
+ROOT_URL="http://localhost:3001"
 
 
 describe("POST-- Get user details by userId", () => {

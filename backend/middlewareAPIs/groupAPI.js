@@ -6,9 +6,7 @@ const kafka = require('../kafka/client')
 
 app.post('/createGroup', checkAuth, async (req,res) => {
     req.body.path = "create-group"
-    // console.log('stuck here')
     kafka.make_request('group', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -18,9 +16,7 @@ app.post('/createGroup', checkAuth, async (req,res) => {
 
 app.post('/getGroups', checkAuth, async (req,res) => {
     req.body.path = "get-groups"
-    // console.log('stuck here')
     kafka.make_request('group', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -30,9 +26,7 @@ app.post('/getGroups', checkAuth, async (req,res) => {
 
 app.post('/getGroupData', checkAuth, async (req,res) => {
     req.body.path = "get-group-data"
-    // console.log('stuck here')
     kafka.make_request('group', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -42,9 +36,7 @@ app.post('/getGroupData', checkAuth, async (req,res) => {
 
 app.post('/acceptInvite', checkAuth, async (req,res) => {
     req.body.path = "accept-invite"
-    // console.log('stuck here')
     kafka.make_request('group', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }
@@ -57,9 +49,7 @@ app.post('/acceptInvite', checkAuth, async (req,res) => {
 
 app.post('/deleteUserFromGroup', checkAuth, async (req,res) => {
     req.body.path = "delete-user-from-group"
-    // console.log('stuck here')
     kafka.make_request('group', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }

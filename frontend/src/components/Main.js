@@ -7,17 +7,9 @@ import Navbar from './navbar/Navbar'
 import landing from './landing/landing'
 import AddGroup from './group/addGroup';
 import userProfile from './userProfile/userProfile';
-// import ViewGroup from './home/centerBar/viewGroup';
-// import dashboard from './home/centerBar/dashboard'
-
 
 class Main extends Component {
     render(){
-        // let navbar_display = null
-        // if(localStorage.getItem('userprofile')){
-        //     navbar_display = navbar
-        // }
-        // console.log(localStorage)
         return(
             <div>
                 <Route exact path='/' component={landing}/>
@@ -27,8 +19,6 @@ class Main extends Component {
                 <Route path="/home" component={Home}/>
                 <Route path="/group/new" component={AddGroup}/>
                 <Route path="/userAccount"  component={userProfile}/>
-                {/* <Route path="/home/groups/:id" component={ViewGroup}/> */}
-                {/* <Route path="/home/dashboard" component={dashboard}/> */}
             </div>
         );
     }

@@ -33,7 +33,6 @@ const upload = multer({
             cb(null, metadataObj);
         },
         key: function (req, file, cb) {
-            // console.log(file);
             imgName = Date.now() + file.originalname
             cb(null, imgName); //use Date.now() for unique file keys
         }

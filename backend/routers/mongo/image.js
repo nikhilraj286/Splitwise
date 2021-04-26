@@ -33,7 +33,6 @@ const upload = multer({
             cb(null, metadataObj);
         },
         key: function (req, file, cb) {
-            // console.log(file);
             imgName = Date.now() + file.originalname
             cb(null, imgName); //use Date.now() for unique file keys
         }
@@ -47,97 +46,14 @@ app.post('/uploadPic', checkAuth, async (req, res) => {
     })
 })
 
-// app.post("/uploadPic", upload.single('myImage'), (err, result) => {
-//     console.log(result)
-//     if(err){
-//         console.log(err)
-//         res.status(400).send("error")
-//     }
-//     res.status(200).send(req.file.filename);
-
-
-    // if (err) {
-    //     console.log(err)
-    //     // res.writeHead(200, {
-    //     //     'Content-Type': 'text/plain'
-    //     // })
-    //     // res.send("error");
-    // } else {
-    //     if (req.file == undefined) {
-    //         console.log("no file")
-    //         // res.writeHead(200, {
-    //         //     'Content-Type': 'text/plain'
-    //         // })
-    //         // res.send("no file");
-    //     } else {
-    //         console.log('file name', req.file.filename)
-    //         // res.writeHead(200, {
-    //         //     'Content-Type': 'text/plain'
-    //         // })
-    //         // res.send(req.file.filename);
-    //     }
-    // }
-// });
-
 app.get('/profile/:image_id', async (req, res) => {
     await s3.getObject({
         Bucket: "spitwise",
         Key: req.params.image_id
     }, (err, data) => {
         if(err){res.sendFile(path.join(__dirname, '../..') + '/public/uploads/default.png')}
-        // // res.sendFile(path(data))
-        // console.log('here', data.Key)
-        // console.log('here again', typeof(data))
         res.status(200).send({})
     })
 });
-
-
-
-// const storage = multer.diskStorage({
-//     destination: './public/uploads/',
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-//     }
-// });
-// const upload = multer({
-//     storage: storage,
-//     limits: { fileSize: 1000000 },
-// }).single('myImage');
-// app.use(express.static('./public'));
-
-// app.post('/uploadPic', (req, res) => {
-//     console.log("upload pic called");
-//     upload(req, res, async (err) => {
-//         if (err) {
-//             res.writeHead(200, {
-//                 'Content-Type': 'text/plain'
-//             })
-//             res.end("error");
-//         } else {
-//             if (req.file == undefined) {
-//                 res.writeHead(200, {
-//                     'Content-Type': 'text/plain'
-//                 })
-//                 res.end("no file");
-//             } else {
-//                 res.writeHead(200, {
-//                     'Content-Type': 'text/plain'
-//                 })
-//                 res.end(req.file.filename);
-//             }
-//         }
-//     });
-// });
-
-// app.get('/profile/:image_id', (req, res) => {
-//     var image = path.join(__dirname, '..') + '/public/uploads/' + req.params.image_id;
-//     if (fs.existsSync(image)) {
-//         res.sendFile(image);
-//     }
-//     else {
-//         res.sendFile(path.join(__dirname, '..') + '/public/uploads/default.png')
-//     }
-// });
 
 module.exports = router;

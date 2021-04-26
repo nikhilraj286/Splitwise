@@ -1,5 +1,4 @@
 const express = require('express');
-// const bodyParser = require('body-parser');
 const session = require('express-session');
 const cors = require('cors');
 const app = express();
@@ -7,9 +6,8 @@ app.set('view engine', 'ejs');
 
 // require('./db/SQL');
 // require('./db/Mongo')
-// http://34.209.25.230:3000
-// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-app.use(cors({ origin: 'http://34.209.25.230:3000', credentials: true }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+// app.use(cors({ origin: 'http://34.209.25.230:3000', credentials: true }));
 app.use(session({
     secret              : 'cmpe273_kafka_passport_mongo',
     resave              : false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
@@ -18,11 +16,10 @@ app.use(session({
     activeDuration      :  5 * 60 * 1000
 }));
 app.use(express.json({ extended: false }));
-// app.use(bodyParser.json());
 
 app.use(function(req, res, next){
-    // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Origin', 'http://34.209.25.230:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    // res.setHeader('Access-Control-Allow-Origin', 'http://34.209.25.230:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');

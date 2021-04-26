@@ -8,11 +8,9 @@ const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
 app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
-    // console.log("Inside Get Expenses for group Request");
     try {
         Expense.find({ group_id: req.body.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Expense not found!"); }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -30,12 +28,11 @@ app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
+        return res.status(400).send(err)
     }
 });
 
 app.post('/newExpense', checkAuth, async (req, res) => {
-    // console.log("Inside New Expense Post Request");
     try {
         const expense = new Expense({
             amount: req.body.amount,
@@ -75,13 +72,11 @@ app.post('/newExpense', checkAuth, async (req, res) => {
         return res.status(200).send({})
     }
     catch (err) {
-        console.log(err);
         return res.status(400).send(err);
     }
 });
 
 app.post('/newComment', checkAuth, async (req, res) => {
-    // console.log("Inside New Comment Post Request");
     try {
         await Expense.findOneAndUpdate({
             _id: req.body.expense_id
@@ -96,14 +91,11 @@ app.post('/newComment', checkAuth, async (req, res) => {
             return res.status(200).send({})
         })
     } catch (err) {
-        console.log(err);
         return res.status(500).send("Internal Server Error!");
     }
 });
 
 app.post('/deleteComment', checkAuth, async (req, res) => {
-    // console.log("Inside Delete Comment Post Request");
-    // console.log(req)
     try {
         await Expense.findOneAndUpdate({
             _id: req.body.expense_id
@@ -116,14 +108,11 @@ app.post('/deleteComment', checkAuth, async (req, res) => {
             return res.status(200).send({})
         })
     } catch (err) {
-        console.log(err);
         return res.status(500).send("Internal Server Error!");
     }
 });
 
 app.post('deleteExpense', checkAuth, async (req, res) => {
-    // console.log("Inside Delete Expense Post Request");
-    // console.log(req)
     try {
         await Expense.findOne({
             _id: req.body.expense_id
@@ -134,7 +123,6 @@ app.post('deleteExpense', checkAuth, async (req, res) => {
             return res.status(200).send({})
         })
     } catch (err) {
-        console.log(err);
         return res.status(500).send("Internal Server Error!");
     }
 });
