@@ -1,16 +1,12 @@
-// import React from 'react'
 import '../../style.css'
 import React from 'react'
-// import { Link } from 'react-router-dom'
 import '../../style.css'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'font-awesome/css/font-awesome.min.css';
 import logo from '../../logo.png'
 
 
 
 const LeftBar = (props) => {
-    // console.log('PROPS',props)
     let selectedId = null
     if(props.tabSelected){
         if(props.tabSelected === 4 && props.groupSelected > 0){
@@ -19,10 +15,7 @@ const LeftBar = (props) => {
             selectedId = 'tab' + props.tabSelected
         }
     }
-    // console.log('tab selected',props.tabSelected,'group selected',props.groupSelected)
-    // console.log('ID -', selectedId)
     if(selectedId && document.getElementById(selectedId)){
-        // console.log(document.getElementById(selectedId).classList)
         document.getElementById(selectedId).classList.add("selected-tab")
     }
     return (<div>
@@ -38,8 +31,6 @@ const LeftBar = (props) => {
             
             
             return (
-                // <div className="leftbar-item" onClick={() => { props.changeTab(item.key)}}>{item.name}</div>)
-                // <div className="leftbar-item" onClick={() => { props.changeTab(tabItem.key) }}>{tabItem.name}</div>)
                 <div>
 
                     {tabItem.heading ?
@@ -70,41 +61,14 @@ const LeftBar = (props) => {
                                  }
                                  
                                  }}>
-                                {/* {tabItem.name === 'Dashboard' ? <img alt="" src={logo} style={{ width: '15px', height: '100%', marginTop: '-3px', marginRight: '8px' }} /> : <i className="fa fa-flag" style={{ color: '#666', marginRight: '8px' }}></i>} */}
                                 {tabLogo}
                                 {tabItem.name}</div>
                         )
                     }
-
-                        
-
-
-
-
-
                 </div>
             )
         })}
         <div className="left-group-heading" style={{ backgroundColor: '#eee', borderRadius: '5px', padding: '2px 0 2px 10px', color: 'gray', margin: '8px 0' }}>Users</div> 
     </div>)
 }
-
-
-
 export default LeftBar;
-
-
-// {
-    // tabItem.heading ?
-    // (<div className="left-group-division" onClick={() => { props.changeTab(tabItem.key) }}>
-    //     <div className="left-group-heading">{tabItem.name}</div>
-    //     {props.groups.map((groupItem) => {
-    //         return (
-    //             <div className="left-group-item" onClick={() => { props.changeGroup(3, groupItem.group_id) }}>{groupItem.Group.group_name}</div>
-    //         )
-    //     })}
-    // </div>)
-    // :
-    // (
-    //     <div className="left-tab-item" key={tabItem.key} onClick={() => { props.changeTab(tabItem.key) }}>{tabItem.name}</div>
-        // )}/

@@ -10,7 +10,6 @@ const jwtAuthHandler = async (msg, callback) => {
                 return callback(null, res);
             }
             if (results) {
-                // console.log('res', results)
                 res.status = 200
                 res.data = results
                 callback(null, res);

@@ -3,7 +3,6 @@ const initialState = {
 }
 
 export const deleteCommentReducer = (state = initialState, action) => {
-    // console.log(action.payload)
     switch (action.type) {
         case 'DELETECOMMENT':
             return { ...state, user: action.payload }

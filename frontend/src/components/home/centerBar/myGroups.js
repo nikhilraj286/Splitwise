@@ -1,12 +1,7 @@
-// import React from 'react'
 import '../../style.css'
 import React from 'react'
-// import { Link } from 'react-router-dom'
 import '../../style.css'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'font-awesome/css/font-awesome.min.css';
-// import logo from '../../logo.png'
-
 
 export default class MyGroup extends React.Component {
 
@@ -21,10 +16,7 @@ export default class MyGroup extends React.Component {
 
 
     render = () => {
-    console.log(this.props)
-    console.log("---------------------------------------", this.state)
     let selectedId = null
-    // let invitedTo = null
     if (this.props.tabSelected) {
         if (this.props.tabSelected === 4 && this.props.groupSelected > 0) {
             selectedId = 'group' + this.props.tabSelected + this.props.groupSelected
@@ -32,7 +24,6 @@ export default class MyGroup extends React.Component {
             selectedId = 'tab' + this.props.tabSelected
         }
     }
-    // let groupIdSelected = null
     let allGroupsList = []
     let keys = Object.keys(this.props.groups)
 
@@ -41,7 +32,6 @@ export default class MyGroup extends React.Component {
         allGroupsList.push(<option key={data.user_id} dataId={data.user_id}>{data.Group.group_name}</option>)
     })
     if (selectedId && document.getElementById(selectedId)) {
-        // console.log(document.getElementById(selectedId).classList)
         document.getElementById(selectedId).classList.add("selected-tab")
     }
     return (<div>

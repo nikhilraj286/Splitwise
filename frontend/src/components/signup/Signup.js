@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { signup } from '../../store/actions/signupActions/signupActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
-// import { Link } from 'react-router-dom';
 
 class SignUp extends Component{
     constructor(props){
@@ -43,7 +42,6 @@ class SignUp extends Component{
     }
         
     submitSignUp = async e => {
-        // var headers = new Headers();
         e.preventDefault();
         const data = {
             email: this.state.email,
@@ -52,22 +50,10 @@ class SignUp extends Component{
         }
         await this.props.signup(data);
         this.setState({ login: true })
-        // console.log(this.props.signupDetails)      
     }
     render(){
-        // let details = null;
-        // if(this.state.errMessage){
-        //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
-        // }
         let redirctVar = ""
         let invalidSignupMsg = ""
-        // console.log("SIGN UP ************");
-        // console.log(this.props);
-        // console.log(this.state);
-        // if (localStorage.getItem('userProfile')) {
-        //     // localStorage.setItem('userProfile', JSON.stringify(this.props.signupDetails.user))
-        //     redirctVar = <Redirect to="/home"/>
-        // }
         if(this.state.login){
         if (this.props.signupDetails && this.props.signupDetails.user && this.props.signupDetails.user.user_id) {
             redirctVar = <Redirect to="/home"/>
@@ -76,17 +62,6 @@ class SignUp extends Component{
             Email id already exists
           </div>)
         }}
-        // if(localStorage.getItem('userProfile')){
-        //     this.setState({
-        //         authFlag: true,
-        //         Redirect: <Redirect to="/home"/>
-        //     })
-        // } else {
-        //     this.setState({
-        //         authFlag: false,
-        //         Redirect: <Redirect to="/signup"/>
-        //     })
-        // }
         return(
             <div>
                 {redirctVar}
@@ -128,7 +103,6 @@ class SignUp extends Component{
 
 SignUp.propTypes = {
     signup: PropTypes.func.isRequired,
-    // user: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => {

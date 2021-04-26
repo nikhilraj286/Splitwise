@@ -34,16 +34,13 @@ const createGroupHandler = async (msg, callback) => {
 const getGroupsHandler = async (msg, callback) => {
     var res = {}
     try {
-        // console.log('reached here', msg.email)
         const group = await Group.find({'user_list._id':msg.user_id})
-        // console.log(group)
         if(group === null){
             res.status = 404
             callback(null, res)
         }
         let output = []
         for (let item of group){
-            // console.log(item)
             let data = {}
             data.Group = {}
             data.group_id = item._id
@@ -61,7 +58,6 @@ const getGroupsHandler = async (msg, callback) => {
             output.push(data)
         }
         res.data = JSON.stringify(output)
-        // console.log(res)
         res.status = 200
         callback(null, res)
     } catch(err){
@@ -86,7 +82,6 @@ const getGroupDataHandler = async (msg, callback) => {
             output.group_desc = result.group_desc
             output.total_users = result.total_users
             output.userToGroups = []
-            // output.comments = []
             for (let item of result.user_list){
                 data = {}
                 data.user_id = item._id._id

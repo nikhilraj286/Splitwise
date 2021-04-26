@@ -5,11 +5,9 @@ const getUserHandler = async (msg, callback) => {
     try {
         const user = await User.findOne({ _id: msg.user_id }, 'full_name email _id currency time_zone language phone profile_picture')
         if (user === null) {
-            // console.log('User not found')
             res.status = 404
             callback(null, res)
         }
-        // console.log('User found')
         res.status = 200
         res.data = JSON.stringify(user)
         callback(null, res)
@@ -36,11 +34,9 @@ const updateUserHandler = async (msg, callback) => {
             {$set:data},
             (err, result) => {
                 if (err) {
-                    // console.log(err)
                     res.status = 400
                     callback(null, res)
                 }
-                // console.log(chalk.red(result))
                 res.status = 200
                 res.data = JSON.stringify(result)
                 callback(null, res)
@@ -66,8 +62,6 @@ const getUsersHandler = async (msg, callback) => {
             for(let item of result){
                 let data = JSON.parse(JSON.stringify(item))
                 data.user_id = String(item._id)
-                // console.log(data)
-                // console.log('*************************')
                 output.push(data)
             }
             res.status = 200
@@ -99,9 +93,6 @@ const getAllUsersNamesHandler = async (msg, callback) => {
                     data.name = item.full_name
                     delete data.full_name
                     delete data._id
-                    // data.remove(full_name)
-                    // console.log(data)
-                    // console.log('*************************')
                     output[item._id] = data
                     
 

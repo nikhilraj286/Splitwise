@@ -3,7 +3,6 @@ const initialState = {
 }
 
 export const acceptInviteReducer = (state = initialState, action) => {
-    // console.log(action.payload)
     switch (action.type) {
         case 'ACCEPTINVITE':
             return { ...state, user: action.payload }

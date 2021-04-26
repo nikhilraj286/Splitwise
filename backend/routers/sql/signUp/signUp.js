@@ -8,7 +8,6 @@ const router = express.Router();
 
 app.post('/signup', async (req, res) => {
 	console.log("Inside Sign up Post Request");
-	// console.log("Req Body : ", req.body);
 	const transaction = await sequelize.transaction();
 	try {
 		const user = await db.User.create({

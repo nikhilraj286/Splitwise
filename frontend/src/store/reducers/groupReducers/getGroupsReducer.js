@@ -3,7 +3,6 @@ const initialState = {
 }
 
 export const getGroupsReducer = (state = initialState, action) => {
-    // console.log(action.payload)
     switch (action.type) {
         case 'GETGROUPS':
             return { ...state, user: action.payload }

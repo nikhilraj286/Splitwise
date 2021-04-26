@@ -8,9 +8,7 @@ app.get('/getTransactions', checkAuth, async (req,res) => {
     req = {}
     req.body = {}
     req.body.path = "get-transactions"
-    // console.log('stuck here')
     kafka.make_request('transaction', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -23,9 +21,7 @@ app.get('/getTransactions', checkAuth, async (req,res) => {
 
 app.post('/getTransactionsForGroup', checkAuth, async (req,res) => {
     req.body.path = "get-transactions-for-group"
-    // console.log('stuck here')
     kafka.make_request('transaction', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -38,10 +34,7 @@ app.post('/getTransactionsForGroup', checkAuth, async (req,res) => {
 
 app.post('/getTransactionsForUser', checkAuth, async (req,res) => {
     req.body.path = "get-transactions-for-user"
-    // console.log(req.body)
-    // console.log('stuck here')
     kafka.make_request('transaction', req.body, (error, result) => {
-        // console.log(result)
         if(result.status === 200){
             return res.status(200).send(JSON.parse(result.data));
         }
@@ -54,9 +47,7 @@ app.post('/getTransactionsForUser', checkAuth, async (req,res) => {
 
 app.post('/settleup', checkAuth, async (req,res) => {
     req.body.path = "settle-up"
-    // console.log('stuck here', req)
     kafka.make_request('transaction', req.body, (error, result) => {
-        console.log(result)
         if(result.status === 200){
             return res.status(200).send({});
         }

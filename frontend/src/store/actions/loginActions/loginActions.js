@@ -11,20 +11,16 @@ export const login = (data) => async dispatch => {
         }
     })
     .then(async res => {
-        // console.log(res);
         if(res.status === 200) {
-            // console.log(res.data);
             const jwttoken = res.data
             localStorage.setItem("token", jwttoken)
             var decoded = jwt_decode(jwttoken.split(' ')[1])
-            console.log(decoded);
             let userprofile = {
                 user_id: decoded.user_id,
                 full_name: decoded.full_name,
                 email: decoded.email
             }
             localStorage.setItem('userProfile', JSON.stringify(userprofile))
-            console.log(decoded)
             let currency = ''
             if(decoded.currency === 'BHD'){currency = 'BD'}
             if(decoded.currency === 'KWD'){currency = 'KWD'}
@@ -42,7 +38,6 @@ export const login = (data) => async dispatch => {
         }
     })
     .catch(err => {
-        console.log(err);
         dispatch({
             type: 'LOGIN',
             payload: 400

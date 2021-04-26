@@ -7,11 +7,9 @@ const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
 app.get('/getTransactions', checkAuth, async (req, res) => {
-    // console.log("Inside Get Transactions Request");
     try {
         Transaction.find({}).sort({ date_paid: -1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -28,16 +26,14 @@ app.get('/getTransactions', checkAuth, async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
+        return res.status(400).send(err)
     }
 });
 
 app.post('/getTransactionsForGroup', checkAuth, async (req, res) => {
-    // console.log("Inside Get Transactions for group Request");
     try {
         Transaction.find({ group_id: req.body.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -54,17 +50,14 @@ app.post('/getTransactionsForGroup', checkAuth, async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
+        return res.status(400).send(err)
     }
 });
 
 app.post('/getTransactionsForUser', checkAuth, async (req, res) => {
-    // console.log("Inside Get Transactions for group Request");
     try {
-        // {$or: [{ paid_by: req.body.user_id }, { paid_to: req.body.user_id }]}
         Transaction.find({ group_id: { $in: req.body.groupList } }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -81,13 +74,11 @@ app.post('/getTransactionsForUser', checkAuth, async (req, res) => {
         })
     }
     catch (err) {
-        console.log(err);
+        return res.status(400).send(err)
     }
 });
 
 app.post('/settleup', checkAuth, async (req, res) => {
-    // console.log("Inside settle up Request");
-    // console.log("Req Body : ",req.body);
     try {
         Promise.mapSeries(req.body, (item) => {
             const transaction = new Transaction({

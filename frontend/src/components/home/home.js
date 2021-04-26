@@ -4,13 +4,10 @@ import { Redirect } from 'react-router';
 import '../../css/buttons.css'
 import '../style.css'
 import LeftBar from './leftBar/LeftBar';
-// import Center from './centerBar/centerBar';
 import Dashboard from './centerBar/dashboard';
 import ViewGroup from './centerBar/viewGroup'
 import RecentActivity from './centerBar/recentActivity'
 import MyGroups from './centerBar/myGroups'
-// import axios from 'axios';
-// import exportData from '../../config/config';
 import { connect } from 'react-redux'
 import { acceptInvite } from '../../store/actions/groupActions/acceptInviteActions'
 import { getGroups } from '../../store/actions/groupActions/getGroupsActions'
@@ -54,7 +51,6 @@ class Home extends Component {
     }
 
     changeTab = (id) => {
-        // console.log("inside change tab - ",id)
         this.setState({
             tabSelected: id,
             rerender: this.state.rerender + 1
@@ -66,7 +62,6 @@ class Home extends Component {
     }
 
     changeGroup = (tabSelectedId, groupSelectedId) => {
-        console.log("inside change group - ",tabSelectedId,groupSelectedId)
         this.setState({
             tabSelected: tabSelectedId,
             groupSelected: groupSelectedId,
@@ -85,25 +80,6 @@ class Home extends Component {
                 user_id: userId,
                 group_id: groupId
             }
-            // axios.defaults.withCredentials = true;
-            // await axios.post(exportData.backendURL+'acceptInvite', data, {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then((res) => {
-            //     console.log("Status Code : ", res.status);
-            //     if (res.status === 200) {
-            //         this.setState({
-            //             rerender: this.state.rerender + 1
-            //         })
-            //         // console.log("State -> ",this.state)
-            //         // this.props.history.push('/home')
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
             this.setState({
                 inviteAccepted: false
             })
@@ -117,10 +93,8 @@ class Home extends Component {
     }
 
     componentDidMount = async () => {
-        // console.log(this.state)
         if(localStorage.getItem('selectedTab')){
             let selectedTabData = JSON.parse(localStorage.getItem('selectedTab'))
-            // console.log('data',data)
             this.setState({
                 groupSelected: selectedTabData.groupSelected,
                 tabSelected: selectedTabData.tabSelected
@@ -134,34 +108,11 @@ class Home extends Component {
         }
         if(localStorage.getItem('userProfile')){
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-            // console.warn(userProfile)
             let userId = userProfile.user_id
             const data = {
                 user_id: userId
             }
-            // axios.defaults.withCredentials = true;
-            // await axios.post(exportData.backendURL+'getGroups', data, {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(async (res) => {
-            //     // console.log("Status Code : ", res.status);
-            //     if (res.status === 200) {
-            //         // this.setState({
-            //         //     groups.
-            //         // })
-            //         // console.log(res.data)
-            //         this.setState({
-            //             groups: res.data,
-            //             rerender: 0
-            //         })
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
-
+           
             await this.props.getGroups(data)
             if(this.props.getGroupsDetails !== 400){
                 this.setState({
@@ -169,30 +120,7 @@ class Home extends Component {
                 })
             }
 
-            // await axios.get(exportData.backendURL+'getAllUsersNames', {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(async (res) => {
-            //     // console.log("Status Code : ", res.status);
-            //     if (res.status === 200) {
-            //         // this.setState({
-            //         //     groups.
-            //         // })
-            //         // console.log(res.data)
-            //         localStorage.setItem('allUsers', JSON.stringify(res.data))
-                    
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
-
             await this.props.getAllUsersNames()
-            // if(this.props.getAllUsersNamesDetails !== 400){
-            //     localStorage.setItem('allUsers', JSON.stringify(this.props.getAllUsersNamesDetails))
-            // }
         }
     }
 
@@ -209,30 +137,10 @@ class Home extends Component {
                     groups: this.props.getGroupsDetails
                 })
             }
-            // axios.defaults.withCredentials = true;
-            // await axios.post(exportData.backendURL+'getGroups', data, {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(async (res) => {
-            //     if (res.status === 200) {
-            //         this.setState({
-            //             groups: res.data,
-            //             rerender: 0
-            //         })
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
         }
     }
 
     render = () => {
-        // console.log(this.props, "in home");
-        // console.log('DATA', JSON.parse(localStorage.getItem('selectedTab')))
-        // console.log('STATE', this.state)
         let redirectVar = null;
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
@@ -259,9 +167,6 @@ class Home extends Component {
                         </div>
                         <div className="col centerBar" style={{padding:'0'}}>
                             <div className="inner">
-                                {/* <Center selected={this.state.tabSelected} groupSelected={this.state.groupSelected}/> */}
-                                {/* <Dashboard />
-                                <ViewGroup /> */}
                                 {comp}
                             </div>
                         </div>
@@ -271,11 +176,8 @@ class Home extends Component {
         )
     }
 }
-//export Home Component
-// export default Home;
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return({
         acceptInviteDetails:state.acceptInviteDetails.user,
         getGroupsDetails:state.getGroupsDetails.user,

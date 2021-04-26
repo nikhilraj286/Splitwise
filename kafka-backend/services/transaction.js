@@ -9,7 +9,6 @@ const getTransactionsHandler = async (msg, callback) => {
                 res.status = 404
                 callback(null, res)
             }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -41,7 +40,6 @@ const getTransactionsForGroupHandler = async (msg, callback) => {
                 res.status = 404
                 callback(null, res)
              }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -69,8 +67,6 @@ const getTransactionsForUserHandler = async (msg, callback) => {
     res = {}
     try {
         let skip = msg.page * msg.size
-        // let count = await Transaction.count({ group_id: { $in: msg.groupList } })
-        // await Transaction.find({ group_id: { $in: msg.groupList } })
         let count = await Transaction.count({
             $and: [
                 {group_id: { $in: msg.groupList }},
@@ -97,7 +93,6 @@ const getTransactionsForUserHandler = async (msg, callback) => {
                 res.status = 404
                 callback(null, res)
              }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}
@@ -126,7 +121,6 @@ const getTransactionsForUserHandler = async (msg, callback) => {
 
 const settleupHandler = async (msg, callback) => {
     res = {}
-    // console.log('msg', msg)
     try {
         Promise.mapSeries(msg.transList, (item) => {
             const transaction = new Transaction({
@@ -140,7 +134,6 @@ const settleupHandler = async (msg, callback) => {
             return transaction.save()
         })
 
-        // console.log('checkpoint 1')
         Promise.mapSeries(msg.transList, (item) => {
             return Transaction.findOneAndUpdate(
                 {
@@ -169,7 +162,6 @@ const settleupHandler = async (msg, callback) => {
 }
 
 handle_request = (msg, callback) => {
-    // console.log('here',msg)
     if(msg.path === "get-transactions"){
         delete msg.path
         getTransactionsHandler(msg, callback)

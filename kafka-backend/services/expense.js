@@ -10,7 +10,6 @@ const getExpensesForGroupHandler = async (msg, callback) => {
                 res.status = 404
                 callback(null, res)
             }
-            // console.log(result)
             output = []
             for (let item of result) {
                 data = {}

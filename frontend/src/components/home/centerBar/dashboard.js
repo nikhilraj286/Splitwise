@@ -1,8 +1,6 @@
-// import axios from 'axios'
 import { Button, Modal } from 'react-bootstrap'
 import React from 'react'
 import { Link } from 'react-router-dom'
-// import exportData from '../../../config/config'
 import { connect } from 'react-redux';
 import { settleup } from '../../../store/actions/transactionActions/settleupActions'
 import { getTransactions } from '../../../store/actions/transactionActions/getTransactionsActions'
@@ -44,33 +42,14 @@ class Dashboard extends React.Component {
                 data.push(item)
             }
         })
-        console.log("data --------->",data)
-        // axios.defaults.withCredentials = true;
-        // await axios.post(exportData.backendURL+'settleup', data, {
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
-        // .then(async (res) => {
-        //     console.log('status', res.status)
-        //     if (res.status === 200) {
-        //         await this.setState({rerender:this.state.rerender+1})
-        //     }
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        // })
 
         await this.props.settleup({transList: data})
-        // console.log('after settleup - ', this.props)
         if(this.props.settleupDetails === 200){
             this.setState({
                 settledUp: true
             })
         }
         await this.props.getTransactions()
-        // console.log('after get in mount - ', this.props)
         if(this.props.getTransactionsDetails !== 400){
             this.setState({
                 transactions: this.props.getTransactionsDetails,
@@ -79,79 +58,17 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount = async () => {
-        // axios.defaults.withCredentials = true;
-        // await axios.get(exportData.backendURL+'getTransactions', {
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
-        //     .then(async (res) => {
-        //         // console.log("Status Code : ", res.status);
-        //         if (res.status === 200) {
-        //             // this.setState({
-        //             //     groups.
-        //             // })
-        //             // console.log('Trasactions',res.data)
-        //             this.setState({
-        //                 transactions: res.data,
-        //                 rerender: (this.state.rerender) + 1
-        //             })
-        //             // this.setState({
-        //             //     groups: res.data[0]
-        //             // })
-        //             // console.log('res', res.data[0])
-        //         }
-        //     }).catch((err) => {
-        //         console.log(err)
-        //     });
 
         await this.props.getTransactions()
-        // console.log('after get in mount - ', this.props)
         if(this.props.getTransactionsDetails !== 400){
             this.setState({
                 transactions: this.props.getTransactionsDetails,
-                // rerender: (this.state.rerender) + 1
             })
         }
     }
 
-    // componentDidUpdate = async (prevProps, prevState) => {
-        // if (this.state.rerender > prevState.rerender) {
-        //     axios.defaults.withCredentials = true;
-        //     await axios.get(exportData.backendURL + 'getTransactions', {
-        //         headers: {
-        //             'Accept': 'application/json',
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //         .then(async (res) => {
-        //             // console.log("Status Code : ", res.status);
-        //             if (res.status === 200) {
-        //                 // this.setState({
-        //                 //     groups.
-        //                 // })
-        //                 // console.log('Trasactions',res.data)
-        //                 this.setState({
-        //                     transactions: res.data
-        //                 })
-        //                 // this.setState({
-        //                 //     groups: res.data[0]
-        //                 // })
-        //                 // console.log('res', res.data[0])
-        //             }
-        //         }).catch((err) => {
-        //             console.log(err)
-        //         });
-        // }
-    // }
-
-
-
 
     render = () => {
-        // console.log(this.state)
-        // console.log(this.state.transactions)
 
         let you_owe = []
         let owes_you = []
@@ -161,44 +78,24 @@ class Dashboard extends React.Component {
         let grand_total = 0
         let currencyIcon = JSON.parse(localStorage.getItem('currency'))
         if (this.state.transactions) {
-            // let users_data = []
             let trans = this.state.transactions
-            // console.log(trans)
             let expense_sum = {}
-            
-            // console.log(JSON.parse(localStorage.getItem('allUsers')))
-            // console.log('state', this.state.groups);
-            // let allUsers = JSON.parse(localStorage.getItem('allUsers'))
             let allUsers = this.props.getAllUsersNamesDetails
-            // console.log(allUsers)
-            // let userListToSettle = []
             let userId = JSON.parse(localStorage.getItem('userProfile'))?JSON.parse(localStorage.getItem('userProfile')).user_id:null
             if (allUsers) {
                 let temp = Object.keys(allUsers)
-                // console.log('TEMP',temp)
-
-                
 
                 temp.forEach(item => {
                     expense_sum[item] = 0
                 })
-                // console.log(expense_sum)
                 trans.forEach(item => {
-                    // if(item.payment_status === 'due'){
-                    // console.log(item.paid_by, item.paid_to, userId, item.amount)
                     if (((item.paid_by === userId) || (item.paid_to === userId)) && (item.paid_by !== item.paid_to)) {
-                        // console.log(userId,item.paid_by, item.paid_to)
                         expense_sum[item.paid_by] = ((expense_sum[item.paid_by]) + (Number(item.amount)))
                         expense_sum[item.paid_to] = ((expense_sum[item.paid_to]) - (Number(item.amount)))
                     }}
-                // }
                 )
-                // console.log(expense_sum)
-                // console.log('expenses',expense_sum)
                 temp.forEach(item => {
                     if (item !== userId) {
-                        // if(item !== userId){
-                        // console.log(item, userId)
                         var amount = expense_sum[item]
                         amount = Number(amount.toFixed(2))
                         if (amount !== 0){
@@ -241,33 +138,11 @@ class Dashboard extends React.Component {
             }
         }
 
-        // if (localStorage.getItem('allUsers')) {
-        //     let allUsers = JSON.parse(localStorage.getItem('allUsers'))
-        //     let curuserId = JSON.parse(localStorage.getItem('userProfile')).user_id
-        //     // console.log('sfvfdvdv', allUsers)
-        //     let keys1 = Object.keys(allUsers)
-        //     keys1.forEach(item => {
-        //         // console.log(item)
-        //         let data = allUsers[item]
-        //         // console.log(data)
-        //         if(data.user_id !== curuserId){
-        //             allUserList.push(<option key={data.user_id} dataId={data.user_id}>{data.name}</option>)
-        //         }
-        //     })
-        //     // console.log(allUserList)
-
-        //     }
-
         function getColor(amount) {
             if (amount < 0) { return '#ff652f' }
             if (amount > 0) { return '#5bc5a7' }
             return "#777"
         }
-
-        
-        // console.log(you_owe.length === 0)
-
-        // let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         return (
             <div>
                 <div className="row">
@@ -289,8 +164,6 @@ class Dashboard extends React.Component {
                                                 <p style={{margin:'0'}}>Select user you want to settle with</p>
                                                 <div>
                                                 <input className="form-control" list="dashboard" id="newPerson" placeholder="Name" onInput={async (e) => {
-                                                    // console.log(e.target.value)
-                                                    // let allUsers = JSON.parse(localStorage.getItem('allUsers'))
                                                     let allUsers = this.props.getAllUsersNamesDetails
                                                     var keys = Object.keys(allUsers)
 
@@ -299,7 +172,6 @@ class Dashboard extends React.Component {
                                                             
                                                             let data = allUsers[item]
                                                             if (e.target.value.includes(data.name)) {
-                                                                // console.log(e.target.value.includes(data.email))
                                                                 this.setState({
                                                                     selectedPerson: data.user_id,
                                                                     selected: true
@@ -307,7 +179,6 @@ class Dashboard extends React.Component {
                                                             }
                                                         })
                                                     }
-                                                    // console.log(this.state)
                                                 }} style={{ height: '38px', width:'50%', marginTop:'10px' }} />
                                                     <datalist id="dashboard">
                                                         {allUserList}
@@ -372,7 +243,6 @@ class Dashboard extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return({
         settleupDetails:state.settleupDetails.user,
         getTransactionsDetails:state.getTransactionsDetails.user,

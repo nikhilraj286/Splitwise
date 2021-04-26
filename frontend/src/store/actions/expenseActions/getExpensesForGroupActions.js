@@ -17,7 +17,6 @@ export const getExpensesForGroup = (data) => async dispatch => {
             })
         }
     }).catch((err) => {
-        console.log(err)
         dispatch({
             type: 'GETEXPENSESFORGROUP',
             payload: 400

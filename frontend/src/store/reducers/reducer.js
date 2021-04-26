@@ -19,7 +19,6 @@ import { getAllUsersNamesReducer } from './userReducers/getAllUserNamesReducer';
 import { updateUserReducer } from './userReducers/updateUserReducer';
 import { GetUserReducer } from './userReducers/getUserReducer';
 import { uploadPicReducer } from './userReducers/uploadPicReducer';
-// import { LogoutReducer } from './logoutReducer/logoutReducer'
 
 const appReducer =  combineReducers({
     loginDetails:LoginReducer,
@@ -42,7 +41,6 @@ const appReducer =  combineReducers({
     updateUserDetails: updateUserReducer,
     getUserDetails: GetUserReducer,
     uploadPicDetails: uploadPicReducer
-    // logoutDetails:LogoutReducer
 })
 
 const RootReducer = (state, action)=> {

@@ -11,13 +11,10 @@ export const signup = (data) => async dispatch => {
         }
     })
     .then(async res => {
-        // console.log(res);
         if(res.status === 200) {
-            // console.log(res);
             const jwttoken = res.data
             localStorage.setItem("token", jwttoken)
             var decoded = jwt_decode(jwttoken.split(' ')[1])
-            // console.log(decoded);
             let userprofile = {
                 user_id: decoded.user_id,
                 full_name: decoded.full_name,

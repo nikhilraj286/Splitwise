@@ -9,9 +9,7 @@ auth();
 
 app.post('/login', async (req,res) => {
     req.body.path = "user-login"
-    console.log('stuck here')
     kafka.make_request('userAuth', req.body, (error, result) => {
-        console.log(result)
         if(result.status === 200){
             const user = JSON.parse(result.data)
             const payload = { user_id: user._id, full_name: user.full_name, email: user.email, currency: user.currency}

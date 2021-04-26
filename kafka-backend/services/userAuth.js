@@ -4,7 +4,6 @@ const passwordHash = require('password-hash');
 const loginHandler = async (msg, callback) => {
     var res = {}
     try {
-        // console.log('reached here', msg.email)
         const user = await User.findOne({ email: msg.email})
         console.log(user)
         if(user === null){

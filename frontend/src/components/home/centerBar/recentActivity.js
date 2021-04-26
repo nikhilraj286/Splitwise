@@ -1,10 +1,7 @@
-// import axios from 'axios'
 import React from 'react'
 import { connect } from 'react-redux'
 import { getGroups } from '../../../store/actions/groupActions/getGroupsActions'
 import { getTransactionsForUser } from '../../../store/actions/transactionActions/getTransactionsForUserActions'
-// import exportData from '../../../config/config'
-// import { Link } from 'react-router-dom'
 import '../../style.css'
 
 class RecentActivity extends React.Component {
@@ -26,25 +23,15 @@ class RecentActivity extends React.Component {
     componentDidMount = async () => {
         let userProfile = JSON.parse(localStorage.getItem('userProfile'))
         let userId = userProfile.user_id
-        // axios.defaults.withCredentials = true;
         let data = {user_id: userId}
 
         await this.props.getGroups(data)
-        console.log('get groups after', this.props)
         if(this.props.getGroupsDetails !== 400 && this.props.getGroupsDetails !== []){
             this.setState({
                 groups: this.props.getGroupsDetails
             })
             let group_list = []
-            // console.log(typeof(this.props.getGroupsDetails) === 'object')
             if(this.props.getGroupsDetails && typeof(this.props.getGroupsDetails) === 'object'){
-                // if(this.state.groupBy === "none"){
-                //     this.props.getGroupsDetails.forEach(item => {
-                //         group_list.push(item.group_id)
-                //     })
-                // } else {
-                //     group_list.push(this.state.group_id)
-                // }
                 this.props.getGroupsDetails.forEach(item => {
                     group_list.push(item.group_id)
                 })
@@ -56,11 +43,8 @@ class RecentActivity extends React.Component {
                 size: this.state.size,
                 orderBy: this.state.orderBy
             }
-            console.log(data)
             await this.props.getTransactionsForUser(data)
-            console.log('get trans for user after', this.props)
             if(this.props.getTransactionsForUserDetails !== 400 && this.props.getTransactionsForUserDetails !== []){
-                console.log(this.props.getTransactionsForUserDetails.length)
                 this.setState({
                     total_pages: Math.ceil(this.props.getTransactionsForUserDetails.length/this.state.size),
                     transactions: this.props.getTransactionsForUserDetails.data
@@ -88,11 +72,8 @@ class RecentActivity extends React.Component {
                 size: this.state.size,
                 orderBy: this.state.orderBy
             }
-            console.log(data)
             await this.props.getTransactionsForUser(data)
-            console.log('get trans for user after in update', this.props)
             if(this.props.getTransactionsForUserDetails !== 400 && this.props.getTransactionsForUserDetails !== []){
-                console.log(this.props.getTransactionsForUserDetails.length)
                 this.setState({
                     total_pages: Math.ceil(this.props.getTransactionsForUserDetails.length/this.state.size),
                     transactions: this.props.getTransactionsForUserDetails.data
@@ -101,17 +82,13 @@ class RecentActivity extends React.Component {
         }
     }
 
-    // <img src="https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png" className="square">
     render = () => {
-        console.log(this.state)
         let groupBy = []
         let element = []
         let allGroups = []
         if (this.state.transactions && this.state.groups && localStorage.getItem('userProfile')) {
             let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-            // let allUsers = JSON.parse(localStorage.getItem('allUsers'))
             let allUsers = this.props.getAllUsersNamesDetails
-            // console.log(allUsers)
             let userId = userProfile.user_id
             let trans = this.state.transactions
             let groups = this.state.groups
@@ -124,21 +101,13 @@ class RecentActivity extends React.Component {
                 grp.group_id = data.Group.group_id
                 allGroups.push(grp)
             })
-            console.log(allGroups)
-            // console.log(trans)
-            // let iter = this.state.sortBy === 'dec' ? trans : trans.slice().reverse()
             let iter = trans
             iter.forEach(item => {
-                // console.log(item)
                 if((item.paid_by === userId || item.paid_to === userId) && (item.paid_by !== item.paid_to) && (this.state.groupBy === 'none' || this.state.groupBy === item.Group.group_name)){
-                    // console.log(this.state.groupBy , item.Group.group_name)
                     let date = new Date(item.date_paid)
-                    // console.log('date', date)
                     let status = (item.payment_status === 'due')? 'paid':'settled with'
                     let amount = (item.payment_status === 'due')? JSON.parse(localStorage.getItem('currency'))+ Number(item.amount) :''
                     let temp2 = (item.payment_status === 'due')? 'to' : '' 
-                    // let temp3 = (item.payment_status === 'due')? 'in' : ''
-                    // let grp = (item.payment_status === 'due')? item.Group.group_name : ''
                     let temp3 = 'in'
                     let grp = item.Group.group_name
                     let imag = (item.payment_status === 'due')?"https://s3.amazonaws.com/splitwise/uploads/notifications/v2021/0-p.png":"https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-p.png"
@@ -163,7 +132,6 @@ class RecentActivity extends React.Component {
             })
         }
         let entryCount = {}
-        console.log((this.state.page - 1)*this.state.size + this.state.size, this.props.getTransactionsForUserDetails.length)
         if(((this.state.page - 1)*this.state.size + this.state.size) < this.props.getTransactionsForUserDetails.length){
             entryCount = (<div>{((this.state.page - 1)*this.state.size) + 1} - {(((this.state.page - 1)*this.state.size) + this.state.size)} of {this.props.getTransactionsForUserDetails.length}</div>)
         } else {
@@ -292,7 +260,6 @@ class RecentActivity extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return({
         getGroupsDetails:state.getGroupsDetails.user,
         getTransactionsForUserDetails:state.getTransactionsForUserDetails.user,

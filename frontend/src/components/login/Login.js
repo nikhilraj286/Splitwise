@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import '../style.css';
 import { Redirect } from 'react-router';
-// import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../store/actions/loginActions/loginActions';
 import PropTypes from 'prop-types'
 import '../../css/buttons.css'
-// import { Link } from 'react-router-dom';
 
 class Login extends Component {
     constructor(props) {
@@ -37,24 +35,14 @@ class Login extends Component {
             password: this.state.password
         }
         await this.props.login(data)
-        console.log(this.props.loginDetails)
         this.setState({login:true})
     }
     render() {
-        // if(this.state.errMessage){
-        //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
-        // }
-        // console.log(this.props)
         let redirctVar = ""
         let invalidLoginMsg = ""
-        // console.log("props in login - ",this.props)
-        // if (localStorage.getItem('userProfile')) {
-        //     redirctVar = <Redirect to="/home"/>
-        // }
         if(this.state.login){
             if (this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user.user_id) {
                 redirctVar = <Redirect to="/home"/>
-                // console.warn('reached here')
             } else if(this.props.loginDetails && this.props.loginDetails.user && this.props.loginDetails.user === 400){
                 invalidLoginMsg = (<div className="alert alert-success" style={{margin:'70px auto', width:'30%', textAlign:'center'}} role="alert">
                 Incorrect username or password
@@ -94,8 +82,6 @@ class Login extends Component {
         );
     }
 }
-
-// export default Login;
 
 Login.propTypes = {
     login: PropTypes.func.isRequired,

@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import '../style.css';
-// import { Redirect } from 'react-router';
-// import { Link } from 'react-router-dom';
-// import { connect } from 'react-redux';
-// import { login } from '../../store/actions/loginActions/loginActions';
-// import PropTypes from 'prop-types'
 import 'font-awesome/css/font-awesome.min.css';
-// import axios from 'axios';
 import { Redirect } from 'react-router';
-// import exportData from '../../config/config';
 import { connect } from 'react-redux';
 import { updateUser } from '../../store/actions/userActions/updateUserActions'
 import { getUser } from '../../store/actions/userActions/getUserActions'
@@ -89,11 +82,9 @@ class UserProfile extends Component {
             datasubmitted: false,
             invalidMobile: false
         })
-        // console.log('1111111111 ',(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))
         if (this.state.email || this.state.fullname || this.state.mobile || this.state.currency || this.state.timezone || this.state.language || this.state.imageUrl) {
             if ((this.state.mobile === null || (this.state.mobile && this.state.mobile.length === 10 && /^\d{10}$/.test(this.state.mobile)))
                 && (this.state.email === null || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email))))) {
-                    console.log('2222222222 ', (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))
                 let userProf = JSON.parse(localStorage.getItem('userProfile'))
                 let userId = userProf.user_id
                 const data = {
@@ -118,46 +109,6 @@ class UserProfile extends Component {
                 document.getElementById('nameInput').value = ''
                 document.getElementById('emailInput').value = ''
                 document.getElementById('mobileInput').value = ''
-                // await axios.post(exportData.backendURL + 'updateUser', data, {
-                //     headers: {
-                //         'Accept': 'application/json',
-                //         'Content-Type': 'application/json'
-                //     }
-                // })
-                //     .then(async (res) => {
-                //         if (res.status === 200) {
-                //             console.log(res.data);
-                //             if (res.data === "failed") {
-                //                 this.setState({
-                //                     rerender: this.state.rerender + 1,
-                //                     invalidEmail: true,
-                //                     // email: null,
-                //                     // fullname: null,
-                //                     // mobile: null,
-                //                     // currency: null,
-                //                     // timezone: null,
-                //                     // language: null,
-                //                     // profilepic: null
-                //                 })
-                //             } else {
-                //                 this.setState({
-                //                     rerender: this.state.rerender + 1,
-                //                     datasubmitted: true,
-                //                     // email: null,
-                //                     // fullname: null,
-                //                     // mobile: null,
-                //                     // currency: null,
-                //                     // timezone: null,
-                //                     // language: null,
-                //                     // profilepic: null
-                //                 })
-                //             }
-                //         }
-
-
-                //     }).catch((err) => {
-                //         console.log(err)
-                //     });
 
                 await this.props.updateUser(data)
                 if(this.props.updateUserDetails !== 400){
@@ -188,7 +139,6 @@ class UserProfile extends Component {
                 if(this.state.userProfile.currency === 'CAD'){currency = '$'}
                 localStorage.setItem('currency', JSON.stringify(currency))
             } else {
-                console.log('here')
                 document.getElementById('emailInput').value = ''
                 document.getElementById('mobileInput').value = ''
                 this.setState({
@@ -208,32 +158,6 @@ class UserProfile extends Component {
             const data = {
                 user_id: userId
             }
-            // axios.defaults.withCredentials = true;
-            // await axios.post(exportData.backendURL+'getUser', data, {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(async (res) => {
-            //     console.log('status',res.status)
-            //     if (res.status === 200) {
-            //         console.log(res.data);
-            //         this.setState({
-            //             userProfile: res.data
-            //             // email: res.data.email,
-            //             // fullname: res.data.full_name,
-            //             // mobile: res.data.phone,
-            //             // currency: res.data.currency,
-            //             // timezone: res.data.time_zone,
-            //             // language: res.data.language,
-            //             // profilepic: res.data.profile_picture,
-            //         })
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
-
             await this.props.getUser(data)
             if(this.props.getUserDetails !== 400){
                 this.setState({
@@ -245,7 +169,6 @@ class UserProfile extends Component {
     }
 
     componentWillUpdate = async (prevProps, prevState) => {
-        // console.log(this.state, prevState)
         if ((this.state.invalidEmail === true && prevState.invalidEmail === false)
             || (this.state.invalidMobile === true && prevState.invalidMobile === false)
             || (this.state.datasubmitted === true && prevState.datasubmitted === false)) {
@@ -254,31 +177,6 @@ class UserProfile extends Component {
             const data = {
                 user_id: userId
             }
-            // axios.defaults.withCredentials = true;
-            // await axios.post(exportData.backendURL+'getUser', data, {
-            //     headers: {
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(async (res) => {
-            //     // console.log('status',res.status)
-            //     if (res.status === 200) {
-            //         console.log(res.data);
-            //         this.setState({
-            //             userProfile: res.data
-            //             // email: res.data.email,
-            //             // fullname: res.data.full_name,
-            //             // mobile: res.data.phone,
-            //             // currency: res.data.currency,
-            //             // timezone: res.data.time_zone,
-            //             // language: res.data.language,
-            //             // profilepic: res.data.profile_picture,
-            //         })
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // });
             await this.props.getUser(data)
             if(this.props.getUserDetails !== 400){
                 this.setState({
@@ -298,9 +196,7 @@ class UserProfile extends Component {
         if (!localStorage.getItem('userProfile')) {
             redirectVar = <Redirect to="/login" />
         }
-        console.log(this.state)
         if(this.state.datasubmitted && this.state.timeout){
-            // this.setState({datasubmitted: false})
             submitted_status = (<div className="alert alert-success" id="successDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
             User profile has been updated sucessfully
           </div>)
@@ -309,7 +205,6 @@ class UserProfile extends Component {
             },3500)
         }
         if (this.state.invalidEmail) {
-            // this.setState({invalidEmail: false})
             errMessage = (<div className="alert alert-warning" id="failDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
                 Email Id has been taken. Try again.
             </div>)
@@ -318,7 +213,6 @@ class UserProfile extends Component {
             },3500)
         }
         if (this.state.invalidMobile) {
-            // this.setState({invalidMobile: false})
             invalidMobileMsg = (<div className="alert alert-warning" id="invalidMobileDisp" style={{margin:'60px 30% 0 30%', textAlign:'center'}} role="alert">
                 Invalid Details Entered
             </div>)
@@ -326,28 +220,8 @@ class UserProfile extends Component {
                 this.setState({timeout: false})
             },3500)
         }
-        // if(this.state.errMessage){
-        //     details = <p className="alert alert-warning" style={{marginTop: '20px'}}><strong>Incorrect email or password</strong></p>
-        // }
-        // let redirctVar = ""
-        // if (this.props.loginDetails.user && this.props.loginDetails.user.user_id) {
-        //     localStorage.setItem('userProfile', JSON.stringify(this.props.loginDetails.user))
-        //     redirctVar = <Redirect to="/home"/>
-        // }
-        
-        // <img className="picture-frame" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png">
-        // let img_src = this.state.profilepic?exportData.backendURL+'profile/'+this.state.profilepic:'https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-teal30-200px.png'
-        // axios.get(exportData.backendURL+'profile/'+this.state.profilepic).then(async (res) => {
-        //     this.setState({
-
-        //     })
-        // })
         let img_src = 'https://spitwise.s3-us-west-2.amazonaws.com/' + (this.state.imageUrl?this.state.imageUrl
                 :(this.state.userProfile?this.state.userProfile.profile_picture:null))
-        // if (user.profile_picture && user.profile_picture !== '') {
-        //     img_src = user.profile_picture
-        // }
-        // console.log(user)
         return (
             <div>
                 {redirectVar}
@@ -375,13 +249,6 @@ class UserProfile extends Component {
                                                     formD: formData,
                                                     conf: config
                                                 }
-                                                // await axios.post(exportData.backendURL+"uploadPic", formData, config).then(async (res) => {
-                                                //     console.log('image', res)
-                                                //     this.setState({imageUrl:res.data, profilepic:null})
-                                                // }).catch((err) => {
-                                                //     console.log(err)
-                                                // });
-
                                                 await this.props.uploadPic(data)
                                                 if(this.props.uploadPicDetails !== 400){
                                                     this.setState({
@@ -389,15 +256,6 @@ class UserProfile extends Component {
                                                         profilepic: null
                                                     })
                                                 }
-
-                                                // await axios.get(exportData.backendURL+'profile/'+this.state.profilepic).then(async (res) => {
-                                                //     if(res.status === 200){
-                                                //         this.setState({
-                                                //             imageUrl: 'https://spitwise.s3-us-west-2.amazonaws.com/' + 
-                                                //         })
-                                                //     }
-                                                // })
-
                                             }}><i className="fa fa-check"></i></div>
                                         </div>
                                     </div>
@@ -436,14 +294,8 @@ class UserProfile extends Component {
                                             <div className='hidden_disp  hidden' id='email2'>
                                                 <input type='email' id='emailInput' onChange={this.emailChangeHandler} placeholder={this.state.userProfile?this.state.userProfile.email:''} />
                                                 <div onClick={(e)=>{
-                                                    // if(this.state.email === null || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))){
-                                                    //     document.getElementById('email1').classList.remove('hidden')
-                                                    //     document.getElementById('email2').classList.add('hidden')
-                                                    // }
-                                                    // if(this.state.email === null || (this.state.email && (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email)))){
                                                         document.getElementById('email1').classList.remove('hidden')
                                                         document.getElementById('email2').classList.add('hidden')
-                                                    // }
                                                 }}><i className="fa fa-check"></i></div>
                                             </div>
                                         </div>
@@ -668,10 +520,7 @@ class UserProfile extends Component {
     }
 }
 
-// export default Login;
-
 const mapStateToProps = (state) => {
-    // console.log(state)
     return({
         updateUserDetails:state.updateUserDetails.user,
         getUserDetails:state.getUserDetails.user,
