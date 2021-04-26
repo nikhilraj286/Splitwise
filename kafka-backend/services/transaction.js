@@ -73,6 +73,10 @@ const getTransactionsForUserHandler = async (msg, callback) => {
                 {$or: [
                     {paid_by: {"$ne": msg.user_id}},
                     {paid_to: {"$ne": msg.user_id}}
+                ]},
+                {$or: [
+                    {paid_by: msg.user_id},
+                    {paid_to: msg.user_id}
                 ]}
             ]
         })
@@ -82,6 +86,10 @@ const getTransactionsForUserHandler = async (msg, callback) => {
                 {$or: [
                     {paid_by: {"$ne": msg.user_id}},
                     {paid_to: {"$ne": msg.user_id}}
+                ]},
+                {$or: [
+                    {paid_by: msg.user_id},
+                    {paid_to: msg.user_id}
                 ]}
             ]
         }).sort({ date_paid: msg.orderBy })

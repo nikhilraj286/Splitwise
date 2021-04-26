@@ -9,6 +9,7 @@ mongoose.connect(DB, {
     useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
+    // poolSize: 20
 }).then(con => {
     console.log('MongoDB connection successful!')
 }).catch(err => {

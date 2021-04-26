@@ -267,7 +267,7 @@ class ViewGroup extends React.Component {
                                 <img alt="" src="https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange47-100px.png" className="avatar" style={{ width: '65%', borderRadius: '25px' }} />
                             </div>
                             <div className="col-8" style={{ paddingLeft: '0' }}>
-                                <div style={{ marginBottom: '5px' }}>{ allUsers ? allUsers[item.user_id].name: ''}</div>
+                                <div style={{ marginBottom: '5px' }}>{ allUsers[item.user_id] ? allUsers[item.user_id].name: ''}</div>
                                 <div style={{ fontSize: '12px' }}>{owe_status}</div>
                             </div>
                         </div>
@@ -314,11 +314,13 @@ class ViewGroup extends React.Component {
                                     <div style={{whiteSpace:'pre-wrap', paddingRight:'60px'}}>{comment.comment}</div>
                                 </div>
                                 <div className='col-1 delete-comment' style={{display:'flex', flexDirection:'column', justifyContent:'center'}} onClick={ async e => {
-                                    await this.setState({
-                                        deleteComment: comment._id,
-                                        deleteCommentFor: item.exp_id
-                                    })
-                                    this.deleteComment(e)
+                                    if(window.confirm('Are you sure you want to delete the comment: "'+ comment.comment +'" ?')){
+                                        await this.setState({
+                                            deleteComment: comment._id,
+                                            deleteCommentFor: item.exp_id
+                                        })
+                                        this.deleteComment(e)
+                                    }
                                 }}>
                                     {commentDeleteButton}
                                 </div>
