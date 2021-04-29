@@ -33,7 +33,7 @@ class Dashboard extends React.Component {
     }
 
     handleSubmit = async () => {
-        let userId = JSON.parse(localStorage.getItem('userProfile')).user_id
+        let userId = localStorage.getItem('userProfile')?JSON.parse(localStorage.getItem('userProfile')).user_id:null
         this.handleClose()
         let trans = this.state.transactions
         const data = []

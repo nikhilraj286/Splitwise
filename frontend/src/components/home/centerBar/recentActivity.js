@@ -22,7 +22,7 @@ class RecentActivity extends React.Component {
 
     componentDidMount = async () => {
         let userProfile = JSON.parse(localStorage.getItem('userProfile'))
-        let userId = userProfile.user_id
+        let userId = (userProfile)?userProfile.user_id:null
         let data = {user_id: userId}
 
         await this.props.getGroups(data)
