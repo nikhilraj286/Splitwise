@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import "../style.css";
 import { Redirect } from "react-router";
-import { connect } from "react-redux";
-import { login } from "../../store/actions/loginActions/loginActions";
-import PropTypes from "prop-types";
+// import { connect } from "react-redux";
+// import { login } from "../../store/actions/loginActions/loginActions";
+import { loginMutation } from "./../../graphQLQueries/queries";
+import { graphql } from "react-apollo";
+// import PropTypes from "prop-types";
 import "../../css/buttons.css";
 
 class Login extends Component {
@@ -34,24 +36,49 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password,
     };
-    await this.props.login(data);
-    this.setState({ login: true });
+    try {
+      let response = await this.props.login({
+        variables: {
+          userDetails: data,
+        },
+      });
+      console.log(response.data.login);
+      let userProfile = { ...response.data.login };
+      userProfile.user_id = userProfile._id;
+      localStorage.setItem("userProfile", JSON.stringify(userProfile));
+      let currency = "";
+      if (userProfile.currency === "BHD") {
+        currency = "BD";
+      }
+      if (userProfile.currency === "KWD") {
+        currency = "KWD";
+      }
+      if (userProfile.currency === "USD") {
+        currency = "$";
+      }
+      if (userProfile.currency === "GBP") {
+        currency = "£";
+      }
+      if (userProfile.currency === "EUR") {
+        currency = "€";
+      }
+      if (userProfile.currency === "CAD") {
+        currency = "$";
+      }
+      localStorage.setItem("currency", JSON.stringify(currency));
+      this.setState({ login: true });
+    } catch (e) {
+      console.log(e);
+    }
   };
   render() {
     let redirctVar = "";
     let invalidLoginMsg = "";
     if (this.state.login) {
-      if (
-        this.props.loginDetails &&
-        this.props.loginDetails.user &&
-        this.props.loginDetails.user.user_id
-      ) {
+      let userProfile = JSON.parse(localStorage.getItem("userProfile"));
+      if (userProfile && userProfile.status === 200) {
         redirctVar = <Redirect to="/home" />;
-      } else if (
-        this.props.loginDetails &&
-        this.props.loginDetails.user &&
-        this.props.loginDetails.user === 400
-      ) {
+      } else if (userProfile && userProfile.status === 400) {
         invalidLoginMsg = (
           <div
             className="alert alert-warning"
@@ -125,12 +152,14 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
-  login: PropTypes.func.isRequired,
-};
+// Login.propTypes = {
+//   login: PropTypes.func.isRequired,
+// };
 
-const mapStateToProps = (state) => {
-  return { loginDetails: state.loginDetails };
-};
+// const mapStateToProps = (state) => {
+//   return { loginDetails: state.loginDetails };
+// };
 
-export default connect(mapStateToProps, { login })(Login);
+// export default connect(mapStateToProps, { login })(Login);
+
+export default graphql(loginMutation, { name: "login" })(Login);

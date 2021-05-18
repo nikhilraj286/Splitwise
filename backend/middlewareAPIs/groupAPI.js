@@ -6,6 +6,10 @@ const kafka = require("../kafka/client");
 
 app.post("/createGroup", checkAuth, async (req, res) => {
   req.body.path = "create-group";
+  console.log("***************************");
+  console.log("request for create group");
+  console.log(req.body);
+  console.log("***************************");
   kafka.make_request("group", req.body, (error, result) => {
     if (result.status === 200) {
       return res.status(200).send(JSON.parse(result.data));

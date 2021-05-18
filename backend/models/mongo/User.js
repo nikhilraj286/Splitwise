@@ -31,15 +31,6 @@ const UserSchema = new Schema({
         type: String,
         default: 'EN'
     },
-    group_list:[{
-        group_id:{ 
-            type: Schema.Types.ObjectId,
-            ref: "Group" 
-        },
-        has_invite:{ 
-            type: Boolean
-        }
-    }]
 })
 
 module.exports = mongoose.model('User', UserSchema)

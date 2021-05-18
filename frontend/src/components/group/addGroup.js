@@ -131,7 +131,12 @@ class AddGroup extends Component {
                     justifyContent: "center",
                   }}
                 >
-                  <p style={{ margin: "0 0 0 10px" }} id={data.user_id}>
+                  <p
+                    style={{
+                      margin: "0 0 0 10px",
+                    }}
+                    id={data.user_id}
+                  >
                     {data.full_name} ({data.email})
                   </p>
                 </div>
