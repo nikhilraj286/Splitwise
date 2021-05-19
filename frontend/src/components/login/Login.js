@@ -3,7 +3,7 @@ import "../style.css";
 import { Redirect } from "react-router";
 // import { connect } from "react-redux";
 // import { login } from "../../store/actions/loginActions/loginActions";
-import { loginMutation } from "./../../graphQLQueries/queries";
+import { loginMutation } from "./../../graphQLQueries/mutations";
 import { graphql } from "react-apollo";
 // import PropTypes from "prop-types";
 import "../../css/buttons.css";
@@ -97,7 +97,7 @@ class Login extends Component {
           <div className="container login-main" style={{ padding: "150px 0" }}>
             <div className="row">
               <div className="col-3"></div>
-              <div className="col-2" style={{ textAlign: "center" }}>
+              <div className="col-3" style={{ textAlign: "center" }}>
                 <img
                   width="200"
                   height="200"
@@ -110,7 +110,9 @@ class Login extends Component {
               </div>
               <div className="col-3">
                 <div className="login-form form" style={{ paddingTop: "20px" }}>
-                  <h4 id="loginHeading">WELCOME TO SPLITWISE</h4>
+                  <h4 id="loginHeading" style={{ width: "200%" }}>
+                    WELCOME TO SPLITWISE
+                  </h4>
                   <form onSubmit={this.submitLogin}>
                     <div className="mb-3">
                       <input
@@ -142,7 +144,7 @@ class Login extends Component {
                   </form>
                 </div>
               </div>
-              <div className="col-4"></div>
+              <div className="col-3"></div>
             </div>
             <div className="row">{invalidLoginMsg}</div>
           </div>

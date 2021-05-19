@@ -1,8 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getGroups } from "../../../store/actions/groupActions/getGroupsActions";
+// import { getGroups } from "../../../store/actions/groupActions/getGroupsActions";
 import { getTransactionsForUser } from "../../../store/actions/transactionActions/getTransactionsForUserActions";
 import "../../style.css";
+import { withApollo } from "react-apollo";
+import {
+  getAllUserNames,
+  getGroups,
+  getTransactions,
+} from "./../../../graphQLQueries/queries";
 
 class RecentActivity extends React.Component {
   constructor(props) {
@@ -25,23 +31,32 @@ class RecentActivity extends React.Component {
     let userId = userProfile ? userProfile.user_id : null;
     let data = { user_id: userId };
 
-    await this.props.getGroups(data);
-    if (
-      this.props.getGroupsDetails !== 400 &&
-      this.props.getGroupsDetails !== []
-    ) {
+    let response = await this.props.client.query({
+      query: getAllUserNames,
+    });
+    if (response.data.getAllUserNames.length > 0) {
+      let output = [];
+      response.data.getAllUserNames.forEach((item) => {
+        output[String(item._id)] = item;
+      });
+      await this.setState({ getAllUserNames: output });
+    }
+
+    let ggresponse = await this.props.client.query({
+      query: getGroups,
+      variables: {
+        getGroupsDetails: data,
+      },
+    });
+    console.log(ggresponse.data.getGroups);
+    if (ggresponse.data.getGroups && ggresponse.data.getGroups !== []) {
       this.setState({
-        groups: this.props.getGroupsDetails,
+        groups: ggresponse.data.getGroups,
       });
       let group_list = [];
-      if (
-        this.props.getGroupsDetails &&
-        typeof this.props.getGroupsDetails === "object"
-      ) {
-        this.props.getGroupsDetails.forEach((item) => {
-          group_list.push(item.group_id);
-        });
-      }
+      ggresponse.data.getGroups.forEach((item) => {
+        group_list.push(item.group_id);
+      });
       data = {
         user_id: userId,
         groupList: group_list,
@@ -49,19 +64,45 @@ class RecentActivity extends React.Component {
         size: this.state.size,
         orderBy: this.state.orderBy,
       };
-      await this.props.getTransactionsForUser(data);
-      if (
-        this.props.getTransactionsForUserDetails !== 400 &&
-        this.props.getTransactionsForUserDetails !== []
-      ) {
-        this.setState({
-          total_pages: Math.ceil(
-            this.props.getTransactionsForUserDetails.length / this.state.size
-          ),
-          transactions: this.props.getTransactionsForUserDetails.data,
-        });
-      }
     }
+
+    // await this.props.getGroups(data);
+    // if (
+    //   this.props.getGroupsDetails !== 400 &&
+    //   this.props.getGroupsDetails !== []
+    // ) {
+    //   this.setState({
+    //     groups: this.props.getGroupsDetails,
+    //   });
+    //   let group_list = [];
+    //   if (
+    //     this.props.getGroupsDetails &&
+    //     typeof this.props.getGroupsDetails === "object"
+    //   ) {
+    //     this.props.getGroupsDetails.forEach((item) => {
+    //       group_list.push(item.group_id);
+    //     });
+    //   }
+    //   data = {
+    //     user_id: userId,
+    //     groupList: group_list,
+    //     page: this.state.page - 1,
+    //     size: this.state.size,
+    //     orderBy: this.state.orderBy,
+    //   };
+    //   await this.props.getTransactionsForUser(data);
+    //   if (
+    //     this.props.getTransactionsForUserDetails !== 400 &&
+    //     this.props.getTransactionsForUserDetails !== []
+    //   ) {
+    //     this.setState({
+    //       total_pages: Math.ceil(
+    //         this.props.getTransactionsForUserDetails.length / this.state.size
+    //       ),
+    //       transactions: this.props.getTransactionsForUserDetails.data,
+    //     });
+    //   }
+    // }
   };
 
   componentDidUpdate = async (prevProps, prevState) => {
@@ -113,7 +154,8 @@ class RecentActivity extends React.Component {
       localStorage.getItem("userProfile")
     ) {
       let userProfile = JSON.parse(localStorage.getItem("userProfile"));
-      let allUsers = this.props.getAllUsersNamesDetails;
+      // let allUsers = this.props.getAllUsersNamesDetails;
+      let allUsers = this.state.getAllUsersNames;
       let userId = userProfile.user_id;
       let trans = this.state.transactions;
       let groups = this.state.groups;
@@ -513,12 +555,18 @@ class RecentActivity extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    getGroupsDetails: state.getGroupsDetails.user,
+    // getGroupsDetails: state.getGroupsDetails.user,
     getTransactionsForUserDetails: state.getTransactionsForUserDetails.user,
-    getAllUsersNamesDetails: state.getAllUsersNamesDetails.user,
+    // getAllUsersNamesDetails: state.getAllUsersNamesDetails.user,
   };
 };
 
-export default connect(mapStateToProps, { getGroups, getTransactionsForUser })(
-  RecentActivity
+export default withApollo(
+  connect(mapStateToProps, { getTransactionsForUser })(RecentActivity)
 );
+
+// export default withApollo(
+//   connect(mapStateToProps, { getGroups, getTransactionsForUser, getAllUserNames })(
+//     RecentActivity
+//   )
+// );

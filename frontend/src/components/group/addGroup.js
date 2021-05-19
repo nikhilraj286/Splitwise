@@ -1,9 +1,13 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import { getUsers } from "../../store/actions/userActions/getUsersActions";
-import { createGroup } from "../../store/actions/groupActions/createGroupActions";
+// import { connect } from "react-redux";
+// import { getUsers } from "../../store/actions/userActions/getUsersActions";
+// import { createGroup } from "../../store/actions/groupActions/createGroupActions";
 import "../style.css";
 import { Redirect } from "react-router";
+import { withApollo } from "react-apollo";
+import { getAllUserNames } from "./../../graphQLQueries/queries";
+import { createGroupMutation } from "./../../graphQLQueries/mutations";
+import { graphql } from "react-apollo";
 
 class AddGroup extends Component {
   constructor(props) {
@@ -23,27 +27,56 @@ class AddGroup extends Component {
   }
 
   createGroup = async () => {
+    let temp = [];
+    let count = 0;
+    let keys = Object.keys(this.state.usersToAdd);
+    keys.forEach((item) => {
+      temp[count] = this.state.usersToAdd[item];
+      count++;
+    });
     let data = {
-      user_list: { ...this.state.usersToAdd },
+      user_list: [...temp],
       group_name: this.state.groupName,
       no_of_users: Object.keys(this.state.usersToAdd).length,
     };
-    await this.props.createGroup(data);
-    if (this.props.createGroupDetails === 200) {
+    console.log(data);
+    let response = await this.props.createGroup({
+      variables: {
+        createGroupDetails: data,
+      },
+    });
+    console.log(response.data);
+    if (response.data.createGroup.status === 200) {
       this.setState({ groupCreated: true });
+      // localStorage.setItem("groupCreated", 1);
     } else {
       this.setState({ duplicateGroup: true });
     }
+    // if (this.props.createGroupDetails === 200) {
+    //   this.setState({ groupCreated: true });
+    // } else {
+    //   this.setState({ duplicateGroup: true });
+    // }
   };
 
   componentDidMount = async () => {
-    await this.props.getUsers();
-    if (this.props.getUsersDetails !== 400) {
+    let response = await this.props.client.query({
+      query: getAllUserNames,
+    });
+    if (response.data.getAllUserNames.length > 0) {
+      let output = [];
+      response.data.getAllUserNames.forEach((item) => {
+        output[String(item._id)] = item;
+      });
+      await this.setState({ getAllUserNames: response.data.getAllUserNames });
+    }
+    // await this.props.getUsers();
+    if (this.state.getAllUserNames) {
       let index = 0;
       let current_user_id = localStorage.getItem("userProfile")
         ? JSON.parse(localStorage.getItem("userProfile")).user_id
         : null;
-      let temp_data = this.props.getUsersDetails;
+      let temp_data = this.state.getAllUserNames;
       let user_data_1 = {};
       let user_data_2 = {};
       for (index; index < temp_data.length; index++) {
@@ -69,13 +102,14 @@ class AddGroup extends Component {
   };
 
   render = () => {
+    console.log(this.props);
     let redirectVar = null;
     let errMsg = null;
     if (!localStorage.getItem("userProfile")) {
       redirectVar = <Redirect to="/login" />;
     }
     if (this.state.groupCreated) {
-      redirectVar = <Redirect to="/" />;
+      redirectVar = <Redirect to="/home" />;
     }
     if (this.state.duplicateGroup) {
       errMsg = (
@@ -449,11 +483,15 @@ class AddGroup extends Component {
   };
 }
 
-const mapStateToProps = (state) => {
-  return {
-    getUsersDetails: state.getUsersDetails.user,
-    createGroupDetails: state.createGroupDetails.user,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     getUsersDetails: state.getUsersDetails.user,
+//     createGroupDetails: state.createGroupDetails.user,
+//   };
+// };
 
-export default connect(mapStateToProps, { createGroup, getUsers })(AddGroup);
+// export default connect(mapStateToProps, { createGroup, getUsers })(AddGroup);
+
+export default withApollo(
+  graphql(createGroupMutation, { name: "createGroup" })(AddGroup)
+);

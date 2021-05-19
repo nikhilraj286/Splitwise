@@ -6,7 +6,7 @@ const Promise = require("bluebird");
 const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
-app.get('/getTransactions', checkAuth, async (req, res) => {
+app.get('/getTransactions', async (req, res) => {
     try {
         Transaction.find({}).sort({ date_paid: -1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
@@ -30,7 +30,7 @@ app.get('/getTransactions', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/getTransactionsForGroup', checkAuth, async (req, res) => {
+app.post('/getTransactionsForGroup', async (req, res) => {
     try {
         Transaction.find({ group_id: req.body.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
@@ -54,7 +54,7 @@ app.post('/getTransactionsForGroup', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/getTransactionsForUser', checkAuth, async (req, res) => {
+app.post('/getTransactionsForUser', async (req, res) => {
     try {
         Transaction.find({ group_id: { $in: req.body.groupList } }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Transactions not found!"); }
@@ -78,7 +78,7 @@ app.post('/getTransactionsForUser', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/settleup', checkAuth, async (req, res) => {
+app.post('/settleup', async (req, res) => {
     try {
         Promise.mapSeries(req.body, (item) => {
             const transaction = new Transaction({

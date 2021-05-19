@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import "../style.css";
 import "font-awesome/css/font-awesome.min.css";
 import { Redirect } from "react-router";
-import { connect } from "react-redux";
-import { updateUser } from "../../store/actions/userActions/updateUserActions";
-import { getUser } from "../../store/actions/userActions/getUserActions";
-import { uploadPic } from "../../store/actions/userActions/uploadPicActions";
+// import { connect } from "react-redux";
+// import { updateUser } from "../../store/actions/userActions/updateUserActions";
+// import { getUser } from "../../store/actions/userActions/getUserActions";
+// import { uploadPic } from "../../store/actions/userActions/uploadPicActions";
+import { graphql, withApollo } from "react-apollo";
+import { updateUserMutation } from "./../../graphQLQueries/mutations";
+import { getUser } from "./../../graphQLQueries/queries";
 
 class UserProfile extends Component {
   constructor(props) {
@@ -126,52 +129,103 @@ class UserProfile extends Component {
         document.getElementById("emailInput").value = "";
         document.getElementById("mobileInput").value = "";
 
-        await this.props.updateUser(data);
-        if (this.props.updateUserDetails !== 400) {
-          if (this.props.updateUserDetails === "failed") {
-            await this.setState({
-              invalidEmail: true,
-              timeout: true,
-            });
-          } else {
-            await this.setState({
-              datasubmitted: true,
-              timeout: true,
-            });
-          }
-        }
-        await this.props.getUser(data);
-        if (this.props.getUserDetails !== 400) {
+        // await this.props.updateUser(data);
+        // if (this.props.updateUserDetails !== 400) {
+        //   if (this.props.updateUserDetails === "failed") {
+        //     await this.setState({
+        //       invalidEmail: true,
+        //       timeout: true,
+        //     });
+        //   } else {
+        //     await this.setState({
+        //       datasubmitted: true,
+        //       timeout: true,
+        //     });
+        //   }
+        // }
+        let updateUserResp = await this.props.updateUser({
+          variables: {
+            updateUserDetails: data,
+          },
+        });
+        console.log(updateUserResp);
+        if (updateUserResp.data.updateUser.status === 200) {
           await this.setState({
-            userProfile: this.props.getUserDetails,
+            datasubmitted: true,
+            timeout: true,
           });
-          let newUserProfile = {
-            user_id: this.state.userProfile._id,
-            full_name: this.state.userProfile.full_name,
-            email: this.state.userProfile.email,
-          };
-          localStorage.setItem("userProfile", JSON.stringify(newUserProfile));
+        } else {
+          await this.setState({
+            invalidEmail: true,
+            timeout: true,
+          });
         }
+        let response = await this.props.client.query({
+          query: getUser,
+          variables: {
+            getUserDetails: data,
+          },
+        });
+        if (response.data.getUser.status === 200) {
+          await this.setState({
+            userProfile: response.data.getUser,
+          });
+        }
+        let userProfile = { ...response.data.getUser };
+        userProfile.user_id = userProfile._id;
+        localStorage.setItem("userProfile", JSON.stringify(userProfile));
         let currency = "";
-        if (this.state.userProfile.currency === "BHD") {
+        if (userProfile.currency === "BHD") {
           currency = "BD";
         }
-        if (this.state.userProfile.currency === "KWD") {
+        if (userProfile.currency === "KWD") {
           currency = "KWD";
         }
-        if (this.state.userProfile.currency === "USD") {
+        if (userProfile.currency === "USD") {
           currency = "$";
         }
-        if (this.state.userProfile.currency === "GBP") {
+        if (userProfile.currency === "GBP") {
           currency = "£";
         }
-        if (this.state.userProfile.currency === "EUR") {
+        if (userProfile.currency === "EUR") {
           currency = "€";
         }
-        if (this.state.userProfile.currency === "CAD") {
+        if (userProfile.currency === "CAD") {
           currency = "$";
         }
         localStorage.setItem("currency", JSON.stringify(currency));
+        // await this.props.getUser(data);
+        // if (this.props.getUserDetails !== 400) {
+        //   await this.setState({
+        //     userProfile: this.props.getUserDetails,
+        //   });
+        //   let newUserProfile = {
+        //     user_id: this.state.userProfile._id,
+        //     full_name: this.state.userProfile.full_name,
+        //     email: this.state.userProfile.email,
+        //   };
+        //   localStorage.setItem("userProfile", JSON.stringify(newUserProfile));
+        // }
+        // let currency = "";
+        // if (this.state.userProfile.currency === "BHD") {
+        //   currency = "BD";
+        // }
+        // if (this.state.userProfile.currency === "KWD") {
+        //   currency = "KWD";
+        // }
+        // if (this.state.userProfile.currency === "USD") {
+        //   currency = "$";
+        // }
+        // if (this.state.userProfile.currency === "GBP") {
+        //   currency = "£";
+        // }
+        // if (this.state.userProfile.currency === "EUR") {
+        //   currency = "€";
+        // }
+        // if (this.state.userProfile.currency === "CAD") {
+        //   currency = "$";
+        // }
+        // localStorage.setItem("currency", JSON.stringify(currency));
       } else {
         document.getElementById("emailInput").value = "";
         document.getElementById("mobileInput").value = "";
@@ -192,12 +246,24 @@ class UserProfile extends Component {
       const data = {
         user_id: userId,
       };
-      await this.props.getUser(data);
-      if (this.props.getUserDetails !== 400) {
+      let response = await this.props.client.query({
+        query: getUser,
+        variables: {
+          getUserDetails: data,
+        },
+      });
+      console.log(response.data);
+      if (response.data.getUser.status === 200) {
         this.setState({
-          userProfile: this.props.getUserDetails,
+          userProfile: response.data.getUser,
         });
       }
+      // await this.props.getUser(data);
+      // if (this.props.getUserDetails !== 400) {
+      //   this.setState({
+      //     userProfile: this.props.getUserDetails,
+      //   });
+      // }
     }
   };
 
@@ -213,16 +279,29 @@ class UserProfile extends Component {
       const data = {
         user_id: userId,
       };
-      await this.props.getUser(data);
-      if (this.props.getUserDetails !== 400) {
+      let response = await this.props.client.query({
+        query: getUser,
+        variables: {
+          getUserDetails: data,
+        },
+      });
+      console.log(response.data);
+      if (response.data.getUser.status === 200) {
         this.setState({
-          userProfile: this.props.getUserDetails,
+          userProfile: response.data.getUser,
         });
       }
+      // await this.props.getUser(data);
+      // if (this.props.getUserDetails !== 400) {
+      //   this.setState({
+      //     userProfile: this.props.getUserDetails,
+      //   });
+      // }
     }
   };
 
   render() {
+    console.log(this.props);
     let redirectVar = null;
     let errMessage = "";
     let submitted_status = "";
@@ -295,7 +374,7 @@ class UserProfile extends Component {
               <div className="col-1"></div>
               <div className="col-5">
                 <div className="row">
-                  <div className="col-5">
+                  <div className="col-5" style={{ paddingLeft: "0" }}>
                     <div>
                       <img
                         className="picture-frame"
@@ -1327,14 +1406,18 @@ class UserProfile extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    updateUserDetails: state.updateUserDetails.user,
-    getUserDetails: state.getUserDetails.user,
-    uploadPicDetails: state.uploadPicDetails.user,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     // updateUserDetails: state.updateUserDetails.user,
+//     // getUserDetails: state.getUserDetails.user,
+//     uploadPicDetails: state.uploadPicDetails.user,
+//   };
+// };
 
-export default connect(mapStateToProps, { updateUser, getUser, uploadPic })(
-  UserProfile
+export default withApollo(
+  graphql(updateUserMutation, { name: "updateUser" })(UserProfile)
 );
+
+// export default withApollo(
+//   connect(mapStateToProps, { updateUser, getUser, uploadPic })(UserProfile)
+// );

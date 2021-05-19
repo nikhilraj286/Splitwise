@@ -8,7 +8,7 @@ const Transaction = require('../../models/mongo/Transaction')
 const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
-app.post('/createGroup', checkAuth, async (req,res) => {
+app.post('/createGroup', async (req,res) => {
     userList = []
     keys = Object.keys(req.body.user_list)
     keys.forEach(item => {
@@ -34,12 +34,13 @@ app.post('/createGroup', checkAuth, async (req,res) => {
 	}
 });
 
-app.post('/getGroups', checkAuth, async (req,res) => {
+app.post('/getGroups', async (req,res) => {
     try {
         const result = await Group.find({'user_list._id':req.body.user_id},
         (err, result) => {
             if(err){return res.status(404).send("Groups not found!");}
             let output = []
+            console.log(result)
             
             for (let item of result){
                 data = {}
@@ -58,6 +59,7 @@ app.post('/getGroups', checkAuth, async (req,res) => {
                 data.Group.user_list = item.user_list
                 output.push(data)
             }
+            console.log(output)
             return res.status(200).send(output)
         });
     }
@@ -66,7 +68,7 @@ app.post('/getGroups', checkAuth, async (req,res) => {
     }
 });
 
-app.post('/getGroupData', checkAuth, async (req,res) => {
+app.post('/getGroupData', async (req,res) => {
     
     try {
         await Group.findOne({_id: req.body.group_id})
@@ -95,7 +97,7 @@ app.post('/getGroupData', checkAuth, async (req,res) => {
     }
 });
 
-app.post('/acceptInvite', checkAuth, async (req,res) => {
+app.post('/acceptInvite', async (req,res) => {
     try {
         await Group.findOneAndUpdate(
             {
@@ -115,7 +117,7 @@ app.post('/acceptInvite', checkAuth, async (req,res) => {
     }
 });
 
-app.post('/deleteUserFromGroup', checkAuth, async (req,res) => {
+app.post('/deleteUserFromGroup', async (req,res) => {
     try {
         await Group.findOneAndUpdate(
             {

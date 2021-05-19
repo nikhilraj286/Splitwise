@@ -7,12 +7,13 @@ const Promise = require("bluebird");
 const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
-app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
+app.post('/getExpensesForGroup', async (req, res) => {
     try {
         Expense.find({ group_id: req.body.group_id }).sort({ date_paid: 1 }).populate('group_id').exec((err, result) => {
             if (err) { return res.status(404).send("Expense not found!"); }
             output = []
             for (let item of result) {
+                console.log(item)
                 data = {}
                 data.exp_id = item._id
                 data.amount = item.amount
@@ -23,6 +24,7 @@ app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
                 data.Group = item.group_id
                 data.comments = item.comments
                 output.push(data)
+                console.log(data)
             }
             return res.status(200).send(output)
         })
@@ -32,7 +34,7 @@ app.post('/getExpensesForGroup', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/newExpense', checkAuth, async (req, res) => {
+app.post('/newExpense', async (req, res) => {
     try {
         const expense = new Expense({
             amount: req.body.amount,
@@ -76,7 +78,7 @@ app.post('/newExpense', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/newComment', checkAuth, async (req, res) => {
+app.post('/newComment', async (req, res) => {
     try {
         await Expense.findOneAndUpdate({
             _id: req.body.expense_id
@@ -95,7 +97,7 @@ app.post('/newComment', checkAuth, async (req, res) => {
     }
 });
 
-app.post('/deleteComment', checkAuth, async (req, res) => {
+app.post('/deleteComment', async (req, res) => {
     try {
         await Expense.findOneAndUpdate({
             _id: req.body.expense_id
@@ -112,7 +114,7 @@ app.post('/deleteComment', checkAuth, async (req, res) => {
     }
 });
 
-app.post('deleteExpense', checkAuth, async (req, res) => {
+app.post('deleteExpense', async (req, res) => {
     try {
         await Expense.findOne({
             _id: req.body.expense_id

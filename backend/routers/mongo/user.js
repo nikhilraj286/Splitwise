@@ -5,7 +5,7 @@ const User = require('../../models/mongo/User')
 const router = express.Router();
 const { checkAuth } = require("../../utils/passport");
 
-app.post('/getUser', checkAuth, async (req,res) => {
+app.post('/getUser', async (req,res) => {
     try {
         const user = await User.findOne({ _id: req.body.user_id }, 'full_name email _id group_list currency time_zone language phone profile_picture')
         if (user === null) {
@@ -19,7 +19,7 @@ app.post('/getUser', checkAuth, async (req,res) => {
     return res.status(500).send("Internal Server Error!");
 });
 
-app.post('/updateUser', checkAuth, async (req,res) => {
+app.post('/updateUser', async (req,res) => {
     let data = {}
     if(req.body.email){data.email = req.body.email}
     if(req.body.full_name){data.full_name = req.body.full_name}
@@ -44,7 +44,7 @@ app.post('/updateUser', checkAuth, async (req,res) => {
     }
 });
 
-app.get('/getUsers', checkAuth, async (req,res) => {
+app.get('/getUsers', async (req,res) => {
     try {
         await User.find({},
             'full_name email _id group_list currency time_zone language phone profile_picture',
@@ -66,7 +66,7 @@ app.get('/getUsers', checkAuth, async (req,res) => {
     }
 });
 
-app.get('/getAllUsersNames', checkAuth, async (req,res) => {
+app.get('/getAllUsersNames', async (req,res) => {
     try {
         await User.find({},
             'full_name email _id group_list currency time_zone language phone profile_picture',
